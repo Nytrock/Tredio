@@ -5,7 +5,8 @@ description = ""
 authors = []
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
+Django = "^4.0.4"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
@@ -13,11 +14,11 @@ isort = "^5.10.1"
 pre-commit = "^2.18.1"
 
 [tool.isort]
-py_version = 37
+py_version = 38
 profile = "black"
 
 [tool.black]
-target-version = ['py37']
+target-version = ['py38']
 line-length = 120
 
 [build-system]
