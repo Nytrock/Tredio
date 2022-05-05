@@ -2,6 +2,7 @@ from django.urls import path, include
 
 from .views import RatingTheatreView, RatingEventView, RatingCreateView
 
+app_name = 'rating'
 urlpatterns = [
     path('event/<int:id>/', RatingEventView.as_view(), name='rating_event'),
     path('theatre/<int:id>/', RatingTheatreView.as_view(), name='rating_theatre'),
