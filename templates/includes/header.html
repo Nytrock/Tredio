@@ -1,3 +1,17 @@
-<header>
-    <p>Шапка страницы</p>
+<header class="navbar navbar-light navbar-expand-md navbar-fixed-top navigation-clean-button" style="background: rgb(34, 34, 34);border-radius: 20;border-top-left-radius: 20;border-top-right-radius: 20;border-bottom-right-radius: 20;border-bottom-left-radius: 20;border-style: none;padding-top: 0;padding-bottom: 10px;">
+    <div class="container"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+        <div><a class="navbar-brand" href="{% url 'homepage:home' %}"><span>Creativarian </span> </a></div>
+        <div class="collapse navbar-collapse" id="navcol-1" style="color: rgb(255,255,255);">
+            <ul class="navbar-nav nav-right">
+                <li class="nav-item"></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'theatres:theatres_list' %}" style="color: rgba(224,217,217,0.9);">Театры</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'theatres:events_list' %}" style="color: rgba(224,217,217,0.9);">Постановки</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'group:group_list' %}" style="color: rgba(224,217,217,0.9);">Группы</a></li>
+            </ul>
+            <p class="ms-auto navbar-text actions">
+                <a class="login" href="{% url 'login' %}" style="color: rgba(224,217,217,0.9);">Log In</a>
+                <a class="btn btn-light action-button" role="button" href="{% url 'users:signup' %}" style="color: rgba(0,0,0,0.9);background: var(--bs-gray-200);border-radius: 10px;border-style: solid;border-color: rgba(0,0,0,0.9);font-size: 16px;padding: 5px 8px;">Sign Up</a>
+            </p>
+        </div>
+    </div>
 </header>

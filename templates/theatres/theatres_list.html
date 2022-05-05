@@ -1,5 +1,67 @@
 {% extends "base.html" %}
 {% block title %}Театры{% endblock %}
 {% block content %}
-    <h1>Список театров</h1>
+    <section>
+        <div class="container py-5">
+            <div class="row mb-4 mb-lg-5">
+                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                    <h3 class="fw-bold">Поиск театров</h3>
+                    <form class="d-flex justify-content-center flex-wrap my-2" method="post">
+                        {% csrf_token %}
+                        <div class="my-2"><input class="form-control" type="email" name="search" placeholder="Название театра"></div>
+                        <div class="my-2"><button class="btn btn-primary ms-sm-2" type="submit">Поиск</button></div>
+                    </form>
+                </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
+                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
+                    <div>
+                        <h5 class="fw-bold">Первый театр</h5>
+                        <p>Краткое описание&nbsp; &nbsp; &nbsp; &nbsp;</p>
+                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>СПБ</p>
+                        <a href="{% url 'theatres:theatres_detail' 1 %}" class="btn btn-primary shadow" type="button">Больше</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
+                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
+                    <div>
+                        <h5 class="fw-bold">Lorem ipsum dolor sit&nbsp;</h5>
+                        <p class="text-muted mb-4">Erat netus est hendrerit, nullam et quis ad cras porttitor iaculis. Bibendum vulputate cras aenean.</p>
+                        <a href="{% url 'theatres:theatres_detail' 2 %}" class="btn btn-primary shadow" type="button">Больше</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
+                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
+                    <div>
+                        <h5 class="fw-bold">Lorem ipsum dolor sit&nbsp;</h5>
+                        <p class="text-muted mb-4">Erat netus est hendrerit, nullam et quis ad cras porttitor iaculis. Bibendum vulputate cras aenean.</p>
+                        <a href="{% url 'theatres:theatres_detail' 3 %}" class="btn btn-primary shadow" type="button">Больше</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
+                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
+                    <div>
+                        <h5 class="fw-bold">Lorem ipsum dolor sit&nbsp;</h5>
+                        <p class="text-muted mb-4">Erat netus est hendrerit, nullam et quis ad cras porttitor iaculis. Bibendum vulputate cras aenean.</p>
+                        <a href="{% url 'theatres:theatres_detail' 4 %}" class="btn btn-primary shadow" type="button">Больше</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="py-4 py-xl-5">
+            <div class="container">
+                <div class="text-white bg-dark border rounded border-0 p-4 p-md-5">
+                    <h2 class="fw-bold text-white mb-3">Не нашли свой театр? Не беда, добавьте его!</h2>
+                    <p class="mb-4">Какая то доп инфа</p><a class="btn btn-primary btn-lg me-2" role="button" href="{% url 'theatres:theatres_create' %}">Приступить к созданию</a>
+                </div>
+            </div>
+        </section>
+    </section>
 {% endblock %}

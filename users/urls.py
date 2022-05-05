@@ -3,6 +3,7 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView,
     PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from .views import ProfileView, SignupView, UserDetailView
 
+app_name = 'users'
 urlpatterns = [
     path(
         'login/',
