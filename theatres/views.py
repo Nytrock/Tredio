@@ -13,6 +13,10 @@ class TheatresCreateView(TemplateView):
     template_name = 'theatres/theatres_create.html'
 
 
+class EventListView(TemplateView):
+    template_name = 'theatres/events_list.html'
+
+
 class EventDetailView(TemplateView):
     template_name = 'theatres/events_detail.html'
 
