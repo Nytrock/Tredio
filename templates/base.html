@@ -12,17 +12,23 @@
     <link rel="stylesheet" href="{% static '/css/Animated-Type-Heading.css' %}">
     <link rel="stylesheet" href="{% static '/css/Black-Navbar.css' %}">
     <link rel="stylesheet" href="{% static '/css/Footer-Dark.css' %}">
+    <link rel="stylesheet" href="{% static '/css/form.css' %}">
+    <link rel="stylesheet" href="{% static '/css/Multi-step-form.css' %}">
+    <link rel="stylesheet" href="{% static '/css/Simple-Slider.css' %}">
     <link rel="stylesheet" href="{% static '/css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.8/swiper-bundle.min.css">
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/sign-in/">
 </head>
 <body class="d-flex flex-column min-vh-100">
     {% include "includes/header.html" %}
-    <main>
-        {% block content %} Иди своей дорогой, Сталкер {% endblock %}
-    </main>
+    {% block content %} Иди своей дорогой, Сталкер {% endblock %}
     {% include "includes/footer.html" %}
     <script src="{% static '/js/jquery.min.js' %}"></script>
     <script src="{% static '/js/bootstrap.min.js' %}"></script>
     <script src="{% static '/js/bs-init.js' %}"></script>
     <script src="{% static '/js/Animated-Type-Heading.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.8/swiper-bundle.min.js"></script>
+    <script src="{% static '/js/multi-step-form.js' %}"></script>
+    <script src="{% static '/js/Simple-Slider.js' %}"></script>
 </body>
 </html>

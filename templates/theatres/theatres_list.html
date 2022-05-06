@@ -8,7 +8,7 @@
                     <h3 class="fw-bold">Поиск театров</h3>
                     <form class="d-flex justify-content-center flex-wrap my-2" method="post">
                         {% csrf_token %}
-                        <div class="my-2"><input class="form-control" type="email" name="search" placeholder="Название театра"></div>
+                        <div class="my-2"><input class="form-control" name="search" placeholder="Название театра"></div>
                         <div class="my-2"><button class="btn btn-primary ms-sm-2" type="submit">Поиск</button></div>
                     </form>
                 </div>
