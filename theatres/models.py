@@ -6,17 +6,27 @@ from users.models import Profile
 
 
 class Troupe(models.Model):
-    pass
+    class Meta:
+        verbose_name = "Труппа"
+        verbose_name_plural = "Труппы"
 
 
 class TroupeMember(models.Model):
-    troupe_id = models.ForeignKey(Troupe, on_delete=models.CASCADE)
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    role = models.CharField(max_length=100, null=True, blank=True)
+    troupe = models.ForeignKey(Troupe, verbose_name="Труппа", on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, verbose_name="Профиль", on_delete=models.CASCADE)
+    role = models.CharField(verbose_name="Роль", max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Участник труппы"
+        verbose_name_plural = "Участники трупп"
 
 
 class City(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField("Название", max_length=100)
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
 
 
 class Location(models.Model):
@@ -26,25 +36,39 @@ class Location(models.Model):
     """
 
     #: Адрес одной строкой
-    query = models.CharField(max_length=250)
+    query = models.CharField("Адрес", max_length=250)
 
     #: Город
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, verbose_name="Город", on_delete=models.CASCADE)
 
     #: Уникальный идентификатор ФИАС
-    fias = models.CharField(max_length=50)
+    fias = models.CharField("ФИАС", max_length=50)
+
+    class Meta:
+        verbose_name = "Местоположение"
+        verbose_name_plural = "Местоположения"
 
 
 class Theatre(models.Model):
-    name = models.CharField(max_length=150)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    troupe = models.ForeignKey(Troupe, on_delete=models.SET_NULL, null=True, blank=True)
-    reviews = models.ForeignKey(ReviewGroup, on_delete=models.SET_NULL, null=True, blank=True)
-    contacts = models.ForeignKey(ContactsGroup, on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField("Название", max_length=150)
+    location = models.ForeignKey(Location, verbose_name="Местоположение", on_delete=models.CASCADE)
+    troupe = models.ForeignKey(Troupe, verbose_name="Труппа", on_delete=models.SET_NULL, null=True, blank=True)
+    reviews = models.ForeignKey(ReviewGroup, verbose_name="Отзывы", on_delete=models.SET_NULL, null=True, blank=True)
+    contacts = models.ForeignKey(
+        ContactsGroup, verbose_name="Контакты", on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    class Meta:
+        verbose_name = "Театр"
+        verbose_name_plural = "Театры"
 
 
 class Event(models.Model):
-    name = models.CharField(max_length=150)
-    theatre = models.ForeignKey(Theatre, on_delete=models.CASCADE)
-    troupe = models.ForeignKey(Troupe, on_delete=models.SET_NULL, null=True, blank=True)
-    reviews = models.ForeignKey(ReviewGroup, on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField("Название", max_length=150)
+    theatre = models.ForeignKey(Theatre, verbose_name="Театр", on_delete=models.CASCADE)
+    troupe = models.ForeignKey(Troupe, verbose_name="Труппа", on_delete=models.SET_NULL, null=True, blank=True)
+    reviews = models.ForeignKey(ReviewGroup, verbose_name="Отзывы", on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Событие"
+        verbose_name_plural = "События"
