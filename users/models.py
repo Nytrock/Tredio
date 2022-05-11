@@ -20,7 +20,7 @@ class CommonProfile(models.Model):
     last_name = models.CharField(max_length=100)
     birthday = models.DateField(null=True, blank=True)
     description = models.CharField(max_length=2500, null=True, unique=True)
-    contacts = models.ForeignKey(ContactsGroup, on_delete=models.SET_NULL, null=True, unique=True)
+    contacts = models.ForeignKey(ContactsGroup, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -41,5 +41,5 @@ class Rank(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rank = models.ForeignKey(Rank, on_delete=models.SET_NULL)
+    rank = models.ForeignKey(Rank, on_delete=models.RESTRICT)
     experience = models.IntegerField()
