@@ -16,31 +16,11 @@ class ReviewCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "review_group_id",
-        "category",
-        "star",
-    )
-    fields = (
-        "review_group_id",
-        "user",
-        "category",
-        "star",
-        "content",
-    )
+    list_display = ("id", "review_group_id", "category", "star")
+    fields = ("review_group_id", "user", "category", "star", "content")
 
 
 @admin.register(ReviewRating)
 class ReviewRatingAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "review",
-        "user",
-        "star",
-    )
-    fields = (
-        "review",
-        "user",
-        "star",
-    )
+    list_display = ("id", "review", "user", "star")
+    fields = ("review", "user", "star")

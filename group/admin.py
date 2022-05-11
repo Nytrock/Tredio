@@ -5,12 +5,7 @@ from group.models import Meetup, MeetupParticipant
 
 @admin.register(Meetup)
 class MeetupAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "host",
-        "event",
-        "start",
-    )
+    list_display = ("id", "host", "event", "start")
     fields = ("host", "event", "participants_limit", "description")
 
 
