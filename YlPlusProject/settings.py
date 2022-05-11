@@ -44,11 +44,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "debug_toolbar",
-    'group.apps.GroupConfig',
-    'homepage.apps.HomepageConfig',
-    'rating.apps.RatingConfig',
-    'theatres.apps.TheatresConfig',
-    'users.apps.UsersConfig',
+    "core.apps.CoreConfig",
+    "group.apps.GroupConfig",
+    "homepage.apps.HomepageConfig",
+    "rating.apps.RatingConfig",
+    "theatres.apps.TheatresConfig",
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -67,7 +68,7 @@ ROOT_URLCONF = "YlPlusProject.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates'],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -139,10 +140,10 @@ STATIC_ROOT = BASE_DIR / "static"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_URL = '/auth/login/'
-LOGIN_REDIRECT_URL = '/auth/profile/'
-LOGOUT_REDIRECT_URL = '/auth/login/'
-REGISTRATION_REDIRECT_URL = '/auth/profile/'
+LOGIN_URL = "/auth/login/"
+LOGIN_REDIRECT_URL = "/auth/profile/"
+LOGOUT_REDIRECT_URL = "/auth/login/"
+REGISTRATION_REDIRECT_URL = "/auth/profile/"
 
 INTERNAL_IPS = [
     "127.0.0.1",
