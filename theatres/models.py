@@ -1,6 +1,7 @@
 from django.db import models
 
 from core.models import ContactsGroup
+from rating.models import ReviewGroup
 from users.models import Profile
 
 
