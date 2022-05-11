@@ -41,3 +41,10 @@ class Theatre(models.Model):
     troupe = models.ForeignKey(Troupe, on_delete=models.SET_NULL, null=True, blank=True)
     reviews = models.ForeignKey(ReviewGroup, on_delete=models.SET_NULL, null=True, blank=True)
     contacts = models.ForeignKey(ContactsGroup, on_delete=models.SET_NULL, null=True, blank=True)
+
+
+class Event(models.Model):
+    name = models.CharField(max_length=150)
+    theatre = models.ForeignKey(Theatre, on_delete=models.CASCADE)
+    troupe = models.ForeignKey(Troupe, on_delete=models.SET_NULL, null=True, blank=True)
+    reviews = models.ForeignKey(ReviewGroup, on_delete=models.SET_NULL, null=True, blank=True)
