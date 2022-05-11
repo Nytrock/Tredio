@@ -11,6 +11,10 @@ class TroupeMember(models.Model):
     role = models.CharField(max_length=100)
 
 
+class City(models.Model):
+    name = models.CharField(max_length=100)
+
+
 class Location(models.Model):
     """
     Информация о местоположении.
@@ -19,6 +23,9 @@ class Location(models.Model):
 
     #: Адрес одной строкой
     query = models.CharField(max_length=250)
+
+    #: Город
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
 
     #: Уникальный идентификатор ФИАС
     fias = models.CharField(max_length=50)
