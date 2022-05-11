@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from core.models import ContactsGroup
+
 User = get_user_model()
 
 
@@ -11,20 +13,6 @@ class Achievement(models.Model):
 class UserAchievement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
-
-
-class ContactsGroup(models.Model):
-    pass
-
-
-class ContactType(models.Model):
-    name = models.CharField(max_length=100)
-
-
-class Contact(models.Model):
-    contacts_group_id = models.ForeignKey(ContactsGroup, on_delete=models.CASCADE)
-    type_ = models.ForeignKey(ContactType, on_delete=models.CASCADE)
-    value = models.CharField(max_length=100)
 
 
 class CommonProfile(models.Model):
