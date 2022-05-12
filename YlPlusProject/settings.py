@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "theatres.apps.TheatresConfig",
     "users.apps.UsersConfig",
     "sorl.thumbnail",
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 MIDDLEWARE = [
