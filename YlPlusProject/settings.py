@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     "rating.apps.RatingConfig",
     "theatres.apps.TheatresConfig",
     "users.apps.UsersConfig",
+    "sorl.thumbnail",
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 MIDDLEWARE = [
@@ -112,8 +114,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 
 # Internationalization
 
@@ -128,11 +130,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_URL = '/static_dev/'
+STATIC_URL = "/static_dev/"
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static_dev"
-]
+STATICFILES_DIRS = [BASE_DIR / "static_dev"]
 
 STATIC_ROOT = BASE_DIR / "static"
 
