@@ -1,52 +1,59 @@
-from django.urls import path, include
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView, \
-    PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from .views import ProfileView, SignupView, UserDetailView
+from django.contrib.auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordChangeDoneView,
+    PasswordChangeView,
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView,
+)
+from django.urls import include, path
 
-app_name = 'users'
+from .views import (
+    ActorDetailView,
+    ProfileChangeView,
+    ProfileView,
+    SignupView,
+    UserDetailView,
+)
+
+app_name = "users"
 urlpatterns = [
+    path("login/", LoginView.as_view(template_name="users/login.html"), name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
     path(
-        'login/',
-        LoginView.as_view(template_name='users/login.html'),
-        name='login'
+        "password_change/",
+        PasswordChangeView.as_view(template_name="users/password_change.html"),
+        name="password_change",
     ),
     path(
-        'logout/',
-        LogoutView.as_view(),
-        name='logout'
+        "password_change/done/",
+        PasswordChangeDoneView.as_view(template_name="users/password_change_done.html"),
+        name="password_change_done",
     ),
     path(
-        'password_change/',
-        PasswordChangeView.as_view(template_name='users/password_change.html'),
-        name='password_change'
+        "password_reset/", PasswordResetView.as_view(template_name="users/password_reset.html"), name="password_reset"
     ),
     path(
-        'password_change/done/',
-        PasswordChangeDoneView.as_view(template_name='users/password_change_done.html'),
-        name='password_change_done'
+        "password_reset/done/",
+        PasswordResetDoneView.as_view(template_name="users/password_reset_done.html"),
+        name="password_reset_done",
     ),
     path(
-        'password_reset/',
-        PasswordResetView.as_view(template_name='users/password_reset.html'),
-        name='password_reset'
+        "reset/<uidb64>/<token>/",
+        PasswordResetConfirmView.as_view(template_name="users/password_reset_confirm.html"),
+        name="password_reset_confirm",
     ),
     path(
-        'password_reset/done/',
-        PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'),
-        name='password_reset_done'
+        "reset/done/",
+        PasswordResetCompleteView.as_view(template_name="users/password_reset_complete.html"),
+        name="password_reset_complete",
     ),
-    path(
-        'reset/<uidb64>/<token>/',
-        PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'),
-        name='password_reset_confirm'
-    ),
-    path(
-        'reset/done/',
-        PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
-        name='password_reset_complete'
-    ),
-    path('profile/', ProfileView.as_view(), name='profile'),
-    path('signup/', SignupView.as_view(), name='signup'),
-    path('users/<int:id>/', UserDetailView.as_view(), name='users_detail'),
-    path('__debug__/', include('debug_toolbar.urls')),
+    path("profile/", ProfileView.as_view(), name="profile"),
+    path("profile/change", ProfileChangeView.as_view(), name="profile_change"),
+    path("signup/", SignupView.as_view(), name="signup"),
+    path("users/<int:id>/", UserDetailView.as_view(), name="users_detail"),
+    path("actors/<int:id>/", ActorDetailView.as_view(), name="actors_detail"),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
