@@ -62,3 +62,5 @@ class ImageBaseModel(models.Model):
 class GalleryBaseModel(ImageBaseModel):
     class Meta:
         abstract = True
+        verbose_name = "Изображение галереи"
+        verbose_name_plural = "Изображения галерей"

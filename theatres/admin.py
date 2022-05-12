@@ -1,6 +1,15 @@
 from django.contrib import admin
 
-from theatres.models import City, Event, Location, Theatre, Troupe, TroupeMember
+from theatres.models import (
+    City,
+    Event,
+    EventImage,
+    Location,
+    Theatre,
+    TheatreImage,
+    Troupe,
+    TroupeMember,
+)
 
 
 @admin.register(Troupe)
@@ -26,13 +35,25 @@ class LocationAdmin(admin.ModelAdmin):
     fields = ("query", "city", "fias")
 
 
+class TheatreImageInline(admin.TabularInline):
+    model = TheatreImage
+    verbose_name_plural = "Галерея"
+
+
 @admin.register(Theatre)
 class TheatreAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "location", "troupe", "reviews", "contacts")
-    fields = ("name", "location", "troupe", "reviews", "contacts")
+    list_display = ("id", "name", "location", "troupe", "reviews", "contacts", "image_tmb")
+    fields = ("name", "location", "troupe", "reviews", "contacts", "image")
+    inlines = [TheatreImageInline]
+
+
+class EventImageInline(admin.TabularInline):
+    model = EventImage
+    verbose_name_plural = "Галерея"
 
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "theatre", "troupe", "reviews")
-    fields = ("name", "theatre", "troupe", "reviews")
+    list_display = ("id", "name", "theatre", "troupe", "reviews", "image_tmb")
+    fields = ("name", "theatre", "troupe", "reviews", "image")
+    inlines = [EventImageInline]

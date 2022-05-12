@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.models import ContactsGroup
+from core.models import ContactsGroup, GalleryBaseModel, ImageBaseModel
 from rating.models import ReviewGroup
 from users.models import ActorProfile
 
@@ -49,7 +49,7 @@ class Location(models.Model):
         verbose_name_plural = "Местоположения"
 
 
-class Theatre(models.Model):
+class Theatre(ImageBaseModel):
     name = models.CharField("Название", max_length=150)
     location = models.ForeignKey(Location, verbose_name="Местоположение", on_delete=models.CASCADE)
     troupe = models.ForeignKey(Troupe, verbose_name="Труппа", on_delete=models.SET_NULL, null=True, blank=True)
@@ -63,7 +63,11 @@ class Theatre(models.Model):
         verbose_name_plural = "Театры"
 
 
-class Event(models.Model):
+class TheatreImage(GalleryBaseModel):
+    theatre = models.ForeignKey(Theatre, on_delete=models.CASCADE, related_name="gallery_images")
+
+
+class Event(ImageBaseModel):
     name = models.CharField("Название", max_length=150)
     theatre = models.ForeignKey(Theatre, verbose_name="Театр", on_delete=models.CASCADE)
     troupe = models.ForeignKey(Troupe, verbose_name="Труппа", on_delete=models.SET_NULL, null=True, blank=True)
@@ -72,3 +76,7 @@ class Event(models.Model):
     class Meta:
         verbose_name = "Событие"
         verbose_name_plural = "События"
+
+
+class EventImage(GalleryBaseModel):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="gallery_images")
