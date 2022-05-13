@@ -19,11 +19,6 @@
   border-bottom-left-radius: 0;
 }
 
-.form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
 
 .btn-margin{
     margin-top: 10px;
@@ -31,4 +26,8 @@
 
 .text-center-vertical{
     margin: auto;
+}
+
+.registration{
+    max-width: 400px;
 }
