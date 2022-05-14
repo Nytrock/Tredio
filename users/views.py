@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.views.generic import FormView, TemplateView
 
@@ -6,7 +7,7 @@ from .forms import CustomUserCreationForm
 from .models import UserProfile
 
 
-class ProfileView(TemplateView):
+class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = "users/profile.html"
 
 
@@ -29,11 +30,19 @@ class SignupView(FormView):
 
     def form_valid(self, form):
         User = get_user_model()
-        user = User.objects.create_user(username=form.cleaned_data["username"], password=form.cleaned_data["password2"])
+        first_name = form.cleaned_data["first_name"]
+        last_name = form.cleaned_data["last_name"]
+        user = User.objects.create_user(
+            username=form.cleaned_data["username"],
+            password=form.cleaned_data["password2"],
+            email=form.cleaned_data["email"],
+            first_name=first_name,
+            last_name=last_name,
+        )
         UserProfile.objects.create(
             user_id=user.id,
-            first_name=form.cleaned_data["first_name"],
-            last_name=form.cleaned_data["last_name"],
+            first_name=first_name,
+            last_name=last_name,
             birthday=form.cleaned_data["birthday"],
             description=form.cleaned_data["description"],
             experience=0,

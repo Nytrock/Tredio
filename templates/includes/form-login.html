@@ -2,13 +2,7 @@
 
  {% for field in form%}
     <div class="form-floating">
-      {% if field.html_name == "birthday" %}
-        <input type="date" name="{{ field.html_name }}" class="form-control" id="{{ field.id_for_label }}" placeholder="Password" {% if field.field.required %} required {% endif %}>
-      {% elif field.html_name == "description" %}
-        <textarea class="form-control" name="{{ field.html_name }}" cols="40" rows="10" id="{{ field.id_for_label }}" placeholder="Password"></textarea>
-      {% else %}
-        <input type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" class="form-control" id="{{ field.id_for_label }}" placeholder="Password">
-      {% endif %}
+      <input type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" class="form-control" id="{{ field.id_for_label }}" placeholder="Password">
       <label for="{{ field.id_for_label }}">
         {{ field.label }}
         {% if field.field.required %}

@@ -31,3 +31,22 @@
 .registration{
     max-width: 400px;
 }
+
+.img-profile{
+    height: 50px;
+    width: 50px;
+    max-height: 50px;
+    max-width: 50px;
+    min-height: 50px;
+    min-width: 50px;
+    object-fit:cover;
+}
+
+.block-profile-img{
+    height: 310px;
+}
+
+.num_exp{
+    margin-top: 7px;
+    margin-left: 5px;
+}

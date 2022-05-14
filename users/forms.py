@@ -2,38 +2,71 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.forms import ModelForm, widgets
 
-from .models import UserProfile
-
 User = get_user_model()
 
 
 class CustomUserCreationForm(ModelForm):
-    password1 = forms.CharField(label="Пароль", widget=forms.PasswordInput(attrs={"placeholder": "Пароль"}))
-    password2 = forms.CharField(
-        label="Подтверждение пароля", widget=forms.PasswordInput(attrs={"placeholder": "Подтвеждение пароля"})
+    password1 = forms.CharField(
+        label="Пароль",
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Пароль",
+                "class": "form-control",
+            }
+        ),
     )
-    first_name = forms.CharField(label="Имя")
-    last_name = forms.CharField(label="Фамилия")
-    birthday = forms.DateField(label="День рождения", required=False)
-    description = forms.CharField(widget=widgets.Textarea, label="О себе", required=False)
+    password2 = forms.CharField(
+        label="Подтверждение пароля",
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Подтвеждение пароля",
+                "class": "form-control",
+            }
+        ),
+    )
+    first_name = forms.CharField(
+        label="Имя", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Имя"})
+    )
+    last_name = forms.CharField(
+        label="Фамилия", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Фамилия"})
+    )
+    birthday = forms.DateField(
+        label="День рождения",
+        required=False,
+        widget=forms.DateTimeInput(attrs={"class": "form-control", "placeholder": "День Рождения"}),
+    )
+    description = forms.CharField(
+        label="О себе",
+        required=False,
+        widget=widgets.Textarea(attrs={"class": "form-control", "placeholder": "О себе"}),
+    )
 
     class Meta:
         model = User
-        fields = ("username",)
+        fields = ("username", "email")
         widgets = {
             "username": widgets.TextInput(
-                attrs={"minlength": 1, "maxlength": User._meta.get_field("username").max_length}
-            )
+                attrs={
+                    "minlength": 1,
+                    "maxlength": User._meta.get_field("username").max_length,
+                    "class": "form-control",
+                    "placeholder": "Имя",
+                }
+            ),
+            "email": widgets.TextInput(
+                attrs={
+                    "minlength": 1,
+                    "maxlength": User._meta.get_field("email").max_length,
+                    "class": "form-control",
+                    "placeholder": "Почта",
+                }
+            ),
         }
 
-        labels = {"username": "Никнейм"}
-
-    def __init__(self, *args, **kwargs):
-        super(CustomUserCreationForm, self).__init__(*args, **kwargs)
-        self.fields["first_name"].initial = UserProfile._meta.get_field("first_name")
-        self.fields["last_name"].initial = UserProfile._meta.get_field("last_name")
-        self.fields["birthday"].initial = UserProfile._meta.get_field("birthday")
-        self.fields["description"].initial = UserProfile._meta.get_field("description")
+        labels = {
+            "username": "Логин",
+            "email": "Почта",
+        }
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
