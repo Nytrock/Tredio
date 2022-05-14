@@ -6,7 +6,8 @@
             <div class="row mb-4 mb-lg-5">
                 <div class="col-md-8 col-xl-6 text-center mx-auto">
                     <h3 class="fw-bold">Поиск театров</h3>
-                    <form class="d-flex justify-content-center flex-wrap my-2" method="post">
+                    <form class="d-flex justify-content-center flex-wrap my-2" method="post" action=".">
+                        {% csrf_token %}
                         <div class="my-2"><input class="form-control" type="email" name="search" placeholder="Название театра"></div>
                         <div class="my-2"><button class="btn btn-primary ms-sm-2" type="submit">Поиск</button></div>
                         <div style="padding-top: 6px;"><label class="form-label text-nowrap ms-sm-2">Город&nbsp;&nbsp;<select class="form-select d-inline-block form-select form-select-sm">
@@ -64,7 +65,7 @@
             <div class="container">
                 <div class="text-white bg-dark border rounded border-0 p-4 p-md-5">
                     <h2 class="fw-bold text-white mb-3">Не нашли свой театр? Не беда, добавьте его!</h2>
-                    <p class="mb-4">Какая то доп инфа</p><a class="btn btn-primary btn-lg me-2" role="button" href="{% url 'theatres:theatres_create' %}">Приступить к созданию</a>
+                    <p class="mb-4">После заполнения информации о новом театре он отправится на модерацию. После её прохождения он будет добавлен в общий список.</p><a class="btn btn-primary btn-lg me-2" role="button" href="{% url 'theatres:theatres_create' %}">Приступить к созданию</a>
                 </div>
             </div>
         </section>

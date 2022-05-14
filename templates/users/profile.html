@@ -14,10 +14,11 @@
                     </div>
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="text-primary fw-bold m-0">Ачивки</h6>
+                            <h6 class="text-primary fw-bold m-0">Ранг</h6>
                         </div>
                         <div class="card-body">
-                            <h4 class="small fw-bold">Первый старт<br><span class="float-end num_exp">150/200</span></h4>
+                            <h4 class="small">Получай опыт за активность на сайте (пиши отзывы, организуй группы и т.д.), получай новые ранги и попробуй достигнуть максимума!</h4>
+                            <h4 class="small fw-bold rank-h1">Первый старт<br><span class="float-end num_exp">150/200</span></h4>
                             <div class="progress progress-sm mb-3">
                                 <div class="progress-bar bg-success" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 75%;"><span class="visually-hidden">100%</span></div>
                             </div>
@@ -50,21 +51,34 @@
                                     <p class="text-primary m-0 fw-bold">Настройки пользователя</p>
                                 </div>
                                 <div class="card-body">
-                                    <form>
+                                    <form method="post" action=".">
+                                        {% csrf_token %}
                                         <div class="row">
                                             <div class="col">
-                                                <div class="mb-3"><label class="form-label" for="username"><strong>Логин</strong></label><input class="form-control" type="text" id="username" placeholder="user.name" name="username"></div>
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="{{ main_form.username.id_for_label }}"><strong>{{ main_form.username.label }}</strong></label>
+                                                    <input class="form-control" required type="text" id="{{ main_form.username.id_for_label }}" placeholder="Введите логин" name="{{ main_form.username.html_name }}" value="{{ main_form.username.value }}">
+                                                </div>
                                             </div>
                                             <div class="col">
-                                                <div class="mb-3"><label class="form-label" for="email"><strong>Email</strong></label><input class="form-control" type="email" id="email" placeholder="user@example.com" name="email"></div>
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="{{ main_form.email.id_for_label }}"><strong>{{ main_form.email.label }}</strong></label>
+                                                    <input class="form-control" required type="email" id="{{ main_form.email.id_for_label }}" placeholder="Введите почту" name="{{ main_form.email.html_name }}" value="{{ main_form.email.value }}">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <div class="mb-3"><label class="form-label" for="first_name"><strong>Имя</strong></label><input class="form-control" type="text" id="first_name" placeholder="John" name="first_name"></div>
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="{{ main_form.first_name.id_for_label }}"><strong>{{ main_form.first_name.label }}</strong></label>
+                                                    <input class="form-control" type="text" id="{{ main_form.first_name.id_for_label }}" placeholder="Введите имя" name="{{ main_form.first_name.html_name }}" value="{{ main_form.first_name.value }}">
+                                                </div>
                                             </div>
                                             <div class="col">
-                                                <div class="mb-3"><label class="form-label" for="last_name"><strong>Фамилия</strong><br></label><input class="form-control" type="text" id="last_name" placeholder="Doe" name="last_name"></div>
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="{{ main_form.last_name.id_for_label }}"><strong>{{ main_form.last_name.label }}</strong></label>
+                                                    <input class="form-control" type="text" id="{{ main_form.last_name.id_for_label }}" placeholder="Введите фамилию" name="{{ main_form.last_name.html_name }}" value="{{ main_form.last_name.value }}">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="mb-3"><button class="btn btn-primary btn-sm" type="submit">Сохранить</button></div>
@@ -77,16 +91,14 @@
                                 </div>
                                 <div class="card-body">
                                     <form>
-                                        <div class="mb-3"><label class="form-label" for="address"><strong>Соцсети</strong><br></label><input class="form-control" type="text" id="address" placeholder="TG: @dsafa" name="сontacts"></div>
-                                        <div class="col">
-                                            <div class="mb-3"><label class="form-label" for="city"><strong>Город</strong></label><select class="form-select d-inline-block form-select form-select-sm">
-                                                    <option value="10" selected="">10</option>
-                                                    <option value="25">25</option>
-                                                    <option value="50">50</option>
-                                                    <option value="100">100</option>
-                                                </select></div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="address"><strong>Соцсети</strong><br></label>
+                                            <input class="form-control" type="text" id="address" placeholder="TG: @dsafa" name="сontacts">
                                         </div>
-                                        <div class="mb-3"><button class="btn btn-primary btn-sm" type="submit">Сохранить</button></div>
+                                        <div class="mb-3">
+                                            <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
+                                            <button class="btn btn-primary btn-sm" type="submit">Добавить</button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -99,15 +111,25 @@
                     <p class="text-primary m-0 fw-bold">Общая информация</p>
                 </div>
                 <div class="card-body">
+                    <form method="post" action=".">
+                    {% csrf_token %}
                     <div class="row">
                         <div class="col-md-6">
-                            <form>
-                                <div class="mb-3"><label class="form-label" for="signature"><strong>О мне</strong><br></label><textarea class="form-control" id="signature" rows="4" name="signature"></textarea></div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ extra_form.description.label }}"><strong>{{ extra_form.description.label }}</strong><br></label>
+                                    <textarea placeholder="Введите описание" class="form-control" id="{{ extra_form.description.label }}" rows="4" name="{{ extra_form.description.html_name }}">{% if extra_form.description.value %}{{ extra_form.description.value }}{% endif %}</textarea>
+                                </div>
                                 <div class="mb-3"></div>
-                                <div class="mb-3"><button class="btn btn-primary btn-sm" type="submit">Сохранить<br></button></div>
-                            </form>
                         </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ extra_form.birthday.label }}"><strong>{{ extra_form.birthday.label }}</strong></label>
+                                <input class="form-control" type="date" id="{{ extra_form.birthday.label }}" name="{{ extra_form.birthday.html_name }}" value="{{ extra_form.birthday.value|date:'Y-m-d' }}">
+                            </div>
+                        </div>
+                        <div class="mb-3"><button class="btn btn-primary btn-sm" type="submit">Сохранить<br></button></div>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>
