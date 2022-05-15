@@ -69,8 +69,20 @@ class TheatreImage(GalleryBaseModel):
 
 class EventQuerySet(models.QuerySet):
     def events_list(self):
-        return self.only("id", "image", "name", "theatre__id", "theatre__name", "theatre__location__query").order_by("name")
-    
+        return self.only("id", "image", "name", "theatre__id", "theatre__name", "theatre__location__query").order_by(
+            "name"
+        )
+
+    def event_details(self, id: int):
+        return (
+            self.filter(id=id)
+            .prefetch_related("troupe__members", "reviews__reviews")
+            .only("id", "image", "name", "theatre__id", "theatre__name", "theatre__location__query")
+            .annotate(
+                reviews_count=models.Count("reviews__reviews"),
+                reviews_average_score=models.Avg("reviews__reviews__star"),
+            )
+        )
 
 
 class Event(ImageBaseModel):

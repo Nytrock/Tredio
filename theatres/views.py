@@ -28,6 +28,11 @@ class EventListView(TemplateView):
 class EventDetailView(TemplateView):
     template_name = "theatres/events_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = get_object_or_404(Event.events.event_details(kwargs["id"]))
+        return context
+
 
 class EventCreateView(TemplateView):
     template_name = "theatres/events_create.html"
