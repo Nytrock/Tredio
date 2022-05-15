@@ -69,7 +69,8 @@ class TheatreImage(GalleryBaseModel):
 
 class EventQuerySet(models.QuerySet):
     def events_list(self):
-        return self.only("id", "image", "name", "theatre__name", "theatre__location__query").order_by("name")
+        return self.only("id", "image", "name", "theatre__id", "theatre__name", "theatre__location__query").order_by("name")
+    
 
 
 class Event(ImageBaseModel):

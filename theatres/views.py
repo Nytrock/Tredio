@@ -21,7 +21,7 @@ class EventListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["events"] = get_object_or_404(Event.events.events_list())
+        context["events"] = Event.events.events_list()
         return context
 
 
