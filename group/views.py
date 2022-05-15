@@ -23,4 +23,11 @@ class GroupDetailView(TemplateView):
 
 
 class GroupCreateView(TemplateView):
-    template_name = 'group/group_create.html'
+    template_name = "group/group_create.html"
+
+    def get_context_data(self, **kwargs):
+        # Replace None with real Form
+
+        context = super().get_context_data(**kwargs)
+        context["form"] = None
+        return context
