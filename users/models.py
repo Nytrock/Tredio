@@ -36,7 +36,19 @@ class CommonProfile(models.Model):
         abstract = True
 
 
+class ActorProfileQuerySet(models.QuerySet):
+    def get_profile(self, id: int):
+        return (
+            self.filter(id=id)
+            .prefetch_related("contacts__contacts")
+            .only("first_name", "last_name", "birthday", "description")
+        )
+
+
 class ActorProfile(CommonProfile):
+    objects = models.Manager()
+    actors = ActorProfileQuerySet.as_manager()
+
     class Meta:
         verbose_name = "Профиль актера"
         verbose_name_plural = "Профили актеров"
