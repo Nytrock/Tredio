@@ -15,6 +15,13 @@ class TheatresDetailView(TemplateView):
 class TheatresCreateView(TemplateView):
     template_name = "theatres/theatres_create.html"
 
+    def get_context_data(self, **kwargs):
+        # Replace None with real form
+
+        context = super().get_context_data(**kwargs)
+        context["form"] = None
+        return context
+
 
 class EventListView(TemplateView):
     template_name = "theatres/events_list.html"
@@ -36,3 +43,10 @@ class EventDetailView(TemplateView):
 
 class EventCreateView(TemplateView):
     template_name = "theatres/events_create.html"
+
+    def get_context_data(self, **kwargs):
+        # Replace None with real form
+
+        context = super().get_context_data(**kwargs)
+        context["form"] = None
+        return context
