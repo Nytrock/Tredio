@@ -22,7 +22,7 @@ class Meetup(models.Model):
 
 
 class MeetupParticipant(models.Model):
-    meetup = models.ForeignKey(Meetup, verbose_name="Встреча", on_delete=models.CASCADE)
+    meetup = models.ForeignKey(Meetup, verbose_name="Встреча", related_name="participants", on_delete=models.CASCADE)
     user = models.ForeignKey(User, verbose_name="Участник", on_delete=models.CASCADE)
 
     class Meta:
