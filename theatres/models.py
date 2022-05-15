@@ -12,7 +12,7 @@ class Troupe(models.Model):
 
 
 class TroupeMember(models.Model):
-    troupe = models.ForeignKey(Troupe, verbose_name="Труппа", on_delete=models.CASCADE)
+    troupe = models.ForeignKey(Troupe, verbose_name="Труппа", related_name="members", on_delete=models.CASCADE)
     profile = models.ForeignKey(ActorProfile, verbose_name="Профиль", on_delete=models.CASCADE)
     role = models.CharField(verbose_name="Роль", max_length=100, null=True, blank=True)
 
