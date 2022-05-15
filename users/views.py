@@ -1,3 +1,4 @@
+from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 
@@ -37,3 +38,8 @@ class UserDetailView(TemplateView):
 
 class SignupView(TemplateView):
     template_name = "users/signup.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = UserCreationForm()
+        return context
