@@ -23,7 +23,9 @@ class ReviewCategory(models.Model):
 
 
 class Review(models.Model):
-    review_group_id = models.ForeignKey(ReviewGroup, verbose_name="Группа отзывов", on_delete=models.CASCADE)
+    review_group_id = models.ForeignKey(
+        ReviewGroup, related_name="reviews", verbose_name="Группа отзывов", on_delete=models.CASCADE
+    )
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
     category = models.ForeignKey(ReviewCategory, verbose_name="Категория", on_delete=models.CASCADE)
     star = models.IntegerField("Оценка", validators=[RangeValidator(1, 5)])
