@@ -63,10 +63,29 @@ class Rank(models.Model):
         verbose_name_plural = "Ранги"
 
 
+class UserProfileQuerySet(models.QuerySet):
+    def get_profile(self, id: int, private: bool = False):
+        PUBLIC_FIELDS = [
+            "user__username",
+            "user__email",
+            "first_name",
+            "last_name",
+            "birthday",
+            "description",
+            "rank__name",
+        ]
+        PRIVATE_FIELDS = PUBLIC_FIELDS + ["experience"]
+
+        return self.filter(id=id).only(*(PRIVATE_FIELDS if private else PUBLIC_FIELDS))
+
+
 class UserProfile(CommonProfile):
     user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.CASCADE)
     rank = models.ForeignKey(Rank, verbose_name="Ранг", on_delete=models.RESTRICT)
     experience = models.IntegerField("Опыт", default=0)
+
+    objects = models.Manager()
+    profiles = UserProfileQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Профиль пользователя"
