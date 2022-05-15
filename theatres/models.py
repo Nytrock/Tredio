@@ -67,11 +67,19 @@ class TheatreImage(GalleryBaseModel):
     theatre = models.ForeignKey(Theatre, on_delete=models.CASCADE, related_name="gallery_images")
 
 
+class EventQuerySet(models.QuerySet):
+    def events_list(self):
+        return self.only("id", "image", "name", "theatre__name", "theatre__location__query").order_by("name")
+
+
 class Event(ImageBaseModel):
     name = models.CharField("Название", max_length=150)
     theatre = models.ForeignKey(Theatre, verbose_name="Театр", on_delete=models.CASCADE)
     troupe = models.ForeignKey(Troupe, verbose_name="Труппа", on_delete=models.SET_NULL, null=True, blank=True)
     reviews = models.ForeignKey(ReviewGroup, verbose_name="Отзывы", on_delete=models.SET_NULL, null=True, blank=True)
+
+    objects = models.Manager()
+    events = EventQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Событие"
