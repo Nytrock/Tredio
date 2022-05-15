@@ -9,8 +9,28 @@ User = get_user_model()
 
 class MeetupQuerySet(models.QuerySet):
     def meetup_list(self):
-        return self.only("event__image", "host__userprofile__first_name", "participants_limit", "description").annotate(
-            participants_count=models.Count("participants")
+        return self.only(
+            "event__image",
+            "host__username",
+            "host__userprofile__first_name",
+            "host__userprofile__last_name",
+            "participants_limit",
+            "description",
+        ).annotate(participants_count=models.Count("participants"))
+
+    def meetup_details(self, meetup_id: int):
+        return (
+            self.filter(id=meetup_id)
+            .prefetch_related("event__troupe__members__profile")
+            .only(
+                "event__image",
+                "host__username",
+                "host__userprofile__first_name",
+                "host__userprofile__last_name",
+                "participants_limit",
+                "description",
+            )
+            .annotate(participants_count=models.Count("participants"))
         )
 
 
