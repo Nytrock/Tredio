@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
+from core.models import ContactsGroup
+
 from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
 from .models import UserProfile
 
@@ -86,6 +88,7 @@ class SignupView(FormView):
         User = get_user_model()
         first_name = form.cleaned_data["first_name"]
         last_name = form.cleaned_data["last_name"]
+        contacts = ContactsGroup.objects.create()
         user = User.objects.create_user(
             username=form.cleaned_data["username"],
             password=form.cleaned_data["password2"],
@@ -101,5 +104,6 @@ class SignupView(FormView):
             description=form.cleaned_data["description"],
             experience=0,
             rank_id=1,
+            contacts_id=contacts.id,
         )
         return redirect("users:login")

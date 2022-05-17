@@ -1,5 +1,60 @@
 {% extends "base.html" %}
 {% block title %}Создать событие{% endblock %}
 {% block content %}
-    <h1>Создание события и отправение его на модерацию</h1>
+    <div class="container">
+    <section style="margin-top: 6vh;margin-bottom: 10vh;">
+        <div class="container multi-form-container-with-no-point mt-5">
+        <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-md-6">
+            <form id="regForm" action="." method="post">
+                {% csrf_token %}
+                <h1 id="register" class="header-text">Добавление постановки</h1>
+                <div class="all-steps" id="all-steps">
+                    {% for field in form %}
+                        <span class="step"></span>
+                    {% endfor %}
+                    <span class="step"></span>
+                </div>
+                <div class="tab">
+                    <div id="troupe">
+                        <h2><strong>Заполните список актёров, играющих в этой постановке. Для добавлнения актёра нажмите кнопку с плюсом. Создание списка необязательно.</strong></h2>
+                        <div class="row collapse" id="troupe_member">
+                            <div class="mb-3 col" id="first_input">
+                                <p> Актёр </p>
+                                <select name="actor_change0" id="actor_change0" class="form-control selected">
+                                    {% for actor in actors %}
+                                        <option>{{ actor }} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3 col" id="second_input">
+                                <p> Роль (необязательно)</p>
+                                <input name="role0" id="role0" class="form-control" type="text" placeholder="Введите роль">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="button-add form-control" type="button" id="addBtn"><strong>+</strong></button>
+                </div>
+                {% for field in form %}
+                    <div class="tab">
+                        <h3>{{ field.label }}</h3>
+                        <p>{{ field }}</p>
+                        {% if not field.field.required %}
+                            <p class="text-muted small"> Данное поле необязательно</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div class="thanks-message text-center" id="text-message"> <img src="https://i.imgur.com/O18mJ1K.png" width="100" class="mb-4">
+                    <h3>Thanks for your Donation!</h3> <span>Your donation has been entered! We will contact you shortly!</span>
+                </div>
+                <div style="overflow:auto;" id="nextprevious">
+                    <div style="float:right;"> <button type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button> <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button> </div>
+                </div>
+                </form>
+        </div>
+        </div>
+        </div>
+    </section>
+    </div>
 {% endblock %}

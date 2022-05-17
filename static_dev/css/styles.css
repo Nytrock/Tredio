@@ -64,3 +64,13 @@
 .btn-lg{
     padding: 0.40rem 0.5rem;
 }
+
+.button-add {
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 0.25rem;
+    color: black;
+    font-size: 35px;
+    padding: 0;
+    margin-bottom: 10px;
+}

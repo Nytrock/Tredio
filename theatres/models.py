@@ -62,6 +62,9 @@ class Theatre(ImageBaseModel):
         verbose_name = "Театр"
         verbose_name_plural = "Театры"
 
+    def __str__(self):
+        return self.name
+
 
 class TheatreImage(GalleryBaseModel):
     theatre = models.ForeignKey(Theatre, on_delete=models.CASCADE, related_name="gallery_images")

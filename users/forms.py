@@ -26,12 +26,6 @@ class CustomUserCreationForm(ModelForm):
             }
         ),
     )
-    first_name = forms.CharField(
-        label="Имя", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Имя"})
-    )
-    last_name = forms.CharField(
-        label="Фамилия", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Фамилия"})
-    )
     birthday = forms.DateField(
         label="День рождения",
         required=False,
@@ -43,21 +37,24 @@ class CustomUserCreationForm(ModelForm):
         widget=widgets.Textarea(attrs={"class": "form-control", "placeholder": "О себе"}),
     )
 
-    email = forms.EmailField(required=True, label="Почта")
-
     class Meta:
         model = User
-        fields = (User.username.field.name, User.email.field.name)
+        fields = (
+            User.username.field.name,
+            User.email.field.name,
+            User.first_name.field.name,
+            User.last_name.field.name,
+        )
         widgets = {
-            "username": widgets.TextInput(
+            User.username.field.name: widgets.TextInput(
                 attrs={
                     "minlength": 1,
                     "maxlength": User._meta.get_field("username").max_length,
                     "class": "form-control",
-                    "placeholder": "Имя",
+                    "placeholder": "Логин",
                 }
             ),
-            "email": widgets.TextInput(
+            User.email.field.name: widgets.TextInput(
                 attrs={
                     "minlength": 1,
                     "maxlength": User._meta.get_field("email").max_length,
@@ -65,10 +62,15 @@ class CustomUserCreationForm(ModelForm):
                     "placeholder": "Почта",
                 }
             ),
+            User.first_name.field.name: widgets.TextInput(attrs={"class": "form-control", "placeholder": "Имя"}),
+            User.last_name.field.name: widgets.TextInput(attrs={"class": "form-control", "placeholder": "Фамилия"}),
         }
 
         labels = {
-            "username": "Логин",
+            User.username.field.name: "Логин",
+            User.email.field.name: "Почта",
+            User.first_name.field.name: "Имя",
+            User.last_name.field.name: "Фамилия",
         }
 
     def clean_password2(self):
@@ -80,6 +82,10 @@ class CustomUserCreationForm(ModelForm):
         if password1 != password2:
             raise forms.ValidationError("Your passwords do not match")
         return password2
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserCreationForm, self).__init__(*args, **kwargs)
+        self.fields[User.email.field.name].required = True
 
 
 class ChangeMainProfileForm(ModelForm):
