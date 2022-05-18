@@ -80,6 +80,9 @@ class Event(ImageBaseModel):
         verbose_name = "Событие"
         verbose_name_plural = "События"
 
+    def __str__(self):
+        return self.name
+
 
 class EventImage(GalleryBaseModel):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="gallery_images")
