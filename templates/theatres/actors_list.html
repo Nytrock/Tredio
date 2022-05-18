@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Список запросов{% endblock %}
+{% block title %}Актёры{% endblock %}
 {% block content %}
     <section>
         <div class="container py-5">
             <div class="row mb-4 mb-lg-5">
                 <div class="col-md-8 col-xl-6 text-center mx-auto">
-                    <h3 class="fw-bold">Список групп</h3>
+                    <h3 class="fw-bold">Список актёров</h3>
                     <form class="d-flex justify-content-center flex-wrap my-2" method="post" action=".">
                         {% csrf_token %}
                         <div class="my-2"><input class="form-control" type="email" name="search" placeholder="Имя актёра"></div>

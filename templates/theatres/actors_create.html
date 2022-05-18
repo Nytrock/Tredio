@@ -10,40 +10,35 @@
                 {% csrf_token %}
                 <h1 id="register" class="header-text">Добавление постановки</h1>
                 <div class="all-steps" id="all-steps">
-                    {% for field in form %}
-                        <span class="step"></span>
-                    {% endfor %}
+                    <span class="step"></span>
                     <span class="step"></span>
                 </div>
-
-                {% for field in form %}
-                    <div class="tab">
-                        <h3>{{ field.label }}</h3>
-                        <p>{{ field }}</p>
-                        {% if not field.field.required %}
-                            <p class="text-muted small"> Данное поле необязательно</p>
-                        {% endif %}
-                    </div>
-                {% endfor %}
                 <div class="tab">
-                    <div id="troupe">
-                        <h2><strong> Заполните список актёров, играющих в этой постановке. Для добавлнения актёра нажмите кнопку с плюсом. Создание списка необязательно.</strong></h2>
-                        <div class="row collapse" id="troupe_member">
+                    <div id="contacts">
+                        <h2><strong> Введите список контактов актёра. Для добавления контакта нажмите кнопку с плюсом. Создание списка необязательно.</strong></h2>
+                        <div class="row collapse" id="actor_contact">
                             <div class="mb-3 col" id="first_input">
-                                <p> Актёр </p>
-                                <select name="actor_change0" id="actor_change0" class="form-control selected">
-                                    {% for actor in actors %}
-                                        <option>{{ actor }} </option>
+                                <p> Тип контакта </p>
+                                <select name="contact_type0" id="contact_type0" class="form-control selected">
+                                    {% for contact in contacts %}
+                                        <option>{{ contact }} </option>
                                     {% endfor %}
                                 </select>
                             </div>
                             <div class="mb-3 col" id="second_input">
-                                <p> Роль (необязательно)</p>
-                                <input name="role0" id="role0" class="form-control" type="text" placeholder="Введите роль">
+                                <p> Значение </p>
+                                <input name="value0" id="value0" class="form-control" type="text" placeholder="Введите значение">
                             </div>
                         </div>
                     </div>
-                    <button class="button-add form-control" type="button" id="addBtn"><strong>+</strong></button>
+                    <button class="button-add form-control" type="button" id="addContBtn"><strong>+</strong></button>
+                </div>
+                <div class="tab">
+                    <h2><strong> Заполните основную информацию об актёре.</strong></h2>
+                    {% for field in form %}
+                        <h3>{{ field.label }}</h3>
+                            <p>{{ field }}</p>
+                    {% endfor %}
                 </div>
 
                 <div class="thanks-message text-center" id="text-message"> <img src="https://i.imgur.com/O18mJ1K.png" width="100" class="mb-4">

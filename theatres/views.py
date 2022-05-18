@@ -1,9 +1,9 @@
 from django.shortcuts import redirect
 from django.views.generic import FormView, TemplateView
 
-from core.models import ContactsGroup
+from core.models import Contact, ContactsGroup, ContactType
 from rating.models import ReviewGroup
-from theatres.forms import EventForm, TheatreForm
+from theatres.forms import ActorForm, EventForm, TheatreForm
 from theatres.models import Event, Troupe, TroupeMember
 from users.models import ActorProfile
 
@@ -77,3 +77,53 @@ class EventCreateView(FormView):
             troupe_id=troupe.id,
         )
         return redirect("theatres:events_list")
+
+
+class ActorListView(TemplateView):
+    template_name = "theatres/actors_list.html"
+
+
+class ActorCreateView(FormView):
+    template_name = "theatres/actors_create.html"
+    form_class = ActorForm
+    success_url = "theatres:events_list"
+
+    def get(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        context = self.get_context_data(**kwargs)
+        context["form"] = form
+        context["contacts"] = ContactType.objects.all()
+        context["id"] = kwargs.get("id")
+        return self.render_to_response(context)
+
+    def form_valid(self, form):
+        num = 1
+        contact_data = {}
+        while True:
+            try:
+                actor = form.data["contact_type" + str(num)]
+            except:
+                break
+            try:
+                role = form.data["value" + str(num)]
+            except:
+                break
+            contact_data[actor] = role
+            num += 1
+        group = ContactsGroup.objects.create()
+        for name in contact_data:
+            contact_type = ContactType.objects.filter(name=name).first()
+            Contact.objects.create(
+                value=contact_data[name],
+                type_id=contact_type.id,
+                contacts_group_id_id=group.id,
+            )
+        ActorProfile.objects.create(
+            first_name=form.cleaned_data[ActorProfile.first_name.field.name],
+            last_name=form.cleaned_data[ActorProfile.last_name.field.name],
+            description=form.cleaned_data[ActorProfile.description.field.name],
+            birthday=form.cleaned_data[ActorProfile.birthday.field.name],
+            contacts_id=group.id,
+        )
+        return redirect("homepage:home")

@@ -1,6 +1,7 @@
 from django.forms import ModelForm, widgets
 
 from theatres.models import Event, Location, Theatre
+from users.models import ActorProfile
 
 
 class TheatreForm(ModelForm):
@@ -33,3 +34,34 @@ class EventForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields[Event.image.field.name].required = False
+
+
+class ActorForm(ModelForm):
+    class Meta:
+        model = ActorProfile
+        fields = (
+            ActorProfile.first_name.field.name,
+            ActorProfile.last_name.field.name,
+            ActorProfile.birthday.field.name,
+            ActorProfile.description.field.name,
+        )
+
+        widgets = {
+            ActorProfile.first_name.field.name: widgets.TextInput(
+                attrs={"class": "multi-form-input", "placeholder": "Имя"}
+            ),
+            ActorProfile.last_name.field.name: widgets.TextInput(
+                attrs={"class": "multi-form-input", "placeholder": "Фамилия"}
+            ),
+            ActorProfile.description.field.name: widgets.Textarea(attrs={"class": "multi-form-input"}),
+            ActorProfile.birthday.field.name: widgets.DateTimeInput(
+                attrs={"class": "multi-form-input", "placeholder": "День рождения", "type": "date"}
+            ),
+        }
+
+        labels = {
+            ActorProfile.first_name.field.name: "Введите имя",
+            ActorProfile.last_name.field.name: "Введите фамилию",
+            ActorProfile.description.field.name: "Введите описание актёра",
+            ActorProfile.birthday.field.name: "Введите дату рождения (необязательно)",
+        }
