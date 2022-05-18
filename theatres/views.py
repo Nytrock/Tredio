@@ -70,10 +70,10 @@ class EventCreateView(FormView):
             actor = ActorProfile.objects.filter(first_name=name.split()[0], last_name=name.split()[1]).first()
             TroupeMember.objects.create(profile_id=actor.id, troupe_id=troupe.id, role=troupe_data[name])
         Event.objects.create(
-            image=form.cleaned_data["image"],
-            name=form.cleaned_data["name"],
+            image=form.cleaned_data[Event.image.field.name],
+            name=form.cleaned_data[Event.name.field.name],
             reviews_id=reviews.id,
-            theatre_id=form.cleaned_data["theatre"].id,
+            theatre_id=form.cleaned_data[Event.theatre.field.name].id,
             troupe_id=troupe.id,
         )
         return redirect("theatres:events_list")
