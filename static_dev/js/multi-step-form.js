@@ -1,10 +1,7 @@
 //your javascript goes here
 var currentTab = 0;
 document.addEventListener("DOMContentLoaded", function(event) {
-
-
     showTab(currentTab);
-
 });
 
 function showTab(n) {
@@ -32,6 +29,7 @@ function nextPrev(n) {
         // document.getElementById("regForm").submit();
         // return false;
         //alert("sdf");
+        document.getElementById("nextBtn").type = "submit";
         document.getElementById("nextprevious").style.display = "none";
         document.getElementById("all-steps").style.display = "none";
         document.getElementById("register").style.display = "none";
@@ -49,7 +47,14 @@ function validateForm() {
     x = document.getElementsByClassName("tab");
     y = x[currentTab].getElementsByTagName("input");
     for (i = 0; i < y.length; i++) {
-        if (y[i].value == "") {
+        if (y[i].value == "" && y[i].required) {
+            y[i].className += " invalid";
+            valid = false;
+        }
+    }
+    y = x[currentTab].getElementsByTagName("select");
+    for (i = 0; i < y.length; i++) {
+        if (y[i].value == "" && y[i].required) {
             y[i].className += " invalid";
             valid = false;
         }

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Актёры{% endblock %}
+{% block content %}
+    <section>
+        <div class="container py-5">
+            <div class="row mb-4 mb-lg-5">
+                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                    <h3 class="fw-bold">Список актёров</h3>
+                    <form class="d-flex justify-content-center flex-wrap my-2" method="post" action=".">
+                        {% csrf_token %}
+                        <div class="my-2"><input class="form-control" type="email" name="search" placeholder="Имя актёра"></div>
+                        <div class="my-2"><button class="btn btn-primary ms-sm-2" type="submit">Поиск</button></div>
+                    </form>
+                </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
+                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
+                    <div>
+                        <h5 class="fw-bold">Райан Гослинг</h5>
+                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>СПБ</p>
+                        <a href="{% url 'users:actors_detail' 1 %}" class="btn btn-primary shadow" type="button">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        <section class="py-4 py-xl-5">
+            <div class="container">
+                <div class="text-white bg-dark border rounded border-0 p-4 p-md-5">
+                    <h2 class="fw-bold text-white mb-3">Не нашли актёра? Не беда, добавьте его!</h2>
+                    <p class="mb-4">После заполнения информации о новом актёре он отправится на модерацию. После её прохождения он будет добавлен в общую базу данных.</p>
+                    <a class="btn btn-primary btn-lg me-2" role="button" href="{% url 'theatres:actors_create' %}">Приступить к созданию</a>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

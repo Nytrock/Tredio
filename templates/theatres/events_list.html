@@ -1,5 +1,41 @@
 {% extends "base.html" %}
 {% block title %}События{% endblock %}
 {% block content %}
-    <h1>Список событий</h1>
+    <section>
+        <div class="container py-5">
+            <div class="row mb-4 mb-lg-5">
+                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                    <h3 class="fw-bold">Поиск постановок</h3>
+                    <form class="d-flex justify-content-center flex-wrap my-2" method="post" action=".">
+                        {% csrf_token %}
+                        <div class="my-2"><input class="form-control" type="email" name="search" placeholder="Название постановки"></div>
+                        <div class="my-2"><button class="btn btn-primary ms-sm-2" type="submit">Поиск</button></div>
+                        <div style="padding-top: 6px;"><label class="form-label text-nowrap ms-sm-2">Город&nbsp;&nbsp;<select class="form-select d-inline-block form-select form-select-sm">
+                                    <option value="10" selected="">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select></label></div>
+                    </form>
+                </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
+                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
+                    <div>
+                        <h5 class="fw-bold">Есть один нюанс</h5>
+                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>СПБ</p>
+                        <a href="{% url 'theatres:events_detail' 1 %}" class="btn btn-primary shadow" type="button">Больше</a>
+                    </div>
+                </div>
+            </div>
+        <section class="py-4 py-xl-5">
+            <div class="container">
+                <div class="text-white bg-dark border rounded border-0 p-4 p-md-5">
+                    <h2 class="fw-bold text-white mb-3">Не нашли нужную постановку? Не беда, добавьте её!</h2>
+                    <p class="mb-4">После заполнения информации о новой постановке она отправится на модерацию. После её прохождения она будет добавлена в общий список.</p><a class="btn btn-primary btn-lg me-2" role="button" href="{% url 'theatres:events_create' %}">Приступить к созданию</a>
+                </div>
+            </div>
+        </section>
+    </section>
 {% endblock %}
