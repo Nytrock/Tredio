@@ -52,4 +52,5 @@ urllib3==1.26.9
 virtualenv==20.14.1
 webencodings==0.5.1
 wheel==0.37.1
+whitenoise==6.1.0
 zipp==3.8.0
