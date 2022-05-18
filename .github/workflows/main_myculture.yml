@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'MyCulture'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_090A24D45A2349168D5FC6B8009BEF67 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_33A2FA5461F44E0E903A3AABD96A1062 }}
