@@ -10,27 +10,27 @@
                 <h1 id="register" class="header-text">Добавление театра</h1>
                 <div class="all-steps" id="all-steps"> <span class="step"></span> <span class="step"></span> <span class="step"></span> <span class="step"></span> </div>
                 <div class="tab">
-                    <h3>Donation Type:</h3>
-                    <label class="container multi-form-container">One time
-                            <input class="multi-form-input" type="radio" checked="checked" name="radio">
-                            <span class="checkmark"></span>
-                    </label>
-                    <label class="container multi-form-container">Recurring
-                            <input class="multi-form-input" type="radio" name="radio">
-                            <span class="checkmark"></span>
-                    </label>
-                    <p><input class="multi-form-input" type="text" placeholder="Amount" oninput="this.className = 'multi-form-input'" name="amount"></p>
+                    <h3>{{ form.name.label }}</h3>
+                    <p><input class="multi-form-input" type="text" placeholder="Введите название" oninput="this.className = 'multi-form-input'" name="{{ form.name.html_name }}"></p>
 
                 </div>
                 <div class="tab">
-                    <p><input class="multi-form-input" placeholder="First Name" oninput="this.className = 'multi-form-input'" name="first"></p>
-                    <p><input class="multi-form-input" placeholder="Last Name" oninput="this.className = 'multi-form-input'" name="last"></p>
-                    <p><input class="multi-form-input" placeholder="Email" oninput="this.className = 'multi-form-input'" name="email"></p>
-                    <p><input class="multi-form-input" placeholder="Phone" oninput="this.className = 'multi-form-input'" name="phone"></p>
-                    <p><input class="multi-form-input" placeholder="Street Address" oninput="this.className = 'multi-form-input'" name="address"></p>
-                    <p><input class="multi-form-input" placeholder="City" oninput="this.className = 'multi-form-input'" name="city"></p>
-                    <p><input class="multi-form-input" placeholder="State" oninput="this.className = 'multi-form-input'" name="state"></p>
-                    <p><input class="multi-form-input" placeholder="Country" oninput="this.className = 'multi-form-input'" name="country"></p>
+                    <h3>{{ form.location.label }}</h3>
+                        {{  form.location }}
+                    <p><select id="month" class="multi-form-input">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select></p>
                 </div>
 
                 <div class="tab">

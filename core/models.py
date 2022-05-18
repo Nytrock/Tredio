@@ -26,6 +26,9 @@ class ContactType(models.Model):
         verbose_name = "Тип контакта"
         verbose_name_plural = "Типы контактов"
 
+    def __str__(self):
+        return self.name
+
 
 class Contact(models.Model):
     contacts_group_id = models.ForeignKey(ContactsGroup, verbose_name="Группа контактов", on_delete=models.CASCADE)
