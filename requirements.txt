@@ -21,7 +21,6 @@ install==1.3.5
 keyring==23.5.0
 lockfile==0.12.2
 msgpack==1.0.3
-mssql-django==1.1.3
 nodeenv==1.6.0
 packaging==20.9
 pastel==0.2.1
