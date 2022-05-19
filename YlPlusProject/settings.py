@@ -90,12 +90,18 @@ WSGI_APPLICATION = "YlPlusProject.wsgi.application"
 # Database
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    'default': {
+        'ENGINE': 'mssql',
+        'NAME': 'database',
+        'USER': environ.get("BD_USER"),
+        'PASSWORD': environ.get("BD_PASSWORD"),
+        'HOST': 'jubastik.database.windows.net',
+        'PORT': '',
+        'OPTIONS': {
+                'driver': 'ODBC Driver 17 for SQL Server',
+            },
+    },
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
