@@ -10,7 +10,17 @@ class ActorProfileView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["profile"] = get_object_or_404(ActorProfile.actors.get_profile(kwargs["id"]))
+        actor_profile_id = kwargs["id"]
+        troupes = list(ActorProfile.actor_profiles.get_troupe_ids(actor_profile_id))
+
+        context["profile"] = get_object_or_404(ActorProfile.common_profiles.get_profile(actor_profile_id))
+        context["theatres"] = ActorProfile.actor_profiles.get_theatres(actor_profile_id, troupes).only(
+            "id", "image", "name", "description"
+        )
+        context["events"] = ActorProfile.actor_profiles.get_events(actor_profile_id, troupes).only(
+            "id", "image", "name", "description"
+        )
+
         return context
 
 
@@ -23,7 +33,12 @@ class ProfileView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["profile"] = get_object_or_404(UserProfile.profiles.get_profile(self.user_id, private=True))
+
+        context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id))
+        context["user"] = get_object_or_404(UserProfile.profiles.get_profile(self.user_id))
+        context["meetups"] = UserProfile.profiles.get_meetups(self.user_id)
+        context["reviews"] = UserProfile.profiles.get_reviews(self.user_id)
+
         return context
 
 
@@ -32,7 +47,13 @@ class UserDetailView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["profile"] = get_object_or_404(UserProfile.profiles.get_profile(kwargs["id"]))
+        profile_id = kwargs["id"]
+
+        context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(profile_id))
+        context["user"] = get_object_or_404(UserProfile.profiles.get_profile(profile_id))
+        context["meetups"] = UserProfile.profiles.get_meetups(profile_id)
+        context["reviews"] = UserProfile.profiles.get_reviews(profile_id)
+
         return context
 
 

@@ -41,7 +41,7 @@ class MeetupQuerySet(models.QuerySet):
 
 
 class Meetup(models.Model):
-    host = models.ForeignKey(User, verbose_name="Организатор", on_delete=models.CASCADE)
+    host = models.ForeignKey(User, verbose_name="Организатор", on_delete=models.CASCADE, related_name="meetups")
     event = models.ForeignKey(Event, verbose_name="Событие", on_delete=models.CASCADE, related_name="meetups")
     start = models.DateTimeField(verbose_name="Время встречи")
     participants_limit = models.IntegerField(

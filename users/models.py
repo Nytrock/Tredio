@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from core.models import ContactsGroup
+from group.models import Meetup
+from rating.models import Review
 from theatres.models import Event, Theatre
 
 User = get_user_model()
@@ -26,7 +28,11 @@ class UserAchievement(models.Model):
 
 class ProfileQuerySet(models.QuerySet):
     def get_profile(self, id: int):
-        return self.filter(id=id)
+        return (
+            self.filter(id=id)
+            .select_related("contacts")
+            .only("first_name", "last_name", "birthday", "description", "contacts")
+        )
 
 
 class CommonProfile(models.Model):
@@ -47,7 +53,7 @@ class CommonProfile(models.Model):
 
 class ActorProfileQuerySet(models.QuerySet):
     def get_troupes_ids(self, id: int):
-        return self.filter(id=id).prefetch_related("troupe__members__troupe__id").only()
+        return self.filter(id=id).prefetch_related("troupe_members__troupe__id").only()
 
     def get_theatres(self, id: int, troupes_ids=None):
         if troupes == None:
@@ -81,8 +87,16 @@ class Rank(models.Model):
 
 
 class UserProfileQuerySet(models.QuerySet):
-    def get_profile(self, id: int):
-        return self.filter(id=id).only("rank__name", "experience")
+    def get_profile(self, id: int, private: bool = False):
+        PUBLIC_FIELDS = ["rank__name"]
+        PRIVATE_FIELDS = ["experience"]
+        return self.filter(id=id).only(*(PUBLIC_FIELDS + PRIVATE_FIELDS if private else PUBLIC_FIELDS))
+
+    def get_meetups(self, id: int):
+        return self.filter(id=id).prefetch_related("meetups").only()
+
+    def get_reviews(self, id: int):
+        return self.filter(id=id).prefetch_related("reviews").only()
 
 
 class UserProfile(CommonProfile):
