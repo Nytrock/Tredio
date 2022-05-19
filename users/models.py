@@ -76,6 +76,9 @@ class ActorProfile(CommonProfile):
         verbose_name = "Профиль актера"
         verbose_name_plural = "Профили актеров"
 
+    def __str__(self):
+        return self.first_name + " " + self.last_name
+
 
 class Rank(models.Model):
     name = models.CharField("Название", max_length=100)

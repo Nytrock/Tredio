@@ -21,6 +21,9 @@ class ReviewCategory(models.Model):
         verbose_name = "Категория отзыва"
         verbose_name_plural = "Категории отзывов"
 
+    def __str__(self):
+        return self.name
+
 
 class Review(models.Model):
     review_group_id = models.ForeignKey(

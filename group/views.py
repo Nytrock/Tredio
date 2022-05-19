@@ -1,5 +1,10 @@
+from django.shortcuts import redirect, render
+from django.views import View
+from django.views.generic import FormView, TemplateView
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView
+
+from .forms import MeetupForm
+from .models import Meetup
 
 from group.models import Meetup
 
@@ -21,13 +26,31 @@ class GroupDetailView(TemplateView):
         context["meetup"] = get_object_or_404(Meetup.meetups.meetup_details(kwargs["id"]))
         return context
 
-
+      
 class GroupCreateView(TemplateView):
     template_name = "group/group_create.html"
 
     def get_context_data(self, **kwargs):
-        # Replace None with real Form
-
+        form = MeetupForm(request.POST or None)
         context = super().get_context_data(**kwargs)
-        context["form"] = None
+        context["form"] = form
         return context
+
+    def post(self, request):
+        form = MeetupForm(request.POST)
+        if form.data[Meetup.participants_limit.field.name] != "":
+            Meetup.objects.create(
+                event_id=form.data[Meetup.event.field.name],
+                start=form.data[Meetup.start.field.name],
+                participants_limit=form.data[Meetup.participants_limit.field.name],
+                description=form.data[Meetup.description.field.name],
+                host_id=request.user.id,
+            )
+        else:
+            Meetup.objects.create(
+                event_id=form.data[Meetup.event.field.name],
+                start=form.data[Meetup.start.field.name],
+                description=form.data[Meetup.description.field.name],
+                host_id=request.user.id,
+            )
+        return redirect("group:group_list")
