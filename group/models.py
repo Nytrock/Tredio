@@ -10,10 +10,12 @@ User = get_user_model()
 class MeetupQuerySet(models.QuerySet):
     def meetup_list(self):
         return self.only(
+            "event__id",
             "event__image",
             "host__username",
             "host__userprofile__first_name",
             "host__userprofile__last_name",
+            "start",
             "participants_limit",
             "description",
         ).annotate(participants_count=models.Count("participants"))
@@ -21,12 +23,16 @@ class MeetupQuerySet(models.QuerySet):
     def meetup_details(self, meetup_id: int):
         return (
             self.filter(id=meetup_id)
-            .prefetch_related("event__troupe__members__profile")
+            .prefetch_related("event__troupe__members", "participants__user")
             .only(
+                "event__theatre__id",
+                "event__theatre__name",
+                "event__theatre__location__query",
                 "event__image",
                 "host__username",
                 "host__userprofile__first_name",
                 "host__userprofile__last_name",
+                "start",
                 "participants_limit",
                 "description",
             )
