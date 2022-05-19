@@ -1,20 +1,44 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views import View
-from django.views.generic import FormView, TemplateView
-
+from django.contrib.auth import get_user_model
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from core.models import ContactsGroup
-
 from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
-from .models import UserProfile
+from users.models import ActorProfile, UserProfile
 
 User = get_user_model()
 
 
-class ProfileView(LoginRequiredMixin, View):
-    def get(self, request):
-        template = "users/profile.html"
+class ActorProfileView(TemplateView):
+    template_name = "users/actor_profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        actor_profile_id = kwargs["id"]
+        troupes = list(ActorProfile.actor_profiles.get_troupe_ids(actor_profile_id))
+
+        context["profile"] = get_object_or_404(ActorProfile.common_profiles.get_profile(actor_profile_id))
+        context["theatres"] = ActorProfile.actor_profiles.get_theatres(actor_profile_id, troupes).only(
+            "id", "image", "name", "description"
+        )
+        context["events"] = ActorProfile.actor_profiles.get_events(actor_profile_id, troupes).only(
+            "id", "image", "name", "description"
+        )
+
+        return context
+
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = "users/profile.html"
+
+    def setup(self, request):
+        super().setup(request)
+        self.user_id: int = request.user.id
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
         user = get_object_or_404(User.objects, pk=request.user.id)
         form_main = ChangeMainProfileForm(
             request.POST or None,
@@ -35,13 +59,16 @@ class ProfileView(LoginRequiredMixin, View):
             },
         )
 
-        context = {
-            "main_form": form_main,
-            "extra_form": form_extra,
-        }
-        return render(request, template, context)
+        context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id))
+        context["user"] = get_object_or_404(UserProfile.profiles.get_profile(self.user_id))
+        context["meetups"] = UserProfile.profiles.get_meetups(self.user_id)
+        context["reviews"] = UserProfile.profiles.get_reviews(self.user_id)
+        context["main_form"] = form_main
+        context["extra_form"] = form_extra
 
-    def post(self, request):
+        return context
+      
+      def post(self, request):
         form_main = ChangeMainProfileForm(request.POST)
         form_extra = ChangeExtraProfileForm(request.POST)
 
@@ -74,16 +101,25 @@ class ProfileView(LoginRequiredMixin, View):
 class UserDetailView(TemplateView):
     template_name = "users/user_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile_id = kwargs["id"]
 
-class ActorDetailView(TemplateView):
-    template_name = "users/profile_actor.html"
+        context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(profile_id))
+        context["user"] = get_object_or_404(UserProfile.profiles.get_profile(profile_id))
+        context["meetups"] = UserProfile.profiles.get_meetups(profile_id)
+        context["reviews"] = UserProfile.profiles.get_reviews(profile_id)
 
+        return context
 
-class SignupView(FormView):
+class SignupView(TemplateView):
     template_name = "users/signup.html"
-    form_class = CustomUserCreationForm
-    success_url = "users:login"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = CustomUserCreationForm()
+        return context
+      
     def form_valid(self, form):
         User = get_user_model()
         first_name = form.cleaned_data[User.first_name.field.name]
