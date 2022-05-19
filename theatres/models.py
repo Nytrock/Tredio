@@ -112,6 +112,22 @@ class EventQuerySet(models.QuerySet):
             )
         )
 
+    def event_ratings(self, id: int):
+        return (
+            self.filter(id=id)
+            .prefetch_related("reviews__reviews")
+            .only(
+                "id",
+                "name",
+                "image",
+                "description",
+                "theatre__id",
+                "theatre__name",
+                "theatre__image",
+                "theatre__location__query",
+            )
+        )
+
 
 class Event(ImageBaseModel):
     name = models.CharField("Название", max_length=150)
