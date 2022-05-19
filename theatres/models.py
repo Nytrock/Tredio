@@ -65,6 +65,13 @@ class TheatreQuerySet(models.QuerySet):
             )
         )
 
+    def theatre_ratings(self, id: int):
+        return (
+            self.filter(id=id)
+            .prefetch_related("reviews__reviews")
+            .only("id", "name", "image", "location__query", "description")
+        )
+
 
 class Theatre(ImageBaseModel):
     name = models.CharField("Название", max_length=150)
