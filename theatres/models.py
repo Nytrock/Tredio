@@ -57,7 +57,7 @@ class TheatreQuerySet(models.QuerySet):
         return (
             self.filter(id=id)
             .prefetch_related("gallery_images", "reviews__reviews", "events", "events__meetups")
-            .only("name")
+            .only("name", "description")
             .annotate(
                 reviews_count=models.Count("reviews__reviews"),
                 reviews_average_score=models.Avg("reviews__reviews__star"),
@@ -68,6 +68,7 @@ class TheatreQuerySet(models.QuerySet):
 
 class Theatre(ImageBaseModel):
     name = models.CharField("Название", max_length=150)
+    description = models.CharField("Описание", max_length=2500, null=True, blank=True)
     location = models.ForeignKey(Location, verbose_name="Местоположение", on_delete=models.CASCADE)
     troupe = models.ForeignKey(Troupe, verbose_name="Труппа", on_delete=models.SET_NULL, null=True, blank=True)
     reviews = models.ForeignKey(ReviewGroup, verbose_name="Отзывы", on_delete=models.SET_NULL, null=True, blank=True)
@@ -89,15 +90,15 @@ class TheatreImage(GalleryBaseModel):
 
 class EventQuerySet(models.QuerySet):
     def events_list(self):
-        return self.only("id", "image", "name", "theatre__id", "theatre__name", "theatre__location__query").order_by(
-            "name"
-        )
+        return self.only(
+            "id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query"
+        ).order_by("name")
 
     def event_details(self, id: int):
         return (
             self.filter(id=id)
             .prefetch_related("troupe__members", "reviews__reviews")
-            .only("id", "image", "name", "theatre__id", "theatre__name", "theatre__location__query")
+            .only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
             .annotate(
                 reviews_count=models.Count("reviews__reviews"),
                 reviews_average_score=models.Avg("reviews__reviews__star"),
@@ -107,6 +108,7 @@ class EventQuerySet(models.QuerySet):
 
 class Event(ImageBaseModel):
     name = models.CharField("Название", max_length=150)
+    description = models.CharField("Описание", max_length=2500, null=True, blank=True)
     theatre = models.ForeignKey(Theatre, verbose_name="Театр", on_delete=models.CASCADE, related_name="events")
     troupe = models.ForeignKey(Troupe, verbose_name="Труппа", on_delete=models.SET_NULL, null=True, blank=True)
     reviews = models.ForeignKey(ReviewGroup, verbose_name="Отзывы", on_delete=models.SET_NULL, null=True, blank=True)

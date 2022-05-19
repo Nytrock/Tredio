@@ -43,7 +43,7 @@ class TheatreImageInline(admin.TabularInline):
 @admin.register(Theatre)
 class TheatreAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "location", "troupe", "reviews", "contacts", "image_tmb")
-    fields = ("name", "location", "troupe", "reviews", "contacts", "image")
+    fields = ("name", "description", "location", "troupe", "reviews", "contacts", "image")
     inlines = [TheatreImageInline]
 
 
@@ -55,5 +55,5 @@ class EventImageInline(admin.TabularInline):
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "theatre", "troupe", "reviews", "image_tmb")
-    fields = ("name", "theatre", "troupe", "reviews", "image")
+    fields = ("name", "theatre", "description", "troupe", "reviews", "image")
     inlines = [EventImageInline]
