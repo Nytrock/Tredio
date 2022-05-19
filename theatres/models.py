@@ -2,7 +2,6 @@ from django.db import models
 
 from core.models import ContactsGroup, GalleryBaseModel, ImageBaseModel
 from rating.models import ReviewGroup
-from users.models import ActorProfile
 
 
 class Troupe(models.Model):
@@ -13,7 +12,9 @@ class Troupe(models.Model):
 
 class TroupeMember(models.Model):
     troupe = models.ForeignKey(Troupe, verbose_name="Труппа", related_name="members", on_delete=models.CASCADE)
-    profile = models.ForeignKey(ActorProfile, verbose_name="Профиль", on_delete=models.CASCADE)
+    profile = models.ForeignKey(
+        to="users.ActorProfile", verbose_name="Профиль", on_delete=models.CASCADE, related_name="troupe_members"
+    )
     role = models.CharField(verbose_name="Роль", max_length=100, null=True, blank=True)
 
     class Meta:

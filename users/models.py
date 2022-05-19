@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from core.models import ContactsGroup
+from theatres.models import Event, Theatre
 
 User = get_user_model()
 
@@ -23,6 +24,11 @@ class UserAchievement(models.Model):
         verbose_name_plural = "Достижения пользователей"
 
 
+class ProfileQuerySet(models.QuerySet):
+    def get_profile(self, id: int):
+        return self.filter(id=id)
+
+
 class CommonProfile(models.Model):
     first_name = models.CharField("Имя", max_length=100)
     last_name = models.CharField("Фамилия", max_length=100)
@@ -32,22 +38,33 @@ class CommonProfile(models.Model):
         ContactsGroup, verbose_name="Контакты", on_delete=models.SET_NULL, null=True, blank=True
     )
 
+    objects = models.Manager()
+    common_profiles = ProfileQuerySet.as_manager()
+
     class Meta:
         abstract = True
 
 
 class ActorProfileQuerySet(models.QuerySet):
-    def get_profile(self, id: int):
-        return (
-            self.filter(id=id)
-            .prefetch_related("contacts__contacts")
-            .only("first_name", "last_name", "birthday", "description")
-        )
+    def get_troupes_ids(self, id: int):
+        return self.filter(id=id).prefetch_related("troupe__members__troupe__id").only()
+
+    def get_theatres(self, id: int, troupes_ids=None):
+        if troupes == None:
+            troupes = get_troupes_ids(id)
+
+        return Theatre.objects.filter(troupe__id__in=troupes)
+
+    def get_events(self, id: int, troupes_ids=None):
+        if troupes == None:
+            troupes = get_troupes_ids()
+
+        return Event.objects.filter(troupe__id__in=troupes)
 
 
 class ActorProfile(CommonProfile):
     objects = models.Manager()
-    actors = ActorProfileQuerySet.as_manager()
+    actor_profiles = ActorProfileQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Профиль актера"
@@ -64,19 +81,8 @@ class Rank(models.Model):
 
 
 class UserProfileQuerySet(models.QuerySet):
-    def get_profile(self, id: int, private: bool = False):
-        PUBLIC_FIELDS = [
-            "user__username",
-            "user__email",
-            "first_name",
-            "last_name",
-            "birthday",
-            "description",
-            "rank__name",
-        ]
-        PRIVATE_FIELDS = PUBLIC_FIELDS + ["experience"]
-
-        return self.filter(id=id).only(*(PRIVATE_FIELDS if private else PUBLIC_FIELDS))
+    def get_profile(self, id: int):
+        return self.filter(id=id).only("rank__name", "experience")
 
 
 class UserProfile(CommonProfile):
