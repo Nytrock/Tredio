@@ -49,6 +49,23 @@ class Location(models.Model):
         verbose_name_plural = "Местоположения"
 
 
+class TheatreQuerySet(models.QuerySet):
+    def theatres_list(self):
+        return self.only("id", "image", "name", "description", "location__query").order_by("name")
+
+    def theatre_details(self, id: int):
+        return (
+            self.filter(id=id)
+            .prefetch_related("gallery_images", "reviews__reviews", "events", "events__meetups")
+            .only("name")
+            .annotate(
+                reviews_count=models.Count("reviews__reviews"),
+                reviews_average_score=models.Avg("reviews__reviews__star"),
+                events_count=models.Count("events"),
+            )
+        )
+
+
 class Theatre(ImageBaseModel):
     name = models.CharField("Название", max_length=150)
     location = models.ForeignKey(Location, verbose_name="Местоположение", on_delete=models.CASCADE)
@@ -57,6 +74,9 @@ class Theatre(ImageBaseModel):
     contacts = models.ForeignKey(
         ContactsGroup, verbose_name="Контакты", on_delete=models.SET_NULL, null=True, blank=True
     )
+
+    objects = models.Manager()
+    theatres = TheatreQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Театр"
@@ -87,7 +107,7 @@ class EventQuerySet(models.QuerySet):
 
 class Event(ImageBaseModel):
     name = models.CharField("Название", max_length=150)
-    theatre = models.ForeignKey(Theatre, verbose_name="Театр", on_delete=models.CASCADE)
+    theatre = models.ForeignKey(Theatre, verbose_name="Театр", on_delete=models.CASCADE, related_name="events")
     troupe = models.ForeignKey(Troupe, verbose_name="Труппа", on_delete=models.SET_NULL, null=True, blank=True)
     reviews = models.ForeignKey(ReviewGroup, verbose_name="Отзывы", on_delete=models.SET_NULL, null=True, blank=True)
 

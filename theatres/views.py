@@ -1,15 +1,25 @@
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 
-from theatres.models import Event
+from theatres.models import Event, Theatre
 
 
 class TheatresListView(TemplateView):
     template_name = "theatres/theatres_list.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["theatres"] = Theatre.theatres.theatres_list()
+        return context
+
 
 class TheatresDetailView(TemplateView):
     template_name = "theatres/theatres_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["theatre"] = get_object_or_404(Theatre.theatres.theatre_details(kwargs["id"]))
+        return context
 
 
 class TheatresCreateView(TemplateView):
