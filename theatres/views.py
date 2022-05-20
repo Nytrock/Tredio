@@ -4,7 +4,7 @@ from django.views.generic import FormView, TemplateView
 from core.models import Contact, ContactsGroup, ContactType
 from rating.models import ReviewGroup
 from theatres.forms import ActorForm, EventForm, TheatreForm
-from theatres.models import Event, Theatre, Troupe, TroupeMember
+from theatres.models import City, Event, Theatre, Troupe, TroupeMember
 from users.models import ActorProfile
 
 
@@ -14,6 +14,7 @@ class TheatresListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["theatres"] = Theatre.theatres.theatres_list()
+        context["cities"] = City.objects.all()
         return context
 
 

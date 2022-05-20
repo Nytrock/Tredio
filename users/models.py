@@ -80,7 +80,7 @@ class ActorProfile(CommonProfile):
 
 class Rank(models.Model):
     name = models.CharField("Название", max_length=100)
-    experience_required = models.CharField("Необходимый опыт", max_length=100)
+    experience_required = models.IntegerField("Необходимый опыт")
 
     class Meta:
         verbose_name = "Ранг"
@@ -91,7 +91,11 @@ class UserProfileQuerySet(models.QuerySet):
     def get_profile(self, id: int, private: bool = False):
         PUBLIC_FIELDS = ["rank__name"]
         PRIVATE_FIELDS = ["experience"]
-        return self.filter(id=id).only(*(PUBLIC_FIELDS + PRIVATE_FIELDS if private else PUBLIC_FIELDS))
+        return (
+            self.filter(id=id)
+            .prefetch_related("contacts")
+            .only(*(PUBLIC_FIELDS + PRIVATE_FIELDS if private else PUBLIC_FIELDS))
+        )
 
     def get_meetups(self, id: int):
         return self.filter(id=id).prefetch_related("meetups").only()

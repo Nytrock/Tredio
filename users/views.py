@@ -5,7 +5,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
-from core.models import ContactsGroup
+from core.models import Contact, ContactsGroup, ContactType
+from group.models import Meetup, MeetupParticipant
 from users.models import ActorProfile, UserProfile
 
 from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
@@ -40,30 +41,25 @@ class ProfileView(LoginRequiredMixin, View):
         form_main = ChangeMainProfileForm(
             request.POST or None,
             initial={
-                User.first_name.field.name: user.first_name,
-                User.last_name.field.name: user.last_name,
                 User.email.field.name: user.email,
-                "username": user.username,
+                User.username.field.name: user.username,
             },
         )
 
-        profile = UserProfile.objects.filter(user=user.id).first()
-        form_extra = ChangeExtraProfileForm(
-            request.POST or None,
-            initial={
-                UserProfile.birthday.field.name: profile.birthday,
-                UserProfile.description.field.name: profile.description,
-            },
-        )
+        form_extra = ChangeExtraProfileForm(request.POST or None)
 
         context = {
             "main_form": form_main,
             "extra_form": form_extra,
             "profile": get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id)),
             "user": get_object_or_404(UserProfile.profiles.get_profile(self.user_id)),
-            "meetups": UserProfile.profiles.get_meetups(self.user_id),
+            "meetups_participant": MeetupParticipant.objects.filter(user_id=self.user_id).prefetch_related("event"),
+            "meetups_host": Meetup.objects.filter(host_id=self.user_id).prefetch_related("event"),
             "reviews": UserProfile.profiles.get_reviews(self.user_id),
+            "contacts": ContactType.objects.all(),
         }
+        context["percent"] = int(context["profile"].experience / context["profile"].rank.experience_required * 100)
+        context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
         return render(request, template, context)
 
     def post(self, request):
@@ -92,6 +88,29 @@ class ProfileView(LoginRequiredMixin, View):
             if form_extra.cleaned_data[UserProfile.birthday.field.name]:
                 profile.birthday = form_extra.cleaned_data[UserProfile.birthday.field.name]
             profile.save()
+
+        num = 1
+        contact_data = {}
+        while True:
+            selection = request.POST.get("contact-label" + str(num))
+            text = request.POST.get("contact-text" + str(num))
+            if selection is not None and text is not None:
+                contact_data[selection] = text
+            else:
+                break
+            num += 1
+        for name in contact_data:
+            contact_type = ContactType.objects.filter(name=name).first()
+            Contact.objects.update_or_create(
+                type_id=contact_type.id,
+                contacts_group_id_id=profile.contacts_id,
+                defaults={"value": contact_data[name]},
+            )
+
+        contacts = Contact.objects.filter(contacts_group_id=profile.contacts)
+        for contact in contacts:
+            contact.value = request.POST.get(contact.type.name)
+            contact.save()
 
         return redirect("users:profile")
 

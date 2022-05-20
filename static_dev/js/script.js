@@ -1,6 +1,6 @@
 var num_actors = 0;
 
-$('#addBtn').click(function () {
+$("#addBtn").click(function () {
     num_actors += 1;
     var $div = $("#troupe_member");
     var $klon = $div.clone().attr("class", "row");
@@ -9,11 +9,20 @@ $('#addBtn').click(function () {
     $klon.appendTo("#troupe" );
 });
 
-$('#addContBtn').click(function () {
+$("#addContBtn").click(function () {
     num_actors += 1;
     var $div = $("#actor_contact");
     var $klon = $div.clone().attr("class", "row");
     $klon.children("#first_input").children("#contact_type0").attr("name", "contact_type" + num_actors)
     $klon.children("#second_input").children("#value0").attr("name", "value" + num_actors).val("").prop("required", true)
     $klon.appendTo("#contacts" );
+});
+
+$("#AddContactProfile").click(function () {
+    num_actors += 1;
+    var $div = $("#contact-div");
+    var $klon = $div.clone().attr("class", "mb-3");
+    $klon.children("#contact-label").attr("name", "contact-label" + num_actors);
+    $klon.children("#contact-text").attr("name", "contact-text" + num_actors).prop("required", true);
+    $klon.appendTo("#contact-container");
 });
