@@ -1,11 +1,14 @@
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
-from django.views.generic import TemplateView
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views import View
+from django.views.generic import FormView, TemplateView
+
 from core.models import ContactsGroup
-from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
 from users.models import ActorProfile, UserProfile
+
+from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
 
 User = get_user_model()
 
@@ -29,17 +32,11 @@ class ActorProfileView(TemplateView):
         return context
 
 
-class ProfileView(LoginRequiredMixin, TemplateView):
-    template_name = "users/profile.html"
-
-    def setup(self, request):
-        super().setup(request)
+class ProfileView(LoginRequiredMixin, View):
+    def get(self, request):
+        template = "users/profile.html"
         self.user_id: int = request.user.id
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        user = get_object_or_404(User.objects, pk=request.user.id)
+        user = get_object_or_404(User.objects, pk=self.user_id)
         form_main = ChangeMainProfileForm(
             request.POST or None,
             initial={
@@ -59,16 +56,17 @@ class ProfileView(LoginRequiredMixin, TemplateView):
             },
         )
 
-        context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id))
-        context["user"] = get_object_or_404(UserProfile.profiles.get_profile(self.user_id))
-        context["meetups"] = UserProfile.profiles.get_meetups(self.user_id)
-        context["reviews"] = UserProfile.profiles.get_reviews(self.user_id)
-        context["main_form"] = form_main
-        context["extra_form"] = form_extra
+        context = {
+            "main_form": form_main,
+            "extra_form": form_extra,
+            "profile": get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id)),
+            "user": get_object_or_404(UserProfile.profiles.get_profile(self.user_id)),
+            "meetups": UserProfile.profiles.get_meetups(self.user_id),
+            "reviews": UserProfile.profiles.get_reviews(self.user_id),
+        }
+        return render(request, template, context)
 
-        return context
-      
-      def post(self, request):
+    def post(self, request):
         form_main = ChangeMainProfileForm(request.POST)
         form_extra = ChangeExtraProfileForm(request.POST)
 
@@ -112,14 +110,12 @@ class UserDetailView(TemplateView):
 
         return context
 
-class SignupView(TemplateView):
-    template_name = "users/signup.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form"] = CustomUserCreationForm()
-        return context
-      
+class SignupView(FormView):
+    template_name = "users/signup.html"
+    form_class = CustomUserCreationForm
+    success_url = "users:login"
+
     def form_valid(self, form):
         User = get_user_model()
         first_name = form.cleaned_data[User.first_name.field.name]

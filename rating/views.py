@@ -24,15 +24,15 @@ class RatingEventView(TemplateView):
         context["reviews"] = get_object_or_404(Event.events.event_ratings(kwargs["id"]))
         return context
 
-      
+
 class RatingCreateView(TemplateView):
     template_name = "rating/rating_create.html"
 
     def get_context_data(self, **kwargs):
-        form = RatingForm(request.POST or None)
+        form = RatingForm()
 
         context = super().get_context_data(**kwargs)
-        context["form"] = None
+        context["form"] = form
         return context
 
     def post(self, request, *args, **kwargs):

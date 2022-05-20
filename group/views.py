@@ -1,12 +1,11 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
-from django.shortcuts import get_object_or_404
+
+from group.models import Meetup
 
 from .forms import MeetupForm
 from .models import Meetup
-
-from group.models import Meetup
 
 
 class GroupListView(TemplateView):
@@ -26,12 +25,12 @@ class GroupDetailView(TemplateView):
         context["meetup"] = get_object_or_404(Meetup.meetups.meetup_details(kwargs["id"]))
         return context
 
-      
+
 class GroupCreateView(TemplateView):
     template_name = "group/group_create.html"
 
     def get_context_data(self, **kwargs):
-        form = MeetupForm(request.POST or None)
+        form = MeetupForm()
         context = super().get_context_data(**kwargs)
         context["form"] = form
         return context

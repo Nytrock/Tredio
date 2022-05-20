@@ -2,8 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from core.models import ContactsGroup
-from group.models import Meetup
-from rating.models import Review
 from theatres.models import Event, Theatre
 
 User = get_user_model()
