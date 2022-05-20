@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
@@ -99,18 +99,18 @@ class ProfileView(LoginRequiredMixin, View):
             else:
                 break
             num += 1
-        for name in contact_data:
-            contact_type = ContactType.objects.filter(name=name).first()
-            Contact.objects.update_or_create(
-                type_id=contact_type.id,
-                contacts_group_id_id=profile.contacts_id,
-                defaults={"value": contact_data[name]},
-            )
 
         contacts = Contact.objects.filter(contacts_group_id=profile.contacts)
         for contact in contacts:
             contact.value = request.POST.get(contact.type.name)
             contact.save()
+
+        for name in contact_data:
+            Contact.objects.update_or_create(
+                type_id=int(name),
+                contacts_group_id_id=profile.contacts_id,
+                defaults={"value": contact_data[name]},
+            )
 
         return redirect("users:profile")
 
@@ -120,7 +120,6 @@ class UserDetailView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        profile_id = kwargs["id"]
 
         context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(profile_id))
         context["user"] = get_object_or_404(UserProfile.profiles.get_profile(profile_id))

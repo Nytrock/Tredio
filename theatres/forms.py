@@ -18,17 +18,19 @@ class TheatreForm(ModelForm):
 class EventForm(ModelForm):
     class Meta:
         model = Event
-        fields = (Event.name.field.name, Event.theatre.field.name, Event.image.field.name)
+        fields = (Event.name.field.name, Event.theatre.field.name, Event.image.field.name, Event.description.field.name)
 
         labels = {
             Event.name.field.name: "Введите название постановки",
             Event.theatre.field.name: "Выберите театр",
             Event.image.field.name: "Выберите изображение",
+            Event.description.field.name: "Введите описание постановки",
         }
 
         widgets = {
             Event.theatre.field.name: widgets.Select(attrs={"class": "multi-form-input"}),
             Event.name.field.name: widgets.TextInput(attrs={"class": "multi-form-input", "placeholder": "Название"}),
+            Event.description.field.name: widgets.Textarea(attrs={"class": "multi-form-input"}),
         }
 
     def __init__(self, *args, **kwargs):

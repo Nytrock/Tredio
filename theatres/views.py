@@ -44,6 +44,7 @@ class EventListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["events"] = Event.events.events_list()
+        context["cities"] = City.objects.all()
         return context
 
 
@@ -141,6 +142,7 @@ class EventCreateView(FormView):
         Event.objects.create(
             image=form.cleaned_data[Event.image.field.name],
             name=form.cleaned_data[Event.name.field.name],
+            description=form.cleaned_data[Event.description.field.name],
             reviews_id=reviews.id,
             theatre_id=form.cleaned_data[Event.theatre.field.name].id,
             troupe_id=troupe.id,

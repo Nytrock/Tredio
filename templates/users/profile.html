@@ -117,7 +117,7 @@
                                         {% for contact in profile_contacts %}
                                             <div class="mb-3">
                                                 <label class="form-label"><strong>{{ contact.type }}</strong><br></label>
-                                                <input class="form-control" name="{{ contact.type }}" type="text" id="{{ contact.type }}" value="{{ contact.value }}" placeholder="TG: @dsafa" name="сontacts">
+                                                <input class="form-control" name="{{ contact.type }}" type="text" id="{{ contact.type }}" value="{{ contact.value }}" placeholder="Введите значение" name="сontacts">
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -129,7 +129,7 @@
                                             <label class="form-label"><strong>Тип контакта</strong></label>
                                             <select id="contact-label" class="form-control selected">
                                                 {% for contact in contacts %}
-                                                    <option>{{ contact }} </option>
+                                                    <option value="{{ contact.id }}">{{ contact }} </option>
                                                 {% endfor %}
                                             </select>
                                             <label class="form-label"><strong>Значение (обязательно)</strong></label>

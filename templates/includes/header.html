@@ -8,7 +8,7 @@
                 <li class="nav-item"></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'theatres:theatres_list' %}" style="color: rgba(224,217,217,0.9);">Театры</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'theatres:events_list' %}" style="color: rgba(224,217,217,0.9);">Постановки</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'group:group_list' %}" style="color: rgba(224,217,217,0.9);">Группы</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'group:group_list' %}" style="color: rgba(224,217,217,0.9);">Встречи</a></li>
             </ul>
             <p class="ms-auto navbar-text actions"> </p>
             <div class="dropdown no-arrow">
@@ -21,7 +21,7 @@
                         <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile
                     </a>
                     {% if request.user.is_superuser %}
-                    <a class="dropdown-item" href="/admin">
+                    <a class="dropdown-item" href="/admin/">
                         <i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Site admin
                     </a>
                     {% endif %}
