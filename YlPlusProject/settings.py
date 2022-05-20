@@ -91,15 +91,12 @@ WSGI_APPLICATION = "YlPlusProject.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',
-        'NAME': 'database',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dproject',
         'USER': environ.get("BD_USER"),
         'PASSWORD': environ.get("BD_PASSWORD"),
-        'HOST': 'jubastik.database.windows.net',
+        'HOST': environ.get("BD_HOST"),
         'PORT': '',
-        'OPTIONS': {
-                'driver': 'ODBC Driver 17 for SQL Server',
-            },
     },
 }
 
