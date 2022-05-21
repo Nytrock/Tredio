@@ -7,13 +7,13 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0001_initial'),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='userprofile',
-            name='rank',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.rank', verbose_name='Ранг'),
+            model_name="userprofile",
+            name="rank",
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="users.rank", verbose_name="Ранг"),
         ),
     ]
