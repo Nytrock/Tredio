@@ -9,8 +9,7 @@ from django.contrib.auth.views import (
     PasswordResetView,
 )
 from django.urls import include, path
-
-from .views import ActorDetailView, ProfileView, SignupView, UserDetailView
+from .views import ActorProfileView, ProfileView, SignupView, UserDetailView
 
 app_name = "users"
 urlpatterns = [
@@ -46,7 +45,7 @@ urlpatterns = [
     ),
     path("profile/", ProfileView.as_view(), name="profile"),
     path("signup/", SignupView.as_view(), name="signup"),
+    path("actors/<int:id>", ActorProfileView.as_view(), name="actor_profile"),
     path("users/<int:id>/", UserDetailView.as_view(), name="users_detail"),
-    path("actors/<int:id>/", ActorDetailView.as_view(), name="actors_detail"),
     path("__debug__/", include("debug_toolbar.urls")),
 ]

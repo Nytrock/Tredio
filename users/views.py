@@ -1,21 +1,44 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
 from core.models import ContactsGroup
+from group.models import Meetup
+from rating.models import Review
+from users.models import ActorProfile, Rank, UserProfile
 
 from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
-from .models import UserProfile
 
 User = get_user_model()
+
+
+class ActorProfileView(TemplateView):
+    template_name = "users/actor_profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        actor_profile_id = kwargs["id"]
+        troupes = list(ActorProfile.actor_profiles.get_troupe_ids(actor_profile_id))
+
+        context["profile"] = get_object_or_404(ActorProfile.common_profiles.get_profile(actor_profile_id))
+        context["theatres"] = ActorProfile.actor_profiles.get_theatres(actor_profile_id, troupes).only(
+            "id", "image", "name", "description"
+        )
+        context["events"] = ActorProfile.actor_profiles.get_events(actor_profile_id, troupes).only(
+            "id", "image", "name", "description"
+        )
+
+        return context
 
 
 class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
         template = "users/profile.html"
-        user = get_object_or_404(User.objects, pk=request.user.id)
+        self.user_id: int = request.user.id
+        user = get_object_or_404(User.objects, pk=self.user_id)
         form_main = ChangeMainProfileForm(
             request.POST or None,
             initial={
@@ -38,6 +61,10 @@ class ProfileView(LoginRequiredMixin, View):
         context = {
             "main_form": form_main,
             "extra_form": form_extra,
+            "profile": get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id)),
+            "user": get_object_or_404(UserProfile.profiles.get_profile(self.user_id)),
+            "meetups": Meetup.meetups.fetch_by_user(user),
+            "reviews": Review.reviews.fetch_by_user(user),
         }
         return render(request, template, context)
 
@@ -74,9 +101,16 @@ class ProfileView(LoginRequiredMixin, View):
 class UserDetailView(TemplateView):
     template_name = "users/user_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile_id = kwargs["id"]
 
-class ActorDetailView(TemplateView):
-    template_name = "users/profile_actor.html"
+        context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(profile_id))
+        context["user"] = get_object_or_404(UserProfile.profiles.get_profile(profile_id))
+        context["meetups"] = UserProfile.profiles.get_meetups(profile_id)
+        context["reviews"] = UserProfile.profiles.get_reviews(profile_id)
+
+        return context
 
 
 class SignupView(FormView):
@@ -86,24 +120,21 @@ class SignupView(FormView):
 
     def form_valid(self, form):
         User = get_user_model()
-        first_name = form.cleaned_data[User.first_name.field.name]
-        last_name = form.cleaned_data[User.last_name.field.name]
+        first_name = form.cleaned_data[UserProfile.first_name.field.name]
+        last_name = form.cleaned_data[UserProfile.last_name.field.name]
         contacts = ContactsGroup.objects.create()
         user = User.objects.create_user(
             username=form.cleaned_data[User.username.field.name],
             password=form.cleaned_data["password2"],
             email=form.cleaned_data[User.email.field.name],
-            first_name=first_name,
-            last_name=last_name,
         )
-        UserProfile.objects.create(
-            user_id=user.id,
+        UserProfile.objects.filter(user=user).update(
             first_name=first_name,
             last_name=last_name,
             birthday=form.cleaned_data["birthday"],
             description=form.cleaned_data["description"],
             experience=0,
-            rank_id=1,
+            rank=Rank.objects.filter(experience_required=0).first(),
             contacts_id=contacts.id,
         )
         return redirect("users:login")

@@ -12,7 +12,7 @@ class RangeValidator(object):
 
     def __call__(self, value):
         try:
-            [validator(value) for validator in validators]
+            [validator(value) for validator in self.validators]
         except ValidationError:
             raise ValidationError(f"{value} должен лежать в диапазоне от {min_value} до {max_value}")
 
