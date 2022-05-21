@@ -1,7 +1,8 @@
 from django.db import models
+from django.db.models import Prefetch
 
 from core.models import ContactsGroup, GalleryBaseModel, ImageBaseModel
-from rating.models import ReviewGroup
+from rating.models import ReviewGroup, ReviewRating
 
 
 class Troupe(models.Model):
@@ -69,7 +70,13 @@ class TheatreQuerySet(models.QuerySet):
     def theatre_ratings(self, id: int):
         return (
             self.filter(id=id)
-            .prefetch_related("reviews__reviews")
+            .prefetch_related(
+                "reviews__reviews",
+                Prefetch("reviews__reviews__ratings", to_attr="like", queryset=ReviewRating.objects.filter(star=True)),
+                Prefetch(
+                    "reviews__reviews__ratings", to_attr="dislike", queryset=ReviewRating.objects.filter(star=False)
+                ),
+            )
             .only("id", "name", "image", "location__query", "description")
         )
 
@@ -119,7 +126,13 @@ class EventQuerySet(models.QuerySet):
     def event_ratings(self, id: int):
         return (
             self.filter(id=id)
-            .prefetch_related("reviews__reviews")
+            .prefetch_related(
+                "reviews__reviews",
+                Prefetch("reviews__reviews__ratings", to_attr="like", queryset=ReviewRating.objects.filter(star=True)),
+                Prefetch(
+                    "reviews__reviews__ratings", to_attr="dislike", queryset=ReviewRating.objects.filter(star=False)
+                ),
+            )
             .only(
                 "id",
                 "name",

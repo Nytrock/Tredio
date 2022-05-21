@@ -1,12 +1,202 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Событие{% endblock %}
 {% block content %}
-    <h1>Информация о событии под номером {{ id }}</h1>
     <section>
-        <div data-bss-parallax-bg="true" style="height: 600px;background-position: center;background-size: cover;">
+        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if event.image %} {{event.image.url}} {% else %} {% static '/img/None400x300.jpg' %} {% endif %} );background-position: center;background-size: cover;">
             <div class="container h-100">
-                <a class="btn btn-outline-primary btn-lg" role="button" href="{% url 'rating:rating_event' id %}">Отзывы</a>
+                <div class="row h-100">
+                    <div class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center">
+                        <div style="max-width: 320px;">
+                            <h1 class="text-uppercase fw-bold text-white">{{ event.name }}</h1>
+                            {% if event.description %}
+                                <p class="my-3 text-white">{{ event.description }}</p>
+                            {% endif %}
+                            <a class="btn btn-primary btn-lg me-2 menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".events">Место проведения</a>
+                            {% if actors %}
+                            <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".actors">Актёры</a>
+                            {% endif %}
+                            <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".ratings">Отзывы</a>
+                            <a class="btn btn-outline-primary btn-lg menu_sub_link menu_linked" role="button" style="margin-top: 9px;" href="{% url 'rating:rating_create' 'event' reviews.id %}">Оставить отзыв</a>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </section>
+    <section>
+        <div class="container py-4 py-xl-5">
+            <div class="text-center text-white-50 bg-primary border rounded border-0 p-3">
+                <div class="row row-cols-2 row-cols-md-2">
+                    <div class="col">
+                        <div class="p-3">
+                            <h4 class="display-5 fw-bold text-white mb-0"><i class="far fa-edit"></i>{{event.reviews_count }}</h4>
+                            <p class="mb-0">Отзывов на данную постановку</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="p-3">
+                            <h4 class="display-5 fw-bold text-white mb-0"><i class="far fa-star"></i>{{ event.reviews_average_score }}</h4>
+                            <p class="mb-0">Средний рейтинг по 5 бальной шкале</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <h2 class="text-center">Место проведения</h2>
+        <div class="container py-5">
+            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                <div class="col mb-5">
+                    {% if event.theatre.image %}
+                        <img class="rounded img-fluid shadow" src="{{ event.theatre.get_image_400x300.url}}">
+                    {% else %}
+                        <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                    {% endif %}
+                </div>
+                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
+                    <div>
+                        <h5 class="fw-bold">{{  event.theatre.name }}</h5>
+                        <p>{{  event.theatre.description }}</p>
+                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{  event.theatre.location.query }}</p>
+                        <a href="{% url 'theatres:theatres_detail' event.theatre.id %}" class="btn btn-primary shadow" type="button">Больше</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if actors %}
+        <div class="hobbies group actors" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
+            <h2 class="text-center">Актёры</h2>
+            <div class="album py-5">
+            <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for actor in actors %}
+            <div class="col">
+                <div class="card shadow sm text-center">
+                    <div class="col mb-5 ">
+                        <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}"></a>
+                    </div>
+                    <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
+                        <div>
+                            <h5 class="fw-bold">{{ actor.profile.first_name }} {{ actor.profile.last_name }}</h5>
+                            {% if actor.profile.description %}
+                                <p>{{ actor.profile.description }}</p>
+                            {% else %}
+                                <p class="text-muted">Описание отсутсвует</p>
+                            {% endif %}
+                            <p class="text-muted mb-4"><i class="fa fa-user"></i>&nbsp;Роль: {{ actor.role }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+            </div>
+            </div>
+        </div>
+        {% endif %}
+        <h2 class="text-center ratings">Отзывы</h2>
+        <div class="album py-5">
+        <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-3 ">
+            {% for review in reviews.reviews.reviews.all %}
+            <div class="card card-inner mx-auto">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="row-md mb-2">
+                            <a href="{% url 'users:users_detail' review.user.id %}">
+                                <img class="border rounded-circle img-profile" src="{% static '/img/None.jpg' %}">
+                                <span class="d-none d-lg-inline me-2 text-gray-600 small">{{ review.user.username }}</span>
+                            </a>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <div class="star-rating mb-3">
+                                    <div class="star-rating__wrap">
+                                        {% if review.star == 5 %}
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                        {% elif review.star == 4 %}
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                        {% elif review.star == 3 %}
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                        {% elif review.star == 2 %}
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                        {% elif review.star == 1 %}
+                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="star-rating__ico fa fa-star fa-lg cool-star"></label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <form class="row-md-9" action="." method="post">
+                            {% csrf_token %}
+                            <p>{{ review.content }}</p>
+                            <input hidden name="id" value="{{ review.id }}">
+                            <p>
+                                {% if review.user_like%}
+                                    <button type="submit" name="like" value="True" class="btn btn-primary">
+                                        <i class="fa fa-thumbs-up" aria-hidden="true"></i> {{ review.like|length }}
+                                    </button>
+                                {% else %}
+                                    <button type="submit" name="like" value="True" class="btn btn-light">
+                                        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> {{ review.like|length }}
+                                    </button>
+                                {% endif %}
+                                {% if review.user_dislike%}
+                                    <button type="submit" name="like" value="False" class="btn btn-danger">
+                                        <i class="fa fa-thumbs-down" aria-hidden="true"></i> {{ review.dislike|length }}
+                                    </button>
+                                {% else %}
+                                    <button type="submit" name="like" value="False" class="btn btn-light">
+                                        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i> {{ review.dislike|length }}
+                                    </button>
+                                {% endif %}
+                           </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        </div>
+        </div>
+        <div class="simple-slider mb-5">
+            <h2 class="text-center">Галерея</h2>
+            {% if event.gallery_images.all %}
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    {% for image in event.gallery_images.all %}
+                        <div class="swiper-slide" style="background: url(&quot;{{ image.get_image_1400x800.url }}&quot;) center center / cover no-repeat;"></div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+            {% else %}
+                <h2 class="text-center">Дополнительных картинок нет.</h2>
+            {% endif %}
         </div>
     </section>
 {% endblock %}

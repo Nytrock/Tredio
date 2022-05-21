@@ -5,6 +5,22 @@
         <form action="." method="post">
             {% csrf_token %}
             <h1 class="h3 mb-3 fw-normal">Создание отзыва</h1>
+            <div class="form-group">
+                <div class="star-rating mb-3">
+                    <div class="star-rating__wrap">
+                        <input required class="star-rating__input" autocomplete="off" id="star-5" type="radio" name="rating" value="5">
+                        <label class="star-rating__ico fa fa-star-o star-size" for="star-5" title="Отлично"></label>
+                        <input  required class="star-rating__input" autocomplete="off" id="star-4" type="radio" name="rating" value="4">
+                        <label class="star-rating__ico fa fa-star-o star-size" for="star-4" title="Хорошо"></label>
+                        <input  required class="star-rating__input" autocomplete="off" id="star-3" type="radio" name="rating" value="3">
+                        <label class="star-rating__ico fa fa-star-o star-size" for="star-3" title="Удовлетворительно"></label>
+                        <input  required class="star-rating__input" autocomplete="off" id="star-2" type="radio" name="rating" value="2">
+                        <label class="star-rating__ico fa fa-star-o star-size" for="star-2" title="Плохо"></label>
+                        <input  required class="star-rating__input" autocomplete="off" id="star-1" type="radio" name="rating" value="1">
+                        <label class="star-rating__ico fa fa-star-o star-size" for="star-1" title="Ужасно"></label>
+                    </div>
+                </div>
+            </div>
             {% include "includes/form-login.html" %}
             {% include "includes/form-errors.html" %}
             <button class="w-100 btn btn-lg btn-primary btn-margin" type="submit">Выложить отзыв</button>

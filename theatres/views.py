@@ -1,8 +1,9 @@
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views import View
 from django.views.generic import FormView, TemplateView
 
 from core.models import Contact, ContactsGroup, ContactType
-from rating.models import ReviewGroup
+from rating.models import ReviewGroup, ReviewRating
 from theatres.forms import ActorForm, EventForm, TheatreForm
 from theatres.models import City, Event, Theatre, Troupe, TroupeMember
 from users.models import ActorProfile
@@ -49,13 +50,40 @@ class EventListView(TemplateView):
         return context
 
 
-class EventDetailView(TemplateView):
-    template_name = "theatres/events_detail.html"
+class EventDetailView(View):
+    def get(self, request, **kwargs):
+        template = "theatres/events_detail.html"
+        context = {
+            "reviews": get_object_or_404(Event.events.event_ratings(kwargs["id"])),
+            "event": get_object_or_404(Event.events.event_details(kwargs["id"])),
+        }
+        context["actors"] = TroupeMember.objects.filter(troupe=context["event"].troupe_id).prefetch_related("profile")
+        self.user = request.user.id
+        for review in context["reviews"].reviews.reviews.all():
+            like = False
+            dislike = False
+            for rat in review.like:
+                if rat.user_id == self.user:
+                    like = True
+            for rat in review.dislike:
+                if rat.user_id == self.user:
+                    dislike = True
+            review.user_like = like
+            review.user_dislike = dislike
+        return render(request, template, context)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["event"] = get_object_or_404(Event.events.event_details(kwargs["id"]))
-        return context
+    def post(self, request, **kwargs):
+        review = ReviewRating.objects.filter(review_id=int(request.POST.get("id")))
+        if review:
+            if review.first().star == (request.POST.get("like") == "True"):
+                review.delete()
+                return redirect("theatres:events_detail", kwargs["id"])
+        ReviewRating.objects.update_or_create(
+            user_id=request.user.id,
+            review_id=int(request.POST.get("id")),
+            defaults={"star": request.POST.get("like") == "True"},
+        )
+        return redirect("theatres:events_detail", kwargs["id"])
 
 
 class ActorCreateView(FormView):

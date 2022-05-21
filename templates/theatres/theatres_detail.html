@@ -9,10 +9,14 @@
                     <div class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center">
                         <div style="max-width: 320px;">
                             <h1 class="text-uppercase fw-bold text-white">{{ theatre.name }}</h1>
-                            <p class="my-3 text-white">{{ theatre.description }}</p>
+                            {% if theatre.description %}
+                                <p class="my-3 text-white">{{ theatre.description }}</p>
+                            {% endif %}
                             <a class="btn btn-primary btn-lg me-2 menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".events">Постановки</a>
                             <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".groups">Группы</a>
+                            {% if actors %}
                             <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".actors">Актёры</a>
+                            {% endif %}
                             <a class="btn btn-outline-primary btn-lg" style="margin-top: 9px;" role="button" href="{% url 'rating:rating_theatre' id %}">Отзывы</a>
                         </div>
                     </div>
@@ -70,8 +74,7 @@
                             {% else %}
                                 <p class="text-muted">Описание отсутсвует</p>
                             {% endif %}
-                            <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}
-                            <br><i class="fas fa-university" style="padding-right: 4px;"></i>{{ event.theatre }}</p>
+                            <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}</p>
                             <a href="{% url 'theatres:events_detail' event.id %}" class="btn btn-primary shadow" type="button">Больше</a>
                         </div>
                     </div>
@@ -161,7 +164,7 @@
                 <div class="swiper-button-next"></div>
             </div>
             {% else %}
-                <h2 class="text-center">Дополнительных картинок нет</h2>
+                <h2 class="text-center">Дополнительных картинок нет.</h2>
             {% endif %}
         </div>
     </section>

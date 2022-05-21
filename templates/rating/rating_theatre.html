@@ -1,12 +1,106 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Отзывы на театр{% endblock %}
 {% block content %}
-    <h1>Отзывы на театр под номером {{ id }}</h1>
     <section>
-        <div data-bss-parallax-bg="true" style="height: 600px;background-position: center;background-size: cover;">
+        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if reviews.image %}{{reviews.image.url}} {% else %} {% static '/img/None400x300.jpg' %} {% endif %});background-position: center;background-size: cover;">
             <div class="container h-100">
-                <a class="btn btn-outline-primary btn-lg" role="button" href="{% url 'rating:rating_create' 'theatre' id %}">Оставить отзыв</a>
+                <div class="row h-100">
+                    <div class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center">
+                        <div style="max-width: 620px;">
+                            <h1 class="text-uppercase fw-bold text-white">Отзывы на {{ reviews.name }}</h1>
+                            <a class="btn btn-outline-primary btn-lg menu_sub_link menu_linked" role="button" href="{% url 'theatres:theatres_detail' reviews.id %}">Назад</a>
+                            <a class="btn btn-primary btn-lg menu_sub_link menu_linked" role="button" href="{% url 'rating:rating_create' 'theatre' reviews.id %}">Оставить отзыв</a>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </section>
+    <section>
+        <div class="album py-5">
+        <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-3 ">
+            {% for review in reviews.reviews.reviews.all %}
+            <div class="card card-inner mx-auto">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="row-md mb-2">
+                            <a href="{% url 'users:users_detail' review.user.id %}">
+                                <img class="border rounded-circle img-profile" src="{% static '/img/None.jpg' %}">
+                                <span class="d-none d-lg-inline me-2 text-gray-600 small">{{ review.user.username }}</span>
+                            </a>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <div class="star-rating mb-3">
+                                    <div class="star-rating__wrap">
+                                        {% if review.star == 5 %}
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                        {% elif review.star == 4 %}
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                        {% elif review.star == 3 %}
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                        {% elif review.star == 2 %}
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                            <label class="fa fa-star fa-lg cool-star"></label>
+                                        {% elif review.star == 1 %}
+                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                            <label class="star-rating__ico fa fa-star fa-lg cool-star"></label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <form class="row-md-9" action="." method="post">
+                            {% csrf_token %}
+                            <p>{{ review.content }}</p>
+                            <input hidden name="id" value="{{ review.id }}">
+                            <p>
+                                {% if review.user_like%}
+                                    <button type="submit" name="like" value="True" class="btn btn-primary">
+                                        <i class="fa fa-thumbs-up" aria-hidden="true"></i> {{ review.like|length }}
+                                    </button>
+                                {% else %}
+                                    <button type="submit" name="like" value="True" class="btn btn-light">
+                                        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> {{ review.like|length }}
+                                    </button>
+                                {% endif %}
+                                {% if review.user_dislike%}
+                                    <button type="submit" name="like" value="False" class="btn btn-danger">
+                                        <i class="fa fa-thumbs-down" aria-hidden="true"></i> {{ review.dislike|length }}
+                                    </button>
+                                {% else %}
+                                    <button type="submit" name="like" value="False" class="btn btn-light">
+                                        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i> {{ review.dislike|length }}
+                                    </button>
+                                {% endif %}
+                           </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        </div>
         </div>
     </section>
 {% endblock %}
