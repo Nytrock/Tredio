@@ -38,7 +38,7 @@ class GroupCreateView(TemplateView):
     def post(self, request):
         form = MeetupForm(request.POST)
         if form.data[Meetup.participants_limit.field.name] != "":
-            Meetup.objects.create(
+            meetup = Meetup.objects.create(
                 event_id=form.data[Meetup.event.field.name],
                 start=form.data[Meetup.start.field.name],
                 participants_limit=form.data[Meetup.participants_limit.field.name],
@@ -46,10 +46,10 @@ class GroupCreateView(TemplateView):
                 host_id=request.user.id,
             )
         else:
-            Meetup.objects.create(
+            meetup = Meetup.objects.create(
                 event_id=form.data[Meetup.event.field.name],
                 start=form.data[Meetup.start.field.name],
                 description=form.data[Meetup.description.field.name],
                 host_id=request.user.id,
             )
-        return redirect("group:group_list")
+        return redirect("group:group_detail", meetup.id)

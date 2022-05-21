@@ -38,8 +38,9 @@
                             {% if event.description %}
                                 <p>{{ event.description }}</p>
                             {% endif %}
-                            <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}</p>
-                            <a href="{% url 'theatres:events_detail' 1 %}" class="btn btn-primary shadow" type="button">Больше</a>
+                            <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}
+                            <br><i class="fas fa-university" style="padding-right: 4px;"></i>{{ event.theatre }}</p>
+                            <a href="{% url 'theatres:events_detail' event.id %}" class="btn btn-primary shadow" type="button">Больше</a>
                         </div>
                     </div>
                 </div>

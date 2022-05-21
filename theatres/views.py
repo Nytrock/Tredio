@@ -24,6 +24,7 @@ class TheatresDetailView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["theatre"] = get_object_or_404(Theatre.theatres.theatre_details(kwargs["id"]))
+        context["actors"] = TroupeMember.objects.filter(troupe=context["theatre"].troupe_id).prefetch_related("profile")
         return context
 
 
@@ -55,10 +56,6 @@ class EventDetailView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["event"] = get_object_or_404(Event.events.event_details(kwargs["id"]))
         return context
-
-
-class ActorListView(TemplateView):
-    template_name = "theatres/actors_list.html"
 
 
 class ActorCreateView(FormView):

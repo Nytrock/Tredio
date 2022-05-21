@@ -2,7 +2,6 @@ from django.urls import include, path
 
 from .views import (
     ActorCreateView,
-    ActorListView,
     EventCreateView,
     EventDetailView,
     EventListView,
@@ -19,7 +18,6 @@ urlpatterns = [
     path("events/", EventListView.as_view(), name="events_list"),
     path("events/<int:id>/", EventDetailView.as_view(), name="events_detail"),
     path("events/create/", EventCreateView.as_view(), name="events_create"),
-    path("actors/<str:type>/<int:id>/", ActorListView.as_view(), name="actors_list"),
     path("actors/create/", ActorCreateView.as_view(), name="actors_create"),
     path("__debug__/", include("debug_toolbar.urls")),
 ]

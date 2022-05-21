@@ -18,9 +18,9 @@
                         </div>
                         <div class="card-body">
                             <h4 class="small">Получай опыт за активность на сайте (пиши отзывы, организуй группы и т.д.), получай новые ранги и попробуй достигнуть максимума!</h4>
-                            <h4 class="small fw-bold rank-h1">{{profile.rank.name}}<br><span class="float-end num_exp">{{ profile.experience }}/{{ profile.rank.experience_required }}</span></h4>
+                            <h4 class="small fw-bold rank-h1">{{profile.rank.name}}<br><span class="float-end num_exp">{{ profile.experience }}/{{ next_rank.experience_required }}</span></h4>
                             <div class="progress progress-sm mb-3">
-                                <div class="progress-bar bg-success" aria-valuenow="{{ profile.experience }}" aria-valuemin="0" aria-valuemax="{{ profile.rank.experience_required }}" style="width: {{ percent }}%;"></div>
+                                <div class="progress-bar bg-success" aria-valuenow="{{ profile.experience }}" aria-valuemin="0" aria-valuemax="{{ next_rank.experience_required }}" style="width: {{ percent }}%;"></div>
                             </div>
                         </div>
                     </div>
@@ -30,12 +30,16 @@
                         {% for meetup in meetups_host %}
                             <div class="col">
                                 <a href="{% url 'group:group_detail' meetup.id %}">
-                                <div class="card textwhite bg-primary text-white shadow">
+                                <div class="card textwhite bg-success text-white shadow">
                                     <div class="card-body">
                                         <div class="row mb-2">
                                             <div class="col">
                                                 <p class="m-0"><strong>Встреча на постановке "{{ meetup.event }}"</strong></p>
-                                                <p class="m-0">{{ meetup.description }}</p>
+                                                {% if meetup.description %}
+                                                    <p class="m-0">{{ meetup.description }}</p>
+                                                {% else %}
+                                                    <p class="m-0">Описание отсутствует</p>
+                                                {% endif %}
                                             </div>
                                             <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
                                         </div>
@@ -53,12 +57,16 @@
                                     <div class="card-body">
                                         <div class="row mb-2">
                                             <div class="col">
-                                                <p class="m-0"><strong>Встреча на постановке "{{ meetup.event }}"</strong></p>
-                                                <p class="m-0">{{ meetup.description }}</p>
+                                                <p class="m-0"><strong>Встреча на постановке "{{ meetup.meetup.event }}"</strong></p>
+                                                {% if meetup.meetup.description %}
+                                                    <p class="m-0">{{ meetup.meetup.description }}</p>
+                                                {% else %}
+                                                    <p class="m-0">Описание отсутствует</p>
+                                                {% endif %}
                                             </div>
                                             <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
                                         </div>
-                                        <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.start }}</p>
+                                        <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.meetup.start }}</p>
                                         <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Роль: участник</p>
                                     </div>
                                 </div>
@@ -119,6 +127,8 @@
                                                 <label class="form-label"><strong>{{ contact.type }}</strong><br></label>
                                                 <input class="form-control" name="{{ contact.type }}" type="text" id="{{ contact.type }}" value="{{ contact.value }}" placeholder="Введите значение" name="сontacts">
                                             </div>
+                                        {% empty %}
+                                            <p class="small">Контакты отсутствуют.</p>
                                         {% endfor %}
                                     </div>
                                         <div class="mb-3">

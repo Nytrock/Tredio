@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
 from core.models import Contact, ContactsGroup, ContactType
 from group.models import Meetup, MeetupParticipant
-from users.models import ActorProfile, UserProfile
+from rating.models import Review
+from users.models import ActorProfile, Rank, UserProfile
 
 from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
 
@@ -53,12 +53,17 @@ class ProfileView(LoginRequiredMixin, View):
             "extra_form": form_extra,
             "profile": get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id)),
             "user": get_object_or_404(UserProfile.profiles.get_profile(self.user_id)),
-            "meetups_participant": MeetupParticipant.objects.filter(user_id=self.user_id).prefetch_related("event"),
-            "meetups_host": Meetup.objects.filter(host_id=self.user_id).prefetch_related("event"),
-            "reviews": UserProfile.profiles.get_reviews(self.user_id),
+            "meetups_host": Meetup.meetups.fetch_by_user(user),
+            "meetups_participant": MeetupParticipant.meetups.fetch_by_user(user),
+            "reviews": Review.reviews.fetch_by_user(user),
             "contacts": ContactType.objects.all(),
         }
-        context["percent"] = int(context["profile"].experience / context["profile"].rank.experience_required * 100)
+        context["next_rank"] = (
+            Rank.objects.order_by("-experience_required")
+            .filter(experience_required__gte=context["profile"].experience)
+            .first()
+        )
+        context["percent"] = int(context["profile"].experience / context["next_rank"].experience_required * 100)
         context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
         return render(request, template, context)
 
@@ -120,11 +125,14 @@ class UserDetailView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        profile_id = kwargs["id"]
 
         context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(profile_id))
-        context["user"] = get_object_or_404(UserProfile.profiles.get_profile(profile_id))
-        context["meetups"] = UserProfile.profiles.get_meetups(profile_id)
-        context["reviews"] = UserProfile.profiles.get_reviews(profile_id)
+        user = get_object_or_404(User.objects, pk=context["profile"].user_id)
+        context["user"] = get_object_or_404(User.objects, pk=user.id)
+        context["meetups_participant"] = MeetupParticipant.meetups.fetch_by_user(user)
+        context["meetups_host"] = Meetup.meetups.fetch_by_user(user)
+        context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
 
         return context
 

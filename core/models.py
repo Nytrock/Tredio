@@ -51,6 +51,9 @@ class ImageBaseModel(models.Model):
     def get_image_400x300(self):
         return get_thumbnail(self.image, "400x300", crop="center", quality=51)
 
+    def get_image_1400x800(self):
+        return get_thumbnail(self.image, "1400x800", crop="center", quality=51)
+
     def image_tmb(self):
         if self.image:
             return mark_safe(f"<img src='{self.image.url}' width='50'/>")

@@ -39,6 +39,9 @@ class MeetupQuerySet(models.QuerySet):
             .annotate(participants_count=models.Count("participants"))
         )
 
+    def fetch_by_user(self, user: User):
+        return self.filter(host=user)
+
 
 class Meetup(models.Model):
     host = models.ForeignKey(User, verbose_name="Организатор", on_delete=models.CASCADE, related_name="meetups")
@@ -57,9 +60,17 @@ class Meetup(models.Model):
         verbose_name_plural = "Встречи"
 
 
+class MeetupParticipantQuerySet(models.QuerySet):
+    def fetch_by_user(self, user: User):
+        return self.filter(user=user)
+
+
 class MeetupParticipant(models.Model):
     meetup = models.ForeignKey(Meetup, verbose_name="Встреча", related_name="participants", on_delete=models.CASCADE)
     user = models.ForeignKey(User, verbose_name="Участник", on_delete=models.CASCADE)
+
+    objects = models.Manager()
+    meetups = MeetupParticipantQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Участник встречи"

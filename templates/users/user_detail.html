@@ -1,5 +1,141 @@
 {% extends "base.html" %}
 {% block title %}Другой пользователь{% endblock %}
+{% load static %}
 {% block content %}
-    <h1>Информация о другом пользователе</h1>
+    <section>
+        <div class="container-fluid">
+            <h3 class="text-center text-dark mb-4" style="padding-top: 26px;">Профиль другого пользователя</h3>
+            <div class="row mb-3">
+                <div class="col-lg-4">
+                    <div class="card shadow block-profile-img mb-3">
+                        <div class="card-body text-center shadow"><img class="rounded-circle mb-3 mt-4" src="{% static '/img/None.jpg' %}" width="160" height="160">
+                            <h3 class="text-center text-dark mb-3">{{ user.username }}</h3>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <p class="text-primary m-0 fw-bold">Контакты</p>
+                            </div>
+                            <div class="card-body">
+                                <div id="contact-container">
+                                    {% for contact in profile_contacts %}
+                                        <div class="mb-3">
+                                            <label class="form-label"><strong>{{ contact.type }}</strong><br></label>
+                                            <input readonly class="form-control" name="{{ contact.type }}" type="text" id="{{ contact.type }}" value="{{ contact.value }}" placeholder="Введите значение" name="сontacts">
+                                        </div>
+                                    {% empty %}
+                                        <p class="text-muted"> Контакты отсутствуют</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="row mb-3">
+                        {% for meetup in meetups_host %}
+                            <div class="col">
+                                <a href="{% url 'group:group_detail' meetup.id %}">
+                                <div class="card textwhite bg-success text-white shadow">
+                                    <div class="card-body">
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                <p class="m-0"><strong>Встреча на постановке "{{ meetup.event }}"</strong></p>
+                                                <p class="m-0">{{ meetup.description }}</p>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
+                                        </div>
+                                        <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.start }}</p>
+                                        <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Роль: лидер</p>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                        {% for meetup in meetups_participant %}
+                            <div class="col">
+                                <a href="{% url 'group:group_detail' meetup.id %}">
+                                <div class="card textwhite bg-primary text-white shadow">
+                                    <div class="card-body">
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                <p class="m-0"><strong>Встреча на постановке "{{ meetup.event }}"</strong></p>
+                                                <p class="m-0">{{ meetup.description }}</p>
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
+                                        </div>
+                                        <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.start }}</p>
+                                        <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Роль: участник</p>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card shadow mb-3">
+                                <div class="card-header py-3">
+                                    <p class="text-primary m-0 fw-bold">Информация о пользователе</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="{{ main_form.username.id_for_label }}"><strong>Имя пользователя</strong></label>
+                                                <input readonly class="form-control" required type="text" id="{{ main_form.username.id_for_label }}" placeholder="Отсутствует" name="{{ main_form.username.html_name }}" value="{{ user.username }}">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="{{ main_form.email.id_for_label }}"><strong>Почта</strong></label>
+                                                <input readonly class="form-control" required type="email" id="{{ main_form.email.id_for_label }}" placeholder="Отсутствует" name="{{ main_form.email.html_name }}" value="{{ user.email }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="{{ main_form.first_name.id_for_label }}"><strong>Имя</strong></label>
+                                                <input readonly class="form-control" type="text" id="{{ main_form.first_name.id_for_label }}" placeholder="Отсутствует" name="{{ main_form.first_name.html_name }}" value="{{ user.first_name }}">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="{{ main_form.last_name.id_for_label }}"><strong>Фамилия</strong></label>
+                                                <input readonly class="form-control" type="text" id="{{ main_form.last_name.id_for_label }}" placeholder="Отсутствует" name="{{ main_form.last_name.html_name }}" value="{{ user.last_name }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label"><strong>Ранг</strong></label>
+                                                <input readonly class="form-control" type="text" name="{{ extra_form.birthday.html_name }}" value="{{profile.rank.name}}">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="{{ extra_form.birthday.label }}"><strong>День рождения</strong></label>
+                                                <input readonly class="form-control" type="date" id="{{ extra_form.birthday.label }}" name="{{ extra_form.birthday.html_name }}" value="{{ profile.birthday|date:'Y-m-d' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="{{ extra_form.description.label }}"><strong>Описание</strong><br></label>
+                                                <textarea readonly placeholder="Введите описание" class="form-control" id="{{ extra_form.description.label }}" rows="4" name="{{ extra_form.description.html_name }}">{{ profile.description}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

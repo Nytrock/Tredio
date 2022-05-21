@@ -57,7 +57,7 @@ class TheatreQuerySet(models.QuerySet):
     def theatre_details(self, id: int):
         return (
             self.filter(id=id)
-            .prefetch_related("gallery_images", "reviews__reviews", "events", "events__meetups")
+            .prefetch_related("gallery_images", "reviews__reviews", "events__meetups", "events__meetups__host")
             .only("name", "description")
             .annotate(
                 reviews_count=models.Count("reviews__reviews"),

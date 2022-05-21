@@ -26,3 +26,38 @@ $("#AddContactProfile").click(function () {
     $klon.children("#contact-text").attr("name", "contact-text" + num_actors).prop("required", true);
     $klon.appendTo("#contact-container");
 });
+
+const menuLinks = document.querySelectorAll('.menu_linked[data-goto]');
+if (menuLinks.length > 0){
+	menuLinks.forEach(menuLink => {
+		menuLink.addEventListener("click", onMenuLinkClick);
+	});
+
+	function onMenuLinkClick(e){
+		const menuLink = e.target;
+		if (menuLink.dataset.goto && document.querySelector(menuLink.dataset.goto)){
+			const gotoBlock = document.querySelector(menuLink.dataset.goto);
+			const gotoBlockValue = gotoBlock.getBoundingClientRect().top + pageYOffset;
+
+			window.scrollTo({
+				top: gotoBlockValue,
+				behavior: "smooth"
+			});
+			const iconMenu = document.querySelector('.menu_icon');
+			const menuBody = document.querySelector('.menu_body');
+			iconMenu.classList.toggle('_active');
+			menuBody.classList.toggle('_active');
+			if (isMobile.any()){
+				let menuArrows = document.querySelectorAll('.menu_link');
+				if (menuArrows.length > 0){
+					for (let index = 0; index < menuArrows.length; index++){
+						const menuArrow = menuArrows[index];
+						menuArrow.parentElement.classList.remove("_active");
+					}
+				}
+			}
+
+			e.preventDefault();
+		}
+	}
+}
