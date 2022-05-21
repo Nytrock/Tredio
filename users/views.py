@@ -6,6 +6,8 @@ from django.views import View
 from django.views.generic import FormView, TemplateView
 
 from core.models import ContactsGroup
+from group.models import Meetup
+from rating.models import Review
 from users.models import ActorProfile, UserProfile
 
 from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
@@ -61,8 +63,8 @@ class ProfileView(LoginRequiredMixin, View):
             "extra_form": form_extra,
             "profile": get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id)),
             "user": get_object_or_404(UserProfile.profiles.get_profile(self.user_id)),
-            "meetups": UserProfile.profiles.get_meetups(self.user_id),
-            "reviews": UserProfile.profiles.get_reviews(self.user_id),
+            "meetups": Meetup.meetups.fetch_by_user(user),
+            "reviews": Review.reviews.fetch_by_user(user),
         }
         return render(request, template, context)
 

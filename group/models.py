@@ -39,6 +39,9 @@ class MeetupQuerySet(models.QuerySet):
             .annotate(participants_count=models.Count("participants"))
         )
 
+    def fetch_by_user(self, user: User):
+        return self.filter(host=user)
+
 
 class Meetup(models.Model):
     host = models.ForeignKey(User, verbose_name="Организатор", on_delete=models.CASCADE, related_name="meetups")

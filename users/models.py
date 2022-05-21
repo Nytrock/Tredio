@@ -95,12 +95,6 @@ class UserProfileQuerySet(models.QuerySet):
         PRIVATE_FIELDS = ["experience"]
         return self.filter(id=id).only(*(PUBLIC_FIELDS + PRIVATE_FIELDS if private else PUBLIC_FIELDS))
 
-    def get_meetups(self, id: int):
-        return self.filter(id=id).prefetch_related("meetups").only()
-
-    def get_reviews(self, id: int):
-        return self.filter(id=id).prefetch_related("reviews").only()
-
 
 class UserProfile(CommonProfile):
     user = models.OneToOneField(
