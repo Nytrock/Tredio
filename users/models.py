@@ -80,9 +80,20 @@ class ActorProfile(CommonProfile):
         return self.first_name + " " + self.last_name
 
 
+class RankQuerySet(models.QuerySet):
+    def get_rank(self, experience: int):
+        return self.filter(experience_required__lte=experience).order_by("-experience_required").first()
+
+    def get_next_rank(self, experience: int):
+        return self.filter(experience_required__gt=experience).order_by("experience_required").first()
+
+
 class Rank(models.Model):
     name = models.CharField("Название", max_length=100)
     experience_required = models.IntegerField("Необходимый опыт")
+
+    objects = models.Manager()
+    ranks = RankQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Ранг"
@@ -116,3 +127,9 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
     instance.user_profile.save()
+
+
+def update_rank(sender, instance, **kwargs):
+    new_rank = Rank.ranks.get_rank(instance.experience)
+    if instance.rank != new_rank:
+        instance.rank = new_rank
