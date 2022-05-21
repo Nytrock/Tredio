@@ -25,6 +25,11 @@ class ReviewCategory(models.Model):
         return self.name
 
 
+class ReviewQuerySet(models.QuerySet):
+    def fetch_by_user(self, user: User):
+        return self.filter(user=user)
+
+
 class Review(models.Model):
     review_group_id = models.ForeignKey(
         ReviewGroup, related_name="reviews", verbose_name="Группа отзывов", on_delete=models.CASCADE
@@ -33,6 +38,9 @@ class Review(models.Model):
     category = models.ForeignKey(ReviewCategory, verbose_name="Категория", on_delete=models.CASCADE)
     star = models.IntegerField("Оценка", validators=[RangeValidator(1, 5)])
     content = models.CharField("Содержание", max_length=2500, null=True, blank=True)
+
+    objects = models.Manager()
+    reviews = ReviewQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Отзыв"
