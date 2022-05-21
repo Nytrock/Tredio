@@ -82,7 +82,7 @@ class ActorProfile(CommonProfile):
 
 class Rank(models.Model):
     name = models.CharField("Название", max_length=100)
-    experience_required = models.CharField("Необходимый опыт", max_length=100)
+    experience_required = models.IntegerField("Необходимый опыт")
 
     class Meta:
         verbose_name = "Ранг"
@@ -100,7 +100,7 @@ class UserProfile(CommonProfile):
     user = models.OneToOneField(
         User, verbose_name="Пользователь", on_delete=models.CASCADE, related_name="user_profile"
     )
-    rank = models.ForeignKey(Rank, verbose_name="Ранг", on_delete=models.RESTRICT)
+    rank = models.ForeignKey(Rank, verbose_name="Ранг", on_delete=models.RESTRICT, null=True, blank=True)
     experience = models.IntegerField("Опыт", default=0)
 
     objects = models.Manager()

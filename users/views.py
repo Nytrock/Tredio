@@ -8,7 +8,7 @@ from django.views.generic import FormView, TemplateView
 from core.models import ContactsGroup
 from group.models import Meetup
 from rating.models import Review
-from users.models import ActorProfile, UserProfile
+from users.models import ActorProfile, Rank, UserProfile
 
 from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
 
@@ -120,24 +120,21 @@ class SignupView(FormView):
 
     def form_valid(self, form):
         User = get_user_model()
-        first_name = form.cleaned_data[User.first_name.field.name]
-        last_name = form.cleaned_data[User.last_name.field.name]
+        first_name = form.cleaned_data[UserProfile.first_name.field.name]
+        last_name = form.cleaned_data[UserProfile.last_name.field.name]
         contacts = ContactsGroup.objects.create()
         user = User.objects.create_user(
             username=form.cleaned_data[User.username.field.name],
             password=form.cleaned_data["password2"],
             email=form.cleaned_data[User.email.field.name],
-            first_name=first_name,
-            last_name=last_name,
         )
-        UserProfile.objects.create(
-            user_id=user.id,
+        UserProfile.objects.filter(user=user).update(
             first_name=first_name,
             last_name=last_name,
             birthday=form.cleaned_data["birthday"],
             description=form.cleaned_data["description"],
             experience=0,
-            rank_id=1,
+            rank=Rank.objects.filter(experience_required=0).first(),
             contacts_id=contacts.id,
         )
         return redirect("users:login")
