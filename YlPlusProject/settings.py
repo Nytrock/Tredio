@@ -108,9 +108,7 @@ elif environ.get("DJANGO_DATABASE_ENGINE") == "postgresql":
         }
     }
 else:
-    raise ValueError(
-        f"Invalid database engine: {environ.get('DJANGO_DATABASE_ENGINE')}"
-    )
+    raise ValueError(f"Invalid database engine: {environ.get('DJANGO_DATABASE_ENGINE')}")
 
 # Connecting to sqlite. Do not send to the master, the server will crash!!!
 
