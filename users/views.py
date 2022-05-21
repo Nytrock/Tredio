@@ -8,7 +8,7 @@ from django.views.generic import FormView, TemplateView
 from core.models import ContactsGroup
 from group.models import Meetup
 from rating.models import Review
-from users.models import ActorProfile, UserProfile
+from users.models import ActorProfile, Rank, UserProfile
 
 from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
 
@@ -135,7 +135,7 @@ class SignupView(FormView):
             birthday=form.cleaned_data["birthday"],
             description=form.cleaned_data["description"],
             experience=0,
-            rank_id=1,
+            rank=Rank.objects.filter(experience_required=0).first(),
             contacts_id=contacts.id,
         )
         return redirect("users:login")

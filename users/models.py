@@ -82,7 +82,7 @@ class ActorProfile(CommonProfile):
 
 class Rank(models.Model):
     name = models.CharField("Название", max_length=100)
-    experience_required = models.CharField("Необходимый опыт", max_length=100)
+    experience_required = models.IntegerField("Необходимый опыт")
 
     class Meta:
         verbose_name = "Ранг"
