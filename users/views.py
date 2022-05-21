@@ -120,15 +120,13 @@ class SignupView(FormView):
 
     def form_valid(self, form):
         User = get_user_model()
-        first_name = form.cleaned_data[User.first_name.field.name]
-        last_name = form.cleaned_data[User.last_name.field.name]
+        first_name = form.cleaned_data[UserProfile.first_name.field.name]
+        last_name = form.cleaned_data[UserProfile.last_name.field.name]
         contacts = ContactsGroup.objects.create()
         user = User.objects.create_user(
             username=form.cleaned_data[User.username.field.name],
             password=form.cleaned_data["password2"],
             email=form.cleaned_data[User.email.field.name],
-            first_name=first_name,
-            last_name=last_name,
         )
         UserProfile.objects.create(
             user_id=user.id,
