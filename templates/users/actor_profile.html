@@ -1,5 +1,144 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Профиль{% endblock %}
 {% block content %}
-    <h1>Профиль актера</h1>
+    <section>
+        <div class="container-fluid">
+            <h3 class="text-center text-dark mb-4" style="padding-top: 26px;">Профиль другого пользователя</h3>
+            <div class="row mb-3">
+                <div class="col-lg-4">
+                    <div class="card shadow block-profile-img mb-3">
+                        <div class="card-body text-center shadow"><img class="rounded-circle mb-3 mt-4" src="{% static '/img/None.jpg' %}" width="160" height="160">
+                            <h3 class="text-center text-dark mb-3">{{ profile.first_name }} {{ profile.last_name }}</h3>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <p class="text-primary m-0 fw-bold">Контакты</p>
+                            </div>
+                            <div class="card-body">
+                                <div id="contact-container">
+                                    {% for contact in profile_contacts %}
+                                        <div class="mb-3">
+                                            <label class="form-label"><strong>{{ contact.type }}</strong><br></label>
+                                            <input readonly class="form-control" name="{{ contact.type }}" type="text" id="{{ contact.type }}" value="{{ contact.value }}" placeholder="Введите значение" name="сontacts">
+                                        </div>
+                                    {% empty %}
+                                        <p class="text-muted"> Контакты отсутствуют</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card shadow mb-3">
+                                <div class="card-header py-3">
+                                    <p class="text-primary m-0 fw-bold">Информация о пользователе</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="{{ main_form.first_name.id_for_label }}"><strong>Имя, фамилия</strong></label>
+                                                <input readonly class="form-control" type="text" id="{{ main_form.first_name.id_for_label }}" placeholder="Отсутствует" name="{{ main_form.first_name.html_name }}" value="{{ profile.first_name }} {{ profile.last_name }}">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="{{ extra_form.birthday.label }}"><strong>День рождения</strong></label>
+                                                <input readonly class="form-control" type="date" id="{{ extra_form.birthday.label }}" name="{{ extra_form.birthday.html_name }}" value="{{ profile.birthday|date:'Y-m-d' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="{{ extra_form.description.label }}"><strong>Описание</strong><br></label>
+                                                <textarea readonly placeholder="Введите описание" class="form-control" id="{{ extra_form.description.label }}" rows="4" name="{{ extra_form.description.html_name }}">{{ profile.description}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h2 class="text-center">Постановки, в которых участвует актёр</h2>
+        <div class="album py-5">
+        <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for event in events %}
+        <div class="col">
+            <div class="card shadow sm text-center">
+                <div class="col mb-5 ">
+                    {% if event.image %}
+                        <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
+                    {% else %}
+                        <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                    {% endif %}
+                </div>
+                <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
+                    <div>
+                        <h5 class="fw-bold">{{ event.name }}</h5>
+                        {% if event.description %}
+                            <p>{{ event.description | truncatewords:10 }}</p>
+                        {% else %}
+                            <p class="text-muted">Описание отсутсвует</p>
+                        {% endif %}
+                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}<br>
+                        <i class="fas fa-user" style="padding-right: 8px;"></i>Роль: {{ event.role }}</p>
+                        <a href="{% url 'theatres:events_detail' event.id %}" class="btn btn-primary shadow" type="button">Больше</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <h4 class="text-center">Постановок нет.</h4>
+        {% endfor %}
+        </div>
+        </div>
+        </div>
+
+        <h2 class="text-center">Театры, в которых работает актёр</h2>
+        <div class="album py-5">
+        <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for event in theatres %}
+        <div class="col">
+            <div class="card shadow sm text-center">
+                <div class="col mb-5 ">
+                    {% if event.image %}
+                        <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
+                    {% else %}
+                        <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                    {% endif %}
+                </div>
+                <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
+                    <div>
+                        <h5 class="fw-bold">{{ event.name }}</h5>
+                        {% if event.description %}
+                            <p>{{ event.description | truncatewords:10 }}</p>
+                        {% else %}
+                            <p class="text-muted">Описание отсутсвует</p>
+                        {% endif %}
+                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.location.query }}<br>
+                        <i class="fas fa-user" style="padding-right: 8px;"></i>Роль: {{ event.role }}</p>
+                        <a href="{% url 'theatres:theatres_detail' event.id %}" class="btn btn-primary shadow" type="button">Больше</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <h4 class="text-center">Постановок нет.</h4>
+        {% endfor %}
+        </div>
+        </div>
+        </div>
+    </section>
 {% endblock %}

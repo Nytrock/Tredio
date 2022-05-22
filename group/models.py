@@ -23,7 +23,7 @@ class MeetupQuerySet(models.QuerySet):
     def meetup_details(self, meetup_id: int):
         return (
             self.filter(id=meetup_id)
-            .prefetch_related("event__troupe__members", "participants__user")
+            .prefetch_related("event__troupe__members", "participants__user", "participants__user__userprofile")
             .only(
                 "event__theatre__id",
                 "event__theatre__name",
@@ -60,9 +60,17 @@ class Meetup(models.Model):
         verbose_name_plural = "Встречи"
 
 
+class MeetupParticipantQuerySet(models.QuerySet):
+    def fetch_by_user(self, user: User):
+        return self.filter(user=user)
+
+
 class MeetupParticipant(models.Model):
     meetup = models.ForeignKey(Meetup, verbose_name="Встреча", related_name="participants", on_delete=models.CASCADE)
     user = models.ForeignKey(User, verbose_name="Участник", on_delete=models.CASCADE)
+
+    objects = models.Manager()
+    meetups = MeetupParticipantQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Участник встречи"

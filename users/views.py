@@ -1,12 +1,11 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
-from core.models import ContactsGroup
-from group.models import Meetup
+from core.models import Contact, ContactsGroup, ContactType
+from group.models import Meetup, MeetupParticipant
 from rating.models import Review
 from theatres.models import TroupeMember
 from users.models import ActorProfile, Rank, UserProfile
@@ -26,11 +25,20 @@ class ActorProfileView(TemplateView):
 
         context["profile"] = get_object_or_404(ActorProfile.common_profiles.get_profile(actor_profile_id))
         context["theatres"] = ActorProfile.actor_profiles.get_theatres(actor_profile_id, troupes).only(
-            "id", "image", "name", "description"
+            "id", "image", "name", "description", "troupe"
         )
         context["events"] = ActorProfile.actor_profiles.get_events(actor_profile_id, troupes).only(
-            "id", "image", "name", "description"
+            "id", "image", "name", "description", "troupe"
         )
+        for event in context["events"]:
+            troupe_member = TroupeMember.objects.filter(troupe_id=event.troupe.pk, profile_id=actor_profile_id).first()
+            event.role = troupe_member.role
+        for theatre in context["theatres"]:
+            troupe_member = TroupeMember.objects.filter(
+                troupe_id=theatre.troupe.pk, profile_id=actor_profile_id
+            ).first()
+            theatre.role = troupe_member.role
+        context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
 
         return context
 
@@ -43,30 +51,30 @@ class ProfileView(LoginRequiredMixin, View):
         form_main = ChangeMainProfileForm(
             request.POST or None,
             initial={
-                User.first_name.field.name: user.first_name,
-                User.last_name.field.name: user.last_name,
                 User.email.field.name: user.email,
-                "username": user.username,
+                User.username.field.name: user.username,
             },
         )
 
-        profile = UserProfile.objects.filter(user=user.id).first()
-        form_extra = ChangeExtraProfileForm(
-            request.POST or None,
-            initial={
-                UserProfile.birthday.field.name: profile.birthday,
-                UserProfile.description.field.name: profile.description,
-            },
-        )
+        form_extra = ChangeExtraProfileForm(request.POST or None)
 
         context = {
             "main_form": form_main,
             "extra_form": form_extra,
             "profile": get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id)),
             "user": get_object_or_404(UserProfile.profiles.get_profile(self.user_id)),
-            "meetups": Meetup.meetups.fetch_by_user(user),
+            "meetups_host": Meetup.meetups.fetch_by_user(user),
+            "meetups_participant": MeetupParticipant.meetups.fetch_by_user(user),
             "reviews": Review.reviews.fetch_by_user(user),
+            "contacts": ContactType.objects.all(),
         }
+        context["next_rank"] = (
+            Rank.objects.order_by("-experience_required")
+            .filter(experience_required__gte=context["profile"].experience)
+            .first()
+        )
+        context["percent"] = int(context["profile"].experience / context["next_rank"].experience_required * 100)
+        context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
         return render(request, template, context)
 
     def post(self, request):
@@ -96,6 +104,29 @@ class ProfileView(LoginRequiredMixin, View):
                 profile.birthday = form_extra.cleaned_data[UserProfile.birthday.field.name]
             profile.save()
 
+        num = 1
+        contact_data = {}
+        while True:
+            selection = request.POST.get("contact-label" + str(num))
+            text = request.POST.get("contact-text" + str(num))
+            if selection is not None and text is not None:
+                contact_data[selection] = text
+            else:
+                break
+            num += 1
+
+        contacts = Contact.objects.filter(contacts_group_id=profile.contacts)
+        for contact in contacts:
+            contact.value = request.POST.get(contact.type.name)
+            contact.save()
+
+        for name in contact_data:
+            Contact.objects.update_or_create(
+                type_id=int(name),
+                contacts_group_id_id=profile.contacts_id,
+                defaults={"value": contact_data[name]},
+            )
+
         return redirect("users:profile")
 
 
@@ -107,9 +138,11 @@ class UserDetailView(TemplateView):
         profile_id = kwargs["id"]
 
         context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(profile_id))
-        context["user"] = get_object_or_404(UserProfile.profiles.get_profile(profile_id))
-        context["meetups"] = UserProfile.profiles.get_meetups(profile_id)
-        context["reviews"] = UserProfile.profiles.get_reviews(profile_id)
+        user = get_object_or_404(User.objects, pk=context["profile"].user_id)
+        context["user"] = get_object_or_404(User.objects, pk=user.id)
+        context["meetups_participant"] = MeetupParticipant.meetups.fetch_by_user(user)
+        context["meetups_host"] = Meetup.meetups.fetch_by_user(user)
+        context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
 
         return context
 

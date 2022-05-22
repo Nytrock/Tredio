@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}События{% endblock %}
+{% load static %}
 {% block content %}
     <section>
         <div class="container py-5">
@@ -10,25 +11,41 @@
                         {% csrf_token %}
                         <div class="my-2"><input class="form-control" type="email" name="search" placeholder="Название постановки"></div>
                         <div class="my-2"><button class="btn btn-primary ms-sm-2" type="submit">Поиск</button></div>
-                        <div style="padding-top: 6px;"><label class="form-label text-nowrap ms-sm-2">Город&nbsp;&nbsp;<select class="form-select d-inline-block form-select form-select-sm">
-                                    <option value="10" selected="">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                </select></label></div>
+                        <div style="padding-top: 6px;">
+                            <label class="form-label text-nowrap ms-sm-2">Город&nbsp;&nbsp;
+                                <select class="form-select d-inline-block form-select form-select-sm">
+                                        {% for city in cities %}
+                                            <option value="{{city.id}}">{{ city.name }}</option>
+                                        {% endfor %}
+                                </select>
+                            </label>
+                        </div>
                     </form>
                 </div>
             </div>
-            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
-                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
-                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
-                    <div>
-                        <h5 class="fw-bold">Есть один нюанс</h5>
-                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>СПБ</p>
-                        <a href="{% url 'theatres:events_detail' 1 %}" class="btn btn-primary shadow" type="button">Больше</a>
+            {% for event in events %}
+                <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                    <div class="col mb-5">
+                        {% if event.image %}
+                            <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
+                        {% else %}
+                            <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                        {% endif %}
+                    </div>
+                    <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
+                        <div>
+                            <h5 class="fw-bold">{{ event.name }}</h5>
+                            {% if event.description %}
+                                <p>{{ event.description | truncatewords:10 }}</p>
+                            {% endif %}
+                            <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}
+                            <br><i class="fas fa-university" style="padding-right: 4px;"></i>{{ event.theatre }}</p>
+                            <a href="{% url 'theatres:events_detail' event.id %}" class="btn btn-primary shadow" type="button">Больше</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endfor %}
+        </div>
         <section class="py-4 py-xl-5">
             <div class="container">
                 <div class="text-white bg-dark border rounded border-0 p-4 p-md-5">

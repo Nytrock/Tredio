@@ -18,31 +18,61 @@
                         </div>
                         <div class="card-body">
                             <h4 class="small">Получай опыт за активность на сайте (пиши отзывы, организуй группы и т.д.), получай новые ранги и попробуй достигнуть максимума!</h4>
-                            <h4 class="small fw-bold rank-h1">Первый старт<br><span class="float-end num_exp">150/200</span></h4>
+                            <h4 class="small fw-bold rank-h1">{{profile.rank.name}}<br><span class="float-end num_exp">{{ profile.experience }}/{{ next_rank.experience_required }}</span></h4>
                             <div class="progress progress-sm mb-3">
-                                <div class="progress-bar bg-success" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 75%;"><span class="visually-hidden">100%</span></div>
+                                <div class="progress-bar bg-success" aria-valuenow="{{ profile.experience }}" aria-valuemin="0" aria-valuemax="{{ next_rank.experience_required }}" style="width: {{ percent }}%;"></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-8">
                     <div class="row mb-3">
-                        <div class="col">
-                            <a href="{% url 'group:group_detail' 1 %}">
-                            <div class="card textwhite bg-primary text-white shadow">
-                                <div class="card-body">
-                                    <div class="row mb-2">
-                                        <div class="col">
-                                            <p class="m-0"><strong>Встреча на пьесе "Колобок"</strong></p>
-                                            <p class="m-0">Описание бла-бла-бла</p>
+                        {% for meetup in meetups_host %}
+                            <div class="col">
+                                <a href="{% url 'group:group_detail' meetup.id %}">
+                                <div class="card textwhite bg-success text-white shadow">
+                                    <div class="card-body">
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                <p class="m-0"><strong>Встреча на постановке "{{ meetup.event }}"</strong></p>
+                                                {% if meetup.description %}
+                                                    <p class="m-0">{{ meetup.description }}</p>
+                                                {% else %}
+                                                    <p class="m-0">Описание отсутствует</p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
                                         </div>
-                                        <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
+                                        <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.start }}</p>
+                                        <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Роль: лидер</p>
                                     </div>
-                                    <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Роль: лидер</p>
                                 </div>
+                                </a>
                             </div>
-                            </a>
-                        </div>
+                        {% endfor %}
+                        {% for meetup in meetups_participant %}
+                            <div class="col">
+                                <a href="{% url 'group:group_detail' meetup.id %}">
+                                <div class="card textwhite bg-primary text-white shadow">
+                                    <div class="card-body">
+                                        <div class="row mb-2">
+                                            <div class="col">
+                                                <p class="m-0"><strong>Встреча на постановке "{{ meetup.meetup.event }}"</strong></p>
+                                                {% if meetup.meetup.description %}
+                                                    <p class="m-0">{{ meetup.meetup.description }}</p>
+                                                {% else %}
+                                                    <p class="m-0">Описание отсутствует</p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
+                                        </div>
+                                        <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.meetup.start }}</p>
+                                        <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Роль: участник</p>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        {% endfor %}
                     </div>
                     <div class="row">
                         <div class="col">
@@ -71,13 +101,13 @@
                                             <div class="col">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="{{ main_form.first_name.id_for_label }}"><strong>{{ main_form.first_name.label }}</strong></label>
-                                                    <input class="form-control" type="text" id="{{ main_form.first_name.id_for_label }}" placeholder="Введите имя" name="{{ main_form.first_name.html_name }}" value="{{ main_form.first_name.value }}">
+                                                    <input class="form-control" type="text" id="{{ main_form.first_name.id_for_label }}" placeholder="Введите имя" name="{{ main_form.first_name.html_name }}" value="{{ user.first_name }}">
                                                 </div>
                                             </div>
                                             <div class="col">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="{{ main_form.last_name.id_for_label }}"><strong>{{ main_form.last_name.label }}</strong></label>
-                                                    <input class="form-control" type="text" id="{{ main_form.last_name.id_for_label }}" placeholder="Введите фамилию" name="{{ main_form.last_name.html_name }}" value="{{ main_form.last_name.value }}">
+                                                    <input class="form-control" type="text" id="{{ main_form.last_name.id_for_label }}" placeholder="Введите фамилию" name="{{ main_form.last_name.html_name }}" value="{{ user.last_name }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -85,23 +115,38 @@
                                     </form>
                                 </div>
                             </div>
-                            <div class="card shadow">
+                            <form class="card shadow" action="." method="post">
+                                {% csrf_token %}
                                 <div class="card-header py-3">
                                     <p class="text-primary m-0 fw-bold">Контакты</p>
                                 </div>
                                 <div class="card-body">
-                                    <form>
-                                        <div class="mb-3">
-                                            <label class="form-label" for="address"><strong>Соцсети</strong><br></label>
-                                            <input class="form-control" type="text" id="address" placeholder="TG: @dsafa" name="сontacts">
-                                        </div>
+                                    <div id="contact-container">
+                                        {% for contact in profile_contacts %}
+                                            <div class="mb-3">
+                                                <label class="form-label"><strong>{{ contact.type }}</strong><br></label>
+                                                <input class="form-control" name="{{ contact.type }}" type="text" id="{{ contact.type }}" value="{{ contact.value }}" placeholder="Введите значение" name="сontacts">
+                                            </div>
+                                        {% empty %}
+                                            <p class="small">Контакты отсутствуют.</p>
+                                        {% endfor %}
+                                    </div>
                                         <div class="mb-3">
                                             <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
-                                            <button class="btn btn-primary btn-sm" type="submit">Добавить</button>
+                                            <button class="btn btn-primary btn-sm" type="button" id="AddContactProfile">Добавить</button>
                                         </div>
-                                    </form>
+                                        <div id="contact-div" class="mb-3 collapse">
+                                            <label class="form-label"><strong>Тип контакта</strong></label>
+                                            <select id="contact-label" class="form-control selected">
+                                                {% for contact in contacts %}
+                                                    <option value="{{ contact.id }}">{{ contact }} </option>
+                                                {% endfor %}
+                                            </select>
+                                            <label class="form-label"><strong>Значение (обязательно)</strong></label>
+                                            <input id="contact-text" class="form-control" type="text" placeholder="Введите значение" name="сontacts">
+                                        </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -117,14 +162,14 @@
                         <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="{{ extra_form.description.label }}"><strong>{{ extra_form.description.label }}</strong><br></label>
-                                    <textarea placeholder="Введите описание" class="form-control" id="{{ extra_form.description.label }}" rows="4" name="{{ extra_form.description.html_name }}">{% if extra_form.description.value %}{{ extra_form.description.value }}{% endif %}</textarea>
+                                    <textarea placeholder="Введите описание" class="form-control" id="{{ extra_form.description.label }}" rows="4" name="{{ extra_form.description.html_name }}">{{user.description}}</textarea>
                                 </div>
                                 <div class="mb-3"></div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
                                 <label class="form-label" for="{{ extra_form.birthday.label }}"><strong>{{ extra_form.birthday.label }}</strong></label>
-                                <input class="form-control" type="date" id="{{ extra_form.birthday.label }}" name="{{ extra_form.birthday.html_name }}" value="{{ extra_form.birthday.value|date:'Y-m-d' }}">
+                                <input class="form-control" type="date" id="{{ extra_form.birthday.label }}" name="{{ extra_form.birthday.html_name }}" value="{{ user.birthday|date:'Y-m-d' }}">
                             </div>
                         </div>
                         <div class="mb-3"><button class="btn btn-primary btn-sm" type="submit">Сохранить<br></button></div>

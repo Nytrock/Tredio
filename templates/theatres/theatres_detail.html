@@ -1,18 +1,24 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Театр{% endblock %}
 {% block content %}
     <section>
-        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url(https://cdn.bootstrapstudio.io/placeholders/1400x800.png);background-position: center;background-size: cover;">
+        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if theatre.image %} {{theatre.image.url}} {% else %} {% static '/img/None400x300.jpg' %} {% endif %});background-position: center;background-size: cover;">
             <div class="container h-100">
                 <div class="row h-100">
                     <div class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center">
                         <div style="max-width: 320px;">
-                            <h1 class="text-uppercase fw-bold">Самый великий театр в мире</h1>
-                            <p class="my-3">Специализируется на семейных постановках. Имеет номер {{ id }}. </p>
-                            <a class="btn btn-primary btn-lg me-2" role="button" href="{% url 'theatres:events_list' %}">Постановки</a>
-                            <a class="btn btn-outline-primary btn-lg" role="button" href="{% url 'rating:rating_theatre' id %}">Отзывы</a>
-                            <a class="btn btn-primary btn-lg" type="button" style="margin-top: 9px;" href="{% url 'group:group_list' %}">Группы</a>
-                            <a class="btn btn-primary btn-lg" type="button" style="margin-top: 9px;" href="{% url 'theatres:actors_list' 'theatre' id %}">Актёры</a>
+                            <h1 class="text-uppercase fw-bold text-white">{{ theatre.name }}</h1>
+                            {% if theatre.description %}
+                                <p class="my-3 text-white">{{ theatre.description | truncatewords:10 }}</p>
+                            {% endif %}
+                            <a class="btn btn-primary btn-lg me-2 menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".description">Описание</a>
+                            <a class="btn btn-primary btn-lg me-2 menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".events">Постановки</a>
+                            <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".groups">Группы</a>
+                            {% if actors %}
+                            <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".actors">Актёры</a>
+                            {% endif %}
+                            <a class="btn btn-outline-primary btn-lg" style="margin-top: 9px;" role="button" href="{% url 'rating:rating_theatre' id %}">Отзывы</a>
                         </div>
                     </div>
                 </div>
@@ -25,19 +31,19 @@
                 <div class="row row-cols-2 row-cols-md-3">
                     <div class="col">
                         <div class="p-3">
-                            <h4 class="display-5 fw-bold text-white mb-0"><i class="far fa-edit"></i>5</h4>
+                            <h4 class="display-5 fw-bold text-white mb-0"><i class="far fa-edit"></i>{{theatre.reviews_count }}</h4>
                             <p class="mb-0">Отзывов на данный театр</p>
                         </div>
                     </div>
                     <div class="col">
                         <div class="p-3">
-                            <h4 class="display-5 fw-bold text-white mb-0"><i class="far fa-star"></i>7</h4>
-                            <p class="mb-0">Средний рейтинг по 10 бальной шкале</p>
+                            <h4 class="display-5 fw-bold text-white mb-0"><i class="far fa-star"></i>{{ theatre.reviews_average_score|floatformat:1 }}</h4>
+                            <p class="mb-0">Средний рейтинг по 5 бальной шкале</p>
                         </div>
                     </div>
                     <div class="col">
                         <div class="p-3">
-                            <h4 class="display-5 fw-bold text-white mb-0"><i class="fas fa-theater-masks"></i>6</h4>
+                            <h4 class="display-5 fw-bold text-white mb-0"><i class="fas fa-theater-masks"></i>{{ theatre.events_count }}</h4>
                             <p class="mb-0">Различных постановок</p>
                         </div>
                     </div>
@@ -45,32 +51,126 @@
             </div>
         </div>
     </section>
-    <section class="sections" style="padding-bottom: 15vh;padding-top: 5vh;">
-        <div class="hobbies group" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-            <h2 class="text-center">Вкратце</h2>
-            <p class="text-center text-muted"><br>Fusce congue luctus turpis, a semper ante cursus ut. Sed consectetur tristique enim eget iaculis. Integer sodales erat nisi, at commodo ipsum finibus quis. Curabitur orci ipsum, feugiat et enim a, tempor feugiat nisl. Aliquam erat volutpat. Quisque quis purus sodales, venenatis est vitae, tempor ex. Maecenas finibus eros lorem, in efficitur metus dictum sed. Maecenas fermentum, dui eu pellentesque ultrices, ex elit scelerisque lacus, eget molestie neque nisl in magna. Quisque diam elit, bibendum quis arcu eget, interdum ultrices libero. Fusce tellus elit, dictum quis fermentum ut, luctus ut diam. Aliquam sit amet auctor magna. Sed vehicula eros eu rhoncus facilisis. Vestibulum lobortis mi vel eleifend commodo. In est magna, dapibus nec metus vel, posuere molestie justo. Fusce semper condimentum ipsum id pharetra. Duis accumsan tristique quam, vulputate ultricies turpis maximus sed.<br></p>
-        </div>
-        <div class="hobbies group" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-            <h2 class="text-center">Направления</h2>
-            <p class="text-center text-muted"><br>Fusce congue luctus turpis, a semper ante cursus ut. Sed consectetur tristique enim eget iaculis. Integer sodales erat nisi, at commodo ipsum finibus quis. Curabitur orci ipsum, feugiat et enim a, tempor feugiat nisl. Aliquam erat volutpat. Quisque quis purus sodales, venenatis est vitae, tempor ex. Maecenas finibus eros lorem, in efficitur metus dictum sed. Maecenas fermentum, dui eu pellentesque ultrices, ex elit scelerisque lacus, eget molestie neque nisl in magna. Quisque diam elit, bibendum quis arcu eget, interdum ultrices libero. Fusce tellus elit, dictum quis fermentum ut, luctus ut diam. Aliquam sit amet auctor magna. Sed vehicula eros eu rhoncus facilisis. Vestibulum lobortis mi vel eleifend commodo. In est magna, dapibus nec metus vel, posuere molestie justo. Fusce semper condimentum ipsum id pharetra. Duis accumsan tristique quam, vulputate ultricies turpis maximus sed.<br></p>
-        </div>
-        <div class="hobbies group" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-            <h2 class="text-center">Hobbies</h2>
-            <p class="text-center text-muted"><br>Fusce congue luctus turpis, a semper ante cursus ut. Sed consectetur tristique enim eget iaculis. Integer sodales erat nisi, at commodo ipsum finibus quis. Curabitur orci ipsum, feugiat et enim a, tempor feugiat nisl. Aliquam erat volutpat. Quisque quis purus sodales, venenatis est vitae, tempor ex. Maecenas finibus eros lorem, in efficitur metus dictum sed. Maecenas fermentum, dui eu pellentesque ultrices, ex elit scelerisque lacus, eget molestie neque nisl in magna. Quisque diam elit, bibendum quis arcu eget, interdum ultrices libero. Fusce tellus elit, dictum quis fermentum ut, luctus ut diam. Aliquam sit amet auctor magna. Sed vehicula eros eu rhoncus facilisis. Vestibulum lobortis mi vel eleifend commodo. In est magna, dapibus nec metus vel, posuere molestie justo. Fusce semper condimentum ipsum id pharetra. Duis accumsan tristique quam, vulputate ultricies turpis maximus sed.<br></p>
-        </div>
-    </section>
     <section>
-        <div class="simple-slider">
+        <div class="hobbies group events" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
+            <h2 class="text-center description">Полное описание</h2>
+            <div class="container py-5">
+                {{ theatre.description }}
+            </div>
+            <h2 class="text-center">Постановки</h2>
+            <div class="album py-5">
+            <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for event in theatre.events.all %}
+            <div class="col">
+                <div class="card shadow sm text-center">
+                    <div class="col mb-5 ">
+                        {% if event.image %}
+                            <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
+                        {% else %}
+                            <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                        {% endif %}
+                    </div>
+                    <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
+                        <div>
+                            <h5 class="fw-bold">{{ event.name }}</h5>
+                            {% if event.description %}
+                                <p>{{ event.description | truncatewords:10 }}</p>
+                            {% else %}
+                                <p class="text-muted">Описание отсутсвует</p>
+                            {% endif %}
+                            <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}</p>
+                            <a href="{% url 'theatres:events_detail' event.id %}" class="btn btn-primary shadow" type="button">Больше</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <h4 class="text-center">Постановок нет.</h4>
+            {% endfor %}
+            </div>
+            </div>
+            </div>
+        </div>
+        <div class="hobbies group groups" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
+            <h2 class="text-center">Группы</h2>
+            <div class="album py-5">
+            <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for event in theatre.events.all %}
+            {% for meetup in event.meetups.all %}
+            <div class="col">
+                <a href="{% url 'group:group_detail' meetup.id %}">
+                <div class="card textwhite bg-primary text-white shadow">
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col">
+                                <p class="m-0"><strong>Встреча на постановке "{{ meetup.event }}"</strong></p>
+                                <p class="m-0">{{ meetup.description | truncatewords:10 }}</p>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
+                        </div>
+                        <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.start }}</p>
+                        <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Лидер: {{ meetup.host.username }}</p>
+                    </div>
+                </div>
+                </a>
+            </div>
+            {% endfor %}
+            {% empty %}
+                <h4 class="text-center">Встреч нет.</h4>
+            {% endfor %}
+            </div>
+            </div>
+            </div>
+        </div>
+        {% if actors %}
+        <div class="hobbies group actors" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
+            <h2 class="text-center">Актёры</h2>
+            <div class="album py-5">
+            <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for actor in actors %}
+            <div class="col">
+                <div class="card shadow sm text-center">
+                    <div class="col mb-5 ">
+                        <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}"></a>
+                    </div>
+                    <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
+                        <div>
+                            <h5 class="fw-bold">{{ actor.profile.first_name }} {{ actor.profile.last_name }}</h5>
+                            {% if actor.profile.description %}
+                                <p>{{ actor.profile.description | truncatewords:10 }}</p>
+                            {% else %}
+                                <p class="text-muted">Описание отсутсвует</p>
+                            {% endif %}
+                            <p class="text-muted mb-4"><i class="fa fa-user"></i>&nbsp;Роль: {{ actor.role }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+            </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="simple-slider mb-5">
+            <h2 class="text-center">Галерея</h2>
+            {% if theatre.gallery_images.all %}
             <div class="swiper-container">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide" style="background: url(&quot;https://cdn.bootstrapstudio.io/placeholders/1400x800.png&quot;) center center / cover no-repeat;"></div>
-                    <div class="swiper-slide" style="background: url(&quot;https://cdn.bootstrapstudio.io/placeholders/1400x800.png&quot;) center center / cover no-repeat;"></div>
-                    <div class="swiper-slide" style="background: url(&quot;https://cdn.bootstrapstudio.io/placeholders/1400x800.png&quot;) center center / cover no-repeat;"></div>
+                    {% for image in theatre.gallery_images.all %}
+                        <div class="swiper-slide" style="background: url(&quot;{{ image.get_image_1400x800.url }}&quot;) center center / cover no-repeat;"></div>
+                    {% endfor %}
                 </div>
                 <div class="swiper-pagination"></div>
                 <div class="swiper-button-prev"></div>
                 <div class="swiper-button-next"></div>
             </div>
+            {% else %}
+                <h2 class="text-center">Дополнительных картинок нет.</h2>
+            {% endif %}
         </div>
     </section>
 {% endblock %}

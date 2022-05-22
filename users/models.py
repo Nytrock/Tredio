@@ -53,13 +53,13 @@ class CommonProfile(models.Model):
 
 class ActorProfileQuerySet(models.QuerySet):
     def get_theatres(self, id: int, troupes_ids=None):
-        if troupes_ids == None:
+        if troupes_ids is None:
             troupes_ids = get_troupes_ids(id)
 
         return Theatre.objects.filter(troupe__id__in=troupes_ids)
 
     def get_events(self, id: int, troupes_ids=None):
-        if troupes_ids == None:
+        if troupes_ids is None:
             troupes_ids = get_troupes_ids()
 
         return Event.objects.filter(troupe__id__in=troupes_ids)
@@ -101,7 +101,11 @@ class UserProfileQuerySet(models.QuerySet):
     def get_profile(self, id: int, private: bool = False):
         PUBLIC_FIELDS = ["rank__name"]
         PRIVATE_FIELDS = ["experience"]
-        return self.filter(id=id).only(*(PUBLIC_FIELDS + PRIVATE_FIELDS if private else PUBLIC_FIELDS))
+        return (
+            self.filter(id=id)
+            .prefetch_related("contacts")
+            .only(*(PUBLIC_FIELDS + PRIVATE_FIELDS if private else PUBLIC_FIELDS))
+        )
 
 
 class UserProfile(CommonProfile):

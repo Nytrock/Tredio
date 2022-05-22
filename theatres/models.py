@@ -1,7 +1,8 @@
 from django.db import models
+from django.db.models import Prefetch
 
 from core.models import ContactsGroup, GalleryBaseModel, ImageBaseModel
-from rating.models import ReviewGroup
+from rating.models import ReviewGroup, ReviewRating
 
 
 class Troupe(models.Model):
@@ -13,6 +14,9 @@ class Troupe(models.Model):
 class TroupeMemberQuerySet(models.QuerySet):
     def fetch_troupes_ids(self, profile: int):
         return self.filter(profile__id=profile).values_list("troupe", flat=True)
+
+    def fetch_troupes_roles(self, profile: int):
+        return self.filter(profile__id=profile).values_list("role", flat=True)
 
 
 class TroupeMember(models.Model):
@@ -65,7 +69,7 @@ class TheatreQuerySet(models.QuerySet):
     def theatre_details(self, id: int):
         return (
             self.filter(id=id)
-            .prefetch_related("gallery_images", "reviews__reviews", "events", "events__meetups")
+            .prefetch_related("gallery_images", "reviews__reviews", "events__meetups", "events__meetups__host")
             .only("name", "description")
             .annotate(
                 reviews_count=models.Count("reviews__reviews", distinct=True),
@@ -77,7 +81,13 @@ class TheatreQuerySet(models.QuerySet):
     def theatre_ratings(self, id: int):
         return (
             self.filter(id=id)
-            .prefetch_related("reviews__reviews")
+            .prefetch_related(
+                "reviews__reviews",
+                Prefetch("reviews__reviews__ratings", to_attr="like", queryset=ReviewRating.objects.filter(star=True)),
+                Prefetch(
+                    "reviews__reviews__ratings", to_attr="dislike", queryset=ReviewRating.objects.filter(star=False)
+                ),
+            )
             .only("id", "name", "image", "location__query", "description")
         )
 
@@ -127,7 +137,13 @@ class EventQuerySet(models.QuerySet):
     def event_ratings(self, id: int):
         return (
             self.filter(id=id)
-            .prefetch_related("reviews__reviews")
+            .prefetch_related(
+                "reviews__reviews",
+                Prefetch("reviews__reviews__ratings", to_attr="like", queryset=ReviewRating.objects.filter(star=True)),
+                Prefetch(
+                    "reviews__reviews__ratings", to_attr="dislike", queryset=ReviewRating.objects.filter(star=False)
+                ),
+            )
             .only(
                 "id",
                 "name",

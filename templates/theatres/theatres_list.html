@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Театры{% endblock %}
+{% load static %}
 {% block content %}
     <section>
         <div class="container py-5">
@@ -10,57 +11,38 @@
                         {% csrf_token %}
                         <div class="my-2"><input class="form-control" type="email" name="search" placeholder="Название театра"></div>
                         <div class="my-2"><button class="btn btn-primary ms-sm-2" type="submit">Поиск</button></div>
-                        <div style="padding-top: 6px;"><label class="form-label text-nowrap ms-sm-2">Город&nbsp;&nbsp;
-                            <select class="form-select d-inline-block form-select form-select-sm">
-                                    <option value="10" selected="">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                </select></label></div>
+                        <div style="padding-top: 6px;">
+                            <label class="form-label text-nowrap ms-sm-2">Город&nbsp;&nbsp;
+                                <select class="form-select d-inline-block form-select form-select-sm">
+                                    {% for city in cities %}
+                                        <option value="{{city.id}}">{{ city.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
                     </form>
                 </div>
             </div>
-            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
-                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
-                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
-                    <div>
-                        <h5 class="fw-bold">Первый театр</h5>
-                        <p>Краткое описание&nbsp; &nbsp; &nbsp; &nbsp;</p>
-                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>СПБ</p>
-                        <a href="{% url 'theatres:theatres_detail' 1 %}" class="btn btn-primary shadow" type="button">Больше</a>
+            {% for theatre in theatres %}
+                <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                    <div class="col mb-5">
+                        {% if theatre.image %}
+                            <img class="rounded img-fluid shadow" src="{{theatre.get_image_400x300.url}}">
+                        {% else %}
+                            <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                        {% endif %}
+                    </div>
+                    <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
+                        <div>
+                            <h5 class="fw-bold">{{ theatre.name }}</h5>
+                            <p>{{ theatre.description | truncatewords:10 }}</p>
+                            <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ theatre.location.query }}</p>
+                            <a href="{% url 'theatres:theatres_detail' theatre.id %}" class="btn btn-primary shadow" type="button">Больше</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
-                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
-                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
-                    <div>
-                        <h5 class="fw-bold">Lorem ipsum dolor sit&nbsp;</h5>
-                        <p class="text-muted mb-4">Erat netus est hendrerit, nullam et quis ad cras porttitor iaculis. Bibendum vulputate cras aenean.</p>
-                        <a href="{% url 'theatres:theatres_detail' 2 %}" class="btn btn-primary shadow" type="button">Больше</a>
-                    </div>
-                </div>
-            </div>
-            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
-                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
-                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
-                    <div>
-                        <h5 class="fw-bold">Lorem ipsum dolor sit&nbsp;</h5>
-                        <p class="text-muted mb-4">Erat netus est hendrerit, nullam et quis ad cras porttitor iaculis. Bibendum vulputate cras aenean.</p>
-                        <a href="{% url 'theatres:theatres_detail' 3 %}" class="btn btn-primary shadow" type="button">Больше</a>
-                    </div>
-                </div>
-            </div>
-            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
-                <div class="col mb-5"><img class="rounded img-fluid shadow" src="products/3.jpg"></div>
-                <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
-                    <div>
-                        <h5 class="fw-bold">Lorem ipsum dolor sit&nbsp;</h5>
-                        <p class="text-muted mb-4">Erat netus est hendrerit, nullam et quis ad cras porttitor iaculis. Bibendum vulputate cras aenean.</p>
-                        <a href="{% url 'theatres:theatres_detail' 4 %}" class="btn btn-primary shadow" type="button">Больше</a>
-                    </div>
-                </div>
-            </div>
+            {% empty %}
+            {% endfor %}
         </div>
         <section class="py-4 py-xl-5">
             <div class="container">
