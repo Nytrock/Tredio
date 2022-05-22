@@ -60,9 +60,9 @@ class TheatreQuerySet(models.QuerySet):
             .prefetch_related("gallery_images", "reviews__reviews", "events", "events__meetups")
             .only("name", "description")
             .annotate(
-                reviews_count=models.Count("reviews__reviews"),
+                reviews_count=models.Count("reviews__reviews", distinct=True),
                 reviews_average_score=models.Avg("reviews__reviews__star"),
-                events_count=models.Count("events"),
+                events_count=models.Count("events", distinct=True),
             )
         )
 
