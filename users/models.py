@@ -52,20 +52,17 @@ class CommonProfile(models.Model):
 
 
 class ActorProfileQuerySet(models.QuerySet):
-    def get_troupes_ids(self, id: int):
-        return self.filter(id=id).prefetch_related("troupe_members__troupe__id").only()
-
     def get_theatres(self, id: int, troupes_ids=None):
-        if troupes == None:
-            troupes = get_troupes_ids(id)
+        if troupes_ids == None:
+            troupes_ids = get_troupes_ids(id)
 
-        return Theatre.objects.filter(troupe__id__in=troupes)
+        return Theatre.objects.filter(troupe__id__in=troupes_ids)
 
     def get_events(self, id: int, troupes_ids=None):
-        if troupes == None:
-            troupes = get_troupes_ids()
+        if troupes_ids == None:
+            troupes_ids = get_troupes_ids()
 
-        return Event.objects.filter(troupe__id__in=troupes)
+        return Event.objects.filter(troupe__id__in=troupes_ids)
 
 
 class ActorProfile(CommonProfile):

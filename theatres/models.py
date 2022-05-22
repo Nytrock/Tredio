@@ -10,12 +10,20 @@ class Troupe(models.Model):
         verbose_name_plural = "Труппы"
 
 
+class TroupeMemberQuerySet(models.QuerySet):
+    def fetch_troupes_ids(self, profile: int):
+        return self.filter(profile__id=profile).values_list("troupe", flat=True)
+
+
 class TroupeMember(models.Model):
     troupe = models.ForeignKey(Troupe, verbose_name="Труппа", related_name="members", on_delete=models.CASCADE)
     profile = models.ForeignKey(
         to="users.ActorProfile", verbose_name="Профиль", on_delete=models.CASCADE, related_name="troupe_members"
     )
     role = models.CharField(verbose_name="Роль", max_length=100, null=True, blank=True)
+
+    objects = models.Manager()
+    troupe_members = TroupeMemberQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Участник труппы"
