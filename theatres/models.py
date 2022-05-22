@@ -11,12 +11,23 @@ class Troupe(models.Model):
         verbose_name_plural = "Труппы"
 
 
+class TroupeMemberQuerySet(models.QuerySet):
+    def fetch_troupes_ids(self, profile: int):
+        return self.filter(profile__id=profile).values_list("troupe", flat=True)
+
+    def fetch_troupes_roles(self, profile: int):
+        return self.filter(profile__id=profile).values_list("role", flat=True)
+
+
 class TroupeMember(models.Model):
     troupe = models.ForeignKey(Troupe, verbose_name="Труппа", related_name="members", on_delete=models.CASCADE)
     profile = models.ForeignKey(
         to="users.ActorProfile", verbose_name="Профиль", on_delete=models.CASCADE, related_name="troupe_members"
     )
     role = models.CharField(verbose_name="Роль", max_length=100, null=True, blank=True)
+
+    objects = models.Manager()
+    troupe_members = TroupeMemberQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Участник труппы"
@@ -61,9 +72,9 @@ class TheatreQuerySet(models.QuerySet):
             .prefetch_related("gallery_images", "reviews__reviews", "events__meetups", "events__meetups__host")
             .only("name", "description")
             .annotate(
-                reviews_count=models.Count("reviews__reviews"),
+                reviews_count=models.Count("reviews__reviews", distinct=True),
                 reviews_average_score=models.Avg("reviews__reviews__star"),
-                events_count=models.Count("events"),
+                events_count=models.Count("events", distinct=True),
             )
         )
 

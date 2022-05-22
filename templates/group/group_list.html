@@ -28,9 +28,9 @@
                             <h5 class="fw-bold">Встреча на постановке "{{ meetup.event.name }}"</h5>
                             <p>{{ meetup.description }}</p>
                             <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ meetup.event.theatre.location.query }}<br>
-                            <i class="fa fa-user" style="padding-right: 8px;" aria-hidden="true"></i>Организатор: {% if meetup.host_id != user.id %}<a href="{% url 'users:users_detail' meetup.host_id %}" >{{meetup.host}}</a> {% else %} <a href="{% url 'users:profile' %}" >{{meetup.host}}</a> {% endif %}<br>
+                            <i class="fa fa-user" style="padding-right: 8px;" aria-hidden="true"></i>Организатор: {% if meetup.host_id != request.user.id %}<a href="{% url 'users:users_detail' meetup.host_id %}" >{{meetup.host}}</a> {% else %} <a href="{% url 'users:profile' %}" >{{meetup.host}}</a> {% endif %}<br>
                             <i class="fa fa-address-book" style="padding-right: 8px;" aria-hidden="true"></i>Количество участников: {{ meetup.participants_count }}/{% if meetup.participants_limit %} {{ meetup.participants_limit }} {% else %}∞ {% endif %}<br>
-                            <i class="fa fa-clock" style="padding-right: 8px;" aria-hidden="true"></i>Дата проведения: {{ meetup.start }}</p>
+                            <i class="fa fa-clock" style="padding-right: 8px;" aria-hidden="true"></i>Время проведения: {{ meetup.start }}</p>
                             <a href="{% url 'group:group_detail' meetup.id %}" class="btn btn-primary shadow" type="button">Подробнее</a>
                         </div>
                     </div>

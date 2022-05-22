@@ -23,7 +23,7 @@ class MeetupQuerySet(models.QuerySet):
     def meetup_details(self, meetup_id: int):
         return (
             self.filter(id=meetup_id)
-            .prefetch_related("event__troupe__members", "participants__user")
+            .prefetch_related("event__troupe__members", "participants__user", "participants__user__userprofile")
             .only(
                 "event__theatre__id",
                 "event__theatre__name",

@@ -7,6 +7,7 @@ from django.views.generic import FormView, TemplateView
 from core.models import Contact, ContactsGroup, ContactType
 from group.models import Meetup, MeetupParticipant
 from rating.models import Review
+from theatres.models import TroupeMember
 from users.models import ActorProfile, Rank, UserProfile
 
 from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
@@ -20,15 +21,24 @@ class ActorProfileView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         actor_profile_id = kwargs["id"]
-        troupes = list(ActorProfile.actor_profiles.get_troupe_ids(actor_profile_id))
+        troupes = list(TroupeMember.troupe_members.fetch_troupes_ids(actor_profile_id))
 
         context["profile"] = get_object_or_404(ActorProfile.common_profiles.get_profile(actor_profile_id))
         context["theatres"] = ActorProfile.actor_profiles.get_theatres(actor_profile_id, troupes).only(
-            "id", "image", "name", "description"
+            "id", "image", "name", "description", "troupe"
         )
         context["events"] = ActorProfile.actor_profiles.get_events(actor_profile_id, troupes).only(
-            "id", "image", "name", "description"
+            "id", "image", "name", "description", "troupe"
         )
+        for event in context["events"]:
+            troupe_member = TroupeMember.objects.filter(troupe_id=event.troupe.pk, profile_id=actor_profile_id).first()
+            event.role = troupe_member.role
+        for theatre in context["theatres"]:
+            troupe_member = TroupeMember.objects.filter(
+                troupe_id=theatre.troupe.pk, profile_id=actor_profile_id
+            ).first()
+            theatre.role = troupe_member.role
+        context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
 
         return context
 

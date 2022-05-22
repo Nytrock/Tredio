@@ -36,7 +36,7 @@
                         <div>
                             <h5 class="fw-bold">{{ event.name }}</h5>
                             {% if event.description %}
-                                <p>{{ event.description }}</p>
+                                <p>{{ event.description | truncatewords:10 }}</p>
                             {% endif %}
                             <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}
                             <br><i class="fas fa-university" style="padding-right: 4px;"></i>{{ event.theatre }}</p>
