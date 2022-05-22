@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "sorl.thumbnail",
     "django_cleanup.apps.CleanupConfig",
     "fieldsignals",
+    "colorfield",
 ]
 
 MIDDLEWARE = [
