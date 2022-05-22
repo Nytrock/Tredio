@@ -72,3 +72,10 @@ class GalleryBaseModel(ImageBaseModel):
         abstract = True
         verbose_name = "Изображение галереи"
         verbose_name_plural = "Изображения галерей"
+
+
+class PublishedBaseModel(models.Model):
+    is_published = models.BooleanField("Опубликовано", default=False)
+
+    class Meta:
+        abstract = True

@@ -1,7 +1,12 @@
 from django.db import models
 from django.db.models import Prefetch
 
-from core.models import ContactsGroup, GalleryBaseModel, ImageBaseModel
+from core.models import (
+    ContactsGroup,
+    GalleryBaseModel,
+    ImageBaseModel,
+    PublishedBaseModel,
+)
 from rating.models import ReviewGroup, ReviewRating
 
 
@@ -92,7 +97,7 @@ class TheatreQuerySet(models.QuerySet):
         )
 
 
-class Theatre(ImageBaseModel):
+class Theatre(PublishedBaseModel, ImageBaseModel):
     name = models.CharField("Название", max_length=150)
     description = models.CharField("Описание", max_length=2500, null=True, blank=True)
     location = models.ForeignKey(Location, verbose_name="Местоположение", on_delete=models.CASCADE)
@@ -157,7 +162,7 @@ class EventQuerySet(models.QuerySet):
         )
 
 
-class Event(ImageBaseModel):
+class Event(PublishedBaseModel, ImageBaseModel):
     name = models.CharField("Название", max_length=150)
     description = models.CharField("Описание", max_length=2500, null=True, blank=True)
     theatre = models.ForeignKey(Theatre, verbose_name="Театр", on_delete=models.CASCADE, related_name="events")

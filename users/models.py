@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from core.models import ContactsGroup
+from core.models import ContactsGroup, PublishedBaseModel
 from theatres.models import Event, Theatre
 
 User = get_user_model()
@@ -66,7 +66,7 @@ class ActorProfileQuerySet(models.QuerySet):
         return Event.objects.filter(troupe__id__in=troupes_ids)
 
 
-class ActorProfile(CommonProfile):
+class ActorProfile(CommonProfile, PublishedBaseModel):
     objects = models.Manager()
     actor_profiles = ActorProfileQuerySet.as_manager()
 
