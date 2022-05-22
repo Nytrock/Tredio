@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "sorl.thumbnail",
     "django_cleanup.apps.CleanupConfig",
+    "fieldsignals",
 ]
 
 MIDDLEWARE = [
@@ -88,14 +89,35 @@ WSGI_APPLICATION = "YlPlusProject.wsgi.application"
 
 
 # Database
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if environ.get("DJANGO_DATABASE_ENGINE") == "sqlite3":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+elif environ.get("DJANGO_DATABASE_ENGINE") == "postgresql":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": environ.get("DJANGO_DATABASE_NAME"),
+            "USER": environ.get("DJANGO_DATABASE_USER"),
+            "PASSWORD": environ.get("DJANGO_DATABASE_PASSWORD"),
+            "HOST": environ.get("DJANGO_DATABASE_HOST"),
+            "PORT": environ.get("DJANGO_DATABASE_PORT"),
+        }
+    }
+else:
+    raise ValueError(f"Invalid database engine: {environ.get('DJANGO_DATABASE_ENGINE')}")
 
+# Connecting to sqlite. Do not send to the master, the server will crash!!!
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from core.models import ContactsGroup
 from theatres.models import Event, Theatre
@@ -75,9 +77,20 @@ class ActorProfile(CommonProfile):
         return self.first_name + " " + self.last_name
 
 
+class RankQuerySet(models.QuerySet):
+    def get_rank(self, experience: int):
+        return self.filter(experience_required__lte=experience).order_by("-experience_required").first()
+
+    def get_next_rank(self, experience: int):
+        return self.filter(experience_required__gt=experience).order_by("experience_required").first()
+
+
 class Rank(models.Model):
     name = models.CharField("Название", max_length=100)
     experience_required = models.IntegerField("Необходимый опыт")
+
+    objects = models.Manager()
+    ranks = RankQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Ранг"
@@ -96,8 +109,10 @@ class UserProfileQuerySet(models.QuerySet):
 
 
 class UserProfile(CommonProfile):
-    user = models.OneToOneField(User, verbose_name="Пользователь", on_delete=models.CASCADE)
-    rank = models.ForeignKey(Rank, verbose_name="Ранг", on_delete=models.RESTRICT)
+    user = models.OneToOneField(
+        User, verbose_name="Пользователь", on_delete=models.CASCADE, related_name="user_profile"
+    )
+    rank = models.ForeignKey(Rank, verbose_name="Ранг", on_delete=models.RESTRICT, null=True, blank=True)
     experience = models.IntegerField("Опыт", default=0)
 
     objects = models.Manager()
@@ -106,3 +121,16 @@ class UserProfile(CommonProfile):
     class Meta:
         verbose_name = "Профиль пользователя"
         verbose_name_plural = "Профили пользователей"
+
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+    instance.user_profile.save()
+
+
+def update_rank(sender, instance, **kwargs):
+    new_rank = Rank.ranks.get_rank(instance.experience)
+    if instance.rank != new_rank:
+        instance.rank = new_rank
