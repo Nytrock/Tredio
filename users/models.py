@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from core.models import ContactsGroup, PublishedBaseModel
+from core.models import ContactsGroup, PublishedBaseModel, ImageBaseModel
 from theatres.models import Event, Theatre
 
 User = get_user_model()
@@ -36,7 +36,7 @@ class ProfileQuerySet(models.QuerySet):
         )
 
 
-class CommonProfile(models.Model):
+class CommonProfile(ImageBaseModel):
     first_name = models.CharField("Имя", max_length=100)
     last_name = models.CharField("Фамилия", max_length=100)
     birthday = models.DateField("Дата рождения", null=True, blank=True)

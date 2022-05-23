@@ -8,8 +8,14 @@
             <div class="row mb-3">
                 <div class="col-lg-4">
                     <div class="card shadow block-profile-img mb-3">
-                        <div class="card-body text-center shadow"><img class="rounded-circle mb-3 mt-4" src="{% static '/img/None.jpg' %}" width="160" height="160">
-                            <div class="mb-3"><button class="btn btn-primary btn-sm" type="button">Изменить фото</button></div>
+                        <div class="card-body text-center shadow"><img class="rounded-circle mb-3 mt-4" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}" width="160" height="160">
+                            <div class="mb-3">
+                                <form id="upload_image_form" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="file" id="{{ extra_form.image.label }}" name="{{ extra_form.image.html_name }}" style="display:none" onchange="$('#upload_image_form').submit()" accept="image/jpeg, image/png"/> 
+                                    <button class="btn btn-primary btn-sm" type="button" onclick="$('#{{ extra_form.image.label }}').trigger('click'); return false;">Изменить фото</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div class="card shadow mb-4">
