@@ -5,6 +5,7 @@ from theatres.models import (
     Event,
     EventImage,
     Location,
+    ModerationEvent,
     ModerationTheatre,
     Theatre,
     TheatreImage,
@@ -68,6 +69,19 @@ class EventImageInline(admin.TabularInline):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "theatre", "troupe", "reviews", "image_tmb")
-    fields = ("name", "theatre", "description", "troupe", "reviews", "image")
+    list_display = ("id", "name", "theatre", "troupe", "reviews", "image_tmb", "is_published")
+    fields = ("name", "theatre", "description", "troupe", "reviews", "image", "is_published")
     inlines = [EventImageInline]
+
+
+@admin.register(ModerationEvent)
+class ModerationEventAdmin(EventAdmin):
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(is_published=False)

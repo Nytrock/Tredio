@@ -187,5 +187,12 @@ class Event(PublishedBaseModel, ImageBaseModel):
         return self.name
 
 
+class ModerationEvent(Event):
+    class Meta:
+        verbose_name = "Событие на модерации"
+        verbose_name_plural = "События на модерации"
+        proxy = True
+
+
 class EventImage(GalleryBaseModel):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="gallery_images")
