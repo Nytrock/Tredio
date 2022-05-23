@@ -21,8 +21,8 @@ class UserAchievementAdmin(admin.ModelAdmin):
 
 @admin.register(ActorProfile)
 class ActorProfileAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "last_name", "birthday", "contacts")
-    fields = ("first_name", "last_name", "birthday", "contacts", "description")
+    list_display = ("first_name", "last_name", "birthday", "contacts", "image_tmb")
+    fields = ("first_name", "last_name", "birthday", "contacts", "description", "image")
 
 
 @admin.register(Rank)

@@ -134,7 +134,7 @@ class ChangeMainProfileForm(ModelForm):
 class ChangeExtraProfileForm(ModelForm):
     class Meta:
         model = UserProfile
-        fields = (UserProfile.birthday.field.name, UserProfile.description.field.name)
+        fields = (UserProfile.birthday.field.name, UserProfile.description.field.name, UserProfile.image.field.name)
         labels = {
             UserProfile.birthday.field.name: "День рождения",
             UserProfile.description.field.name: "Описание",
