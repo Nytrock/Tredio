@@ -78,6 +78,13 @@ class ActorProfile(CommonProfile, PublishedBaseModel):
         return self.first_name + " " + self.last_name
 
 
+class ModerationActorProfile(ActorProfile):
+    class Meta:
+        verbose_name = "Профиль актера на модерации"
+        verbose_name_plural = "Профили актеров на модерации"
+        proxy = True
+
+
 class RankQuerySet(models.QuerySet):
     def get_rank(self, experience: int):
         return self.filter(experience_required__lte=experience).order_by("-experience_required").first()
