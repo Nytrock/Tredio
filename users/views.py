@@ -78,11 +78,11 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, template, context)
 
     def post(self, request):
-        form_main = ChangeMainProfileForm(request.POST)
-        form_extra = ChangeExtraProfileForm(request.POST)
-
         user = get_object_or_404(User.objects, pk=request.user.id)
-        profile = UserProfile.objects.filter(user=user.id).first()
+        profile = user.user_profile
+
+        form_main = ChangeMainProfileForm(request.POST)
+        form_extra = ChangeExtraProfileForm(request.POST, request.FILES, instance=profile)
 
         if form_main.is_valid():
             first_name = form_main.cleaned_data["first_name"]
@@ -98,11 +98,7 @@ class ProfileView(LoginRequiredMixin, View):
             profile.save()
 
         if form_extra.is_valid():
-            if form_extra.cleaned_data[UserProfile.description.field.name]:
-                profile.description = form_extra.cleaned_data[UserProfile.description.field.name]
-            if form_extra.cleaned_data[UserProfile.birthday.field.name]:
-                profile.birthday = form_extra.cleaned_data[UserProfile.birthday.field.name]
-            profile.save()
+            form_extra.save()
 
         num = 1
         contact_data = {}
