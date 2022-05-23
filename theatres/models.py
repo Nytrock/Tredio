@@ -88,6 +88,7 @@ class TheatreQuerySet(models.QuerySet):
             self.filter(id=id)
             .prefetch_related(
                 "reviews__reviews",
+                "reviews__reviews__user__user_profile",
                 Prefetch("reviews__reviews__ratings", to_attr="like", queryset=ReviewRating.objects.filter(star=True)),
                 Prefetch(
                     "reviews__reviews__ratings", to_attr="dislike", queryset=ReviewRating.objects.filter(star=False)

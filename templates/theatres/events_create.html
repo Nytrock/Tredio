@@ -6,7 +6,7 @@
         <div class="container multi-form-container-with-no-point mt-5">
         <div class="row d-flex justify-content-center align-items-center">
         <div class="col-md-6">
-            <form id="regForm" action="." method="post">
+            <form id="regForm" action="." method="post" enctype='multipart/form-data'>
                 {% csrf_token %}
                 <h1 id="register" class="header-text">Добавление постановки</h1>
                 <div class="all-steps" id="all-steps">

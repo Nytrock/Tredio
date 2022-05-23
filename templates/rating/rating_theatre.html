@@ -26,8 +26,8 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="row-md mb-2">
-                            <a href="{% url 'users:users_detail' review.user.id %}">
-                                <img class="border rounded-circle img-profile" src="{% static '/img/None.jpg' %}">
+                            <a href="{% if review.user.id != request.user.id %} {% url 'users:users_detail' review.user.id %} {% else %} {% url 'users:profile' %} {% endif %}">
+                                <img class="border rounded-circle img-profile" style="border:2px solid {{ review.user.user_profile.rank.color }}!important" src="{% if review.user.user_profile.image %} {{ review.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}">
                                 <span class="d-none d-lg-inline me-2 text-gray-600 small">{{ review.user.username }}</span>
                             </a>
                         </div>

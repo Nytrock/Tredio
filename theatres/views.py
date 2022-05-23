@@ -122,13 +122,9 @@ class ActorCreateView(FormView):
                 type_id=contact_type.id,
                 contacts_group_id_id=group.id,
             )
-        ActorProfile.objects.create(
-            first_name=form.cleaned_data[ActorProfile.first_name.field.name],
-            last_name=form.cleaned_data[ActorProfile.last_name.field.name],
-            description=form.cleaned_data[ActorProfile.description.field.name],
-            birthday=form.cleaned_data[ActorProfile.birthday.field.name],
-            contacts_id=group.id,
-        )
+        new_actor = form.save(commit=False)
+        new_actor.contacts = group
+        new_actor.save()
         return redirect("homepage:home")
 
 
@@ -164,12 +160,8 @@ class EventCreateView(FormView):
         for name in troupe_data:
             actor = ActorProfile.objects.filter(first_name=name.split()[0], last_name=name.split()[1]).first()
             TroupeMember.objects.create(profile_id=actor.id, troupe_id=troupe.id, role=troupe_data[name])
-        Event.objects.create(
-            image=form.cleaned_data[Event.image.field.name],
-            name=form.cleaned_data[Event.name.field.name],
-            description=form.cleaned_data[Event.description.field.name],
-            reviews_id=reviews.id,
-            theatre_id=form.cleaned_data[Event.theatre.field.name].id,
-            troupe_id=troupe.id,
-        )
+        event = form.save(commit=False)
+        event.troupe = troupe
+        event.reviews = reviews
+        event.save()
         return redirect("theatres:events_list")

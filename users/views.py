@@ -68,12 +68,9 @@ class ProfileView(LoginRequiredMixin, View):
             "reviews": Review.reviews.fetch_by_user(user),
             "contacts": ContactType.objects.all(),
         }
-        context["next_rank"] = (
-            Rank.objects.order_by("-experience_required")
-            .filter(experience_required__gte=context["profile"].experience)
-            .first()
-        )
-        context["percent"] = int(context["profile"].experience / context["next_rank"].experience_required * 100)
+        context["next_rank"] = Rank.ranks.get_next_rank(context["profile"].experience)
+        if context["next_rank"] is not None:
+            context["percent"] = int(context["profile"].experience / context["next_rank"].experience_required * 100)
         context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
         return render(request, template, context)
 
@@ -111,17 +108,18 @@ class ProfileView(LoginRequiredMixin, View):
                 break
             num += 1
 
-        contacts = Contact.objects.filter(contacts_group_id=profile.contacts)
-        for contact in contacts:
-            contact.value = request.POST.get(contact.type.name)
-            contact.save()
+        if request.POST.get("contact-button") == "True":
+            contacts = Contact.objects.filter(contacts_group_id=profile.contacts)
+            for contact in contacts:
+                contact.value = request.POST.get(contact.type.name)
+                contact.save()
 
-        for name in contact_data:
-            Contact.objects.update_or_create(
-                type_id=int(name),
-                contacts_group_id_id=profile.contacts_id,
-                defaults={"value": contact_data[name]},
-            )
+            for name in contact_data:
+                Contact.objects.update_or_create(
+                    type_id=int(name),
+                    contacts_group_id_id=profile.contacts_id,
+                    defaults={"value": contact_data[name]},
+                )
 
         return redirect("users:profile")
 

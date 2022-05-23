@@ -21,14 +21,14 @@
                 <div class="dropdown no-arrow">
                     <a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">
                         <span class="d-none d-lg-inline me-2 text-gray-600 small">{{ request.user.username }}</span>
-                        <img class="border rounded-circle img-profile" src="{% static '/img/None.jpg' %}">
+                        <img class="rounded-circle img-profile" style="border:2px solid {{ profile_header.rank.color }}" src="{% if profile_header.image %} {{ profile_header.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}">
                     </a>
                     <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in">
                         <a class="dropdown-item" href="{% url 'users:profile' %}">
                             <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile
                         </a>
                         {% if request.user.is_superuser %}
-                        <a class="dropdown-item" href="/admin/">
+                        <a class="dropdown-item" href="/admin">
                             <i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Site admin
                         </a>
                         {% endif %}

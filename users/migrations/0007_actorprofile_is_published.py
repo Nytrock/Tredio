@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("users", "0005_rank_color"),
+        ("users", "0006_actorprofile_image_userprofile_image"),
     ]
 
     operations = [
