@@ -1,7 +1,12 @@
 from django.db import models
 from django.db.models import Prefetch
 
-from core.models import ContactsGroup, GalleryBaseModel, ImageBaseModel
+from core.models import (
+    ContactsGroup,
+    GalleryBaseModel,
+    ImageBaseModel,
+    PublishedBaseModel,
+)
 from rating.models import ReviewGroup, ReviewRating
 
 
@@ -92,7 +97,7 @@ class TheatreQuerySet(models.QuerySet):
         )
 
 
-class Theatre(ImageBaseModel):
+class Theatre(PublishedBaseModel, ImageBaseModel):
     name = models.CharField("Название", max_length=150)
     description = models.CharField("Описание", max_length=2500, null=True, blank=True)
     location = models.ForeignKey(Location, verbose_name="Местоположение", on_delete=models.CASCADE)
@@ -111,6 +116,13 @@ class Theatre(ImageBaseModel):
 
     def __str__(self):
         return self.name
+
+
+class ModerationTheatre(Theatre):
+    class Meta:
+        verbose_name = "Театр на модерации"
+        verbose_name_plural = "Театры на модерации"
+        proxy = True
 
 
 class TheatreImage(GalleryBaseModel):
@@ -157,7 +169,7 @@ class EventQuerySet(models.QuerySet):
         )
 
 
-class Event(ImageBaseModel):
+class Event(PublishedBaseModel, ImageBaseModel):
     name = models.CharField("Название", max_length=150)
     description = models.CharField("Описание", max_length=2500, null=True, blank=True)
     theatre = models.ForeignKey(Theatre, verbose_name="Театр", on_delete=models.CASCADE, related_name="events")
@@ -173,6 +185,13 @@ class Event(ImageBaseModel):
 
     def __str__(self):
         return self.name
+
+
+class ModerationEvent(Event):
+    class Meta:
+        verbose_name = "Событие на модерации"
+        verbose_name_plural = "События на модерации"
+        proxy = True
 
 
 class EventImage(GalleryBaseModel):

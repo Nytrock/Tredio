@@ -2,7 +2,14 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from users.models import Achievement, ActorProfile, Rank, UserAchievement, UserProfile
+from users.models import (
+    Achievement,
+    ActorProfile,
+    ModerationActorProfile,
+    Rank,
+    UserAchievement,
+    UserProfile,
+)
 
 User = get_user_model()
 
@@ -21,8 +28,21 @@ class UserAchievementAdmin(admin.ModelAdmin):
 
 @admin.register(ActorProfile)
 class ActorProfileAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "last_name", "birthday", "contacts", "image_tmb")
-    fields = ("first_name", "last_name", "birthday", "contacts", "description", "image")
+    list_display = ("first_name", "last_name", "birthday", "contacts", "is_published")
+    fields = ("first_name", "last_name", "birthday", "contacts", "description", "is_published")
+
+
+@admin.register(ModerationActorProfile)
+class ModerationActorProfileAdmin(ActorProfileAdmin):
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(is_published=False)
 
 
 @admin.register(Rank)
