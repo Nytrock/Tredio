@@ -118,6 +118,13 @@ class Theatre(PublishedBaseModel, ImageBaseModel):
         return self.name
 
 
+class ModerationTheatre(Theatre):
+    class Meta:
+        verbose_name = "Театр на модерации"
+        verbose_name_plural = "Театры на модерации"
+        proxy = True
+
+
 class TheatreImage(GalleryBaseModel):
     theatre = models.ForeignKey(Theatre, on_delete=models.CASCADE, related_name="gallery_images")
 
