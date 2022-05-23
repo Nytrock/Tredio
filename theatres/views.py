@@ -7,7 +7,7 @@ from core.models import Contact, ContactsGroup, ContactType
 from rating.models import ReviewGroup, ReviewRating
 from theatres.forms import ActorForm, EventForm, TheatreForm
 from theatres.models import City, Event, Theatre, Troupe, TroupeMember
-from users.models import ActorProfile
+from users.models import ActorProfile, add_experience
 
 
 class TheatresListView(TemplateView):
@@ -144,7 +144,7 @@ class EventCreateView(FormView):
         form = self.get_form(form_class)
         context = self.get_context_data(**kwargs)
         context["form"] = form
-        context["actors"] = ActorProfile.objects.all()
+        context["actors"] = ActorProfile.objects.filter(is_published=True)
         return self.render_to_response(context)
 
     def form_valid(self, form):

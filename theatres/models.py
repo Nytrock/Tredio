@@ -69,7 +69,11 @@ class Location(models.Model):
 
 class TheatreQuerySet(models.QuerySet):
     def theatres_list(self):
-        return self.only("id", "image", "name", "description", "location__query").order_by("name")
+        return (
+            self.only("id", "image", "name", "description", "location__query")
+            .order_by("name")
+            .filter(is_published=True)
+        )
 
     def theatre_details(self, id: int):
         return (
@@ -132,9 +136,11 @@ class TheatreImage(GalleryBaseModel):
 
 class EventQuerySet(models.QuerySet):
     def events_list(self):
-        return self.only(
-            "id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query"
-        ).order_by("name")
+        return (
+            self.only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
+            .order_by("name")
+            .filter(is_published=True)
+        )
 
     def event_details(self, id: int):
         return (

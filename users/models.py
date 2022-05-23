@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from core.models import ContactsGroup, PublishedBaseModel, ImageBaseModel
+from core.models import ContactsGroup, ImageBaseModel, PublishedBaseModel
 from theatres.models import Event, Theatre
 
 User = get_user_model()
@@ -143,3 +143,9 @@ def update_rank(sender, instance, **kwargs):
     new_rank = Rank.ranks.get_rank(instance.experience)
     if instance.rank != new_rank:
         instance.rank = new_rank
+
+
+def add_experience(id, xp):
+    profile = UserProfile.objects.filter(user_id=id).first()
+    profile.experience += xp
+    profile.save()

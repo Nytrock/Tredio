@@ -17,7 +17,7 @@
                             <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".event">Информация о постановке</a>
                             <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".groups">Участники</a>
                             {% if request.user.id != meetup.host_id %}
-                                {% if not in_meetup and meetup.participants_count != meetup.participants_limit %}
+                                {% if not in_meetup and meetup.participants_limit is not None %}
                                     <button class="btn btn-primary btn-lg" name="group_add" style="margin-top: 9px;" value="True" type="submit">Присоединиться к группе</button>
                                 {% elif meetup.participants_count != meetup.participants_limit %}
                                     <button class="btn btn-primary btn-lg" name="group_add" style="margin-top: 9px;" value="False" type="submit">Покинуть группу</button>
@@ -155,16 +155,16 @@
                 <div class="card shadow sm text-center">
                     <div class="col mb-5 ">
                         {% if user.user.id != request.user.id %}
-                            <a href="{% url 'users:users_detail' user.user.userprofile.id %}"><img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}"></a>
+                            <a href="{% url 'users:users_detail' user.user.user_profile.id %}"><img class="rounded img-fluid shadow" style="border:2px solid {{ user.user.user_profile.rank.color }}" src="{% if user.user.user_profile.image %} {{ user.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
                         {% else %}
-                            <a href="{% url 'users:profile' %}"><img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}"></a>
+                            <a href="{% url 'users:profile' %}"><img class="rounded img-fluid shadow" style="border:2px solid {{ user.user.user_profile.rank.color }}" src="{% if user.user.user_profile.image %} {{ user.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
                         {% endif %}
                     </div>
                     <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
                         <div>
-                            <h5 class="fw-bold">{{  user.user.userprofile.first_name }} {{  user.user.userprofile.last_name }} ({{  user.user.username }})</h5>
-                            {% if user.user.userprofile.description %}
-                                <p>{{ user.user.userprofile.description }}</p>
+                            <h5 class="fw-bold">{{  user.user.user_profile.first_name }} {{  user.user.user_profile.last_name }} ({{  user.user.username }})</h5>
+                            {% if user.user.user_profile.description %}
+                                <p>{{ user.user.user_profile.description }}</p>
                             {% else %}
                                 <p class="text-muted">Описание отсутсвует</p>
                             {% endif %}

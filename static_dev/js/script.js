@@ -79,6 +79,7 @@ function postLike(clickedElement) {
                 if (button.hasClass("btn-primary")){
                     button.attr("class", "btn btn-light like");
                     button.html("<i class='fa fa-thumbs-o-up' aria-hidden='true'> </i> " + (button_like - 1));
+                    frm.children("#like_num").attr("value", button_like - 1);
                 } else {
                     button.attr("class", "btn btn-primary like");
                     button.html("<i class='fa fa-thumbs-up' aria-hidden='true'> </i> " + (button_like + 1));

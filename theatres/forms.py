@@ -36,6 +36,7 @@ class EventForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields[Event.image.field.name].required = False
+        self.fields[Event.theatre.field.name].queryset = Theatre.objects.filter(is_published=True)
 
 
 class ActorForm(ModelForm):

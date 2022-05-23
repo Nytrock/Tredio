@@ -1,9 +1,15 @@
 from django.forms import ModelForm, widgets
 
+from theatres.models import Event
+
 from .models import Meetup
 
 
 class MeetupForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(MeetupForm, self).__init__(*args, **kwargs)
+        self.fields[Meetup.event.field.name].queryset = Event.objects.filter(is_published=True)
+
     class Meta:
         model = Meetup
         fields = (

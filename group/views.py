@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
-from django.views.generic import FormView, TemplateView
+from django.views.generic import TemplateView
 
-from group.models import Meetup, MeetupParticipant
-from theatres.models import TroupeMember
+from group.models import MeetupParticipant
+from theatres.models import Event, TroupeMember
+from users.models import UserProfile, add_experience
 
 from .forms import MeetupForm
 from .models import Meetup
@@ -35,9 +36,12 @@ class GroupDetailView(View):
     def post(self, request, **kwargs):
         if request.POST.get("group_delete") is not None:
             Meetup.objects.filter(id=kwargs["id"]).delete()
+            add_experience(request.user.id, -2)
             return redirect("group:group_list")
         if request.POST.get("group_add") == "True":
-            MeetupParticipant.objects.create(meetup_id=kwargs["id"], user_id=request.user.id)
+            meetup = get_object_or_404(Meetup, pk=kwargs["id"])
+            MeetupParticipant.objects.create(meetup_id=meetup.id, user_id=request.user.id)
+            add_experience(meetup.host_id, 15)
         else:
             MeetupParticipant.objects.filter(user_id=request.user.id).delete()
         return redirect("group:group_detail", kwargs["id"])
@@ -53,20 +57,9 @@ class GroupCreateView(TemplateView):
         return context
 
     def post(self, request):
+        add_experience(request.user.id, 5)
         form = MeetupForm(request.POST)
-        if form.data[Meetup.participants_limit.field.name] != "":
-            meetup = Meetup.objects.create(
-                event_id=form.data[Meetup.event.field.name],
-                start=form.data[Meetup.start.field.name],
-                participants_limit=form.data[Meetup.participants_limit.field.name],
-                description=form.data[Meetup.description.field.name],
-                host_id=request.user.id,
-            )
-        else:
-            meetup = Meetup.objects.create(
-                event_id=form.data[Meetup.event.field.name],
-                start=form.data[Meetup.start.field.name],
-                description=form.data[Meetup.description.field.name],
-                host_id=request.user.id,
-            )
+        meetup = form.save(commit=False)
+        meetup.host_id = request.user.id
+        meetup.save()
         return redirect("group:group_detail", meetup.id)

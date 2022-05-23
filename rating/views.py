@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 from rating.forms import RatingForm
 from rating.models import Review, ReviewRating
 from theatres.models import Event, Theatre
+from users.models import add_experience
 
 
 def is_ajax(request):
@@ -33,21 +34,37 @@ class RatingTheatreView(View):
         return render(request, template, context)
 
     def post(self, request, **kwargs):
-        review_rating = ReviewRating.objects.filter(review_id=int(request.POST.get("id")))
+        review_rating = ReviewRating.objects.filter(
+            review_id=int(request.POST.get("id")), user_id=request.user.id
+        ).prefetch_related("review")
         json_file = {
             "like": request.POST.get("like") == "True",
             "like_num": int(request.POST.get("like_num")),
             "dislike_num": int(request.POST.get("dislike_num")),
         }
         if review_rating:
-            if review_rating.first().star == (request.POST.get("like") == "True"):
+            review_rating = review_rating.first()
+            if review_rating.star == (request.POST.get("like") == "True"):
+                if request.POST.get("like") == "True":
+                    add_experience(review_rating.review.user_id, -2)
+                else:
+                    add_experience(review_rating.review.user_id, 2)
                 review_rating.delete()
                 return JsonResponse(json_file)
-        ReviewRating.objects.update_or_create(
+            else:
+                if request.POST.get("like") == "True":
+                    add_experience(review_rating.review.user_id, 2)
+                else:
+                    add_experience(review_rating.review.user_id, -2)
+        review_rating = ReviewRating.objects.update_or_create(
             user_id=request.user.id,
             review_id=int(request.POST.get("id")),
             defaults={"star": request.POST.get("like") == "True"},
-        )
+        )[0]
+        if request.POST.get("like") == "True":
+            add_experience(review_rating.review.user_id, 2)
+        else:
+            add_experience(review_rating.review.user_id, -2)
 
         return JsonResponse(json_file)
 
@@ -82,4 +99,5 @@ class RatingCreateView(TemplateView):
                 review_group_id_id=event.reviews.id,
                 user_id=request.user.id,
             )
+        add_experience(request.user.id, 10)
         return redirect(f"rating:rating_{kwargs.get('type')}", kwargs.get("id"))
