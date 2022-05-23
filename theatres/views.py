@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
@@ -74,16 +75,21 @@ class EventDetailView(View):
 
     def post(self, request, **kwargs):
         review = ReviewRating.objects.filter(review_id=int(request.POST.get("id")))
+        json_file = {
+            "like": request.POST.get("like") == "True",
+            "like_num": int(request.POST.get("like_num")),
+            "dislike_num": int(request.POST.get("dislike_num")),
+        }
         if review:
             if review.first().star == (request.POST.get("like") == "True"):
                 review.delete()
-                return redirect("theatres:events_detail", kwargs["id"])
+                return JsonResponse(json_file)
         ReviewRating.objects.update_or_create(
             user_id=request.user.id,
             review_id=int(request.POST.get("id")),
             defaults={"star": request.POST.get("like") == "True"},
         )
-        return redirect("theatres:events_detail", kwargs["id"])
+        return JsonResponse(json_file)
 
 
 class ActorCreateView(FormView):

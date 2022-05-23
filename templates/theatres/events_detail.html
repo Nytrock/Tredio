@@ -50,7 +50,7 @@
         <div class="container py-5">
             {{ event.description }}
         </div>
-        <h2 class="text-center">Место проведения</h2>
+        <h2 class="text-center events">Место проведения</h2>
         <div class="container py-5">
             <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
                 <div class="col mb-5">
@@ -154,27 +154,29 @@
                                 </div>
                             </div>
                         </div>
-                        <form class="row-md-9" action="." method="post">
+                        <form class="row-md-9" action="." class="like-form" method="post">
                             {% csrf_token %}
                             <p>{{ review.content }}</p>
                             <input hidden name="id" value="{{ review.id }}">
-                            <p>
+                            <input hidden id="like_num" name="like_num" value="{{ review.like|length }}">
+                            <input hidden id="dislike_num" name="dislike_num" value="{{ review.dislike|length }}">
+                            <p id="like-div">
                                 {% if review.user_like%}
-                                    <button type="submit" name="like" value="True" class="btn btn-primary">
+                                    <button type="button" onclick="postLike(this)" id="like" name="like" value="True" class="btn btn-primary like">
                                         <i class="fa fa-thumbs-up" aria-hidden="true"></i> {{ review.like|length }}
                                     </button>
                                 {% else %}
-                                    <button type="submit" name="like" value="True" class="btn btn-light">
-                                        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> {{ review.like|length }}
+                                    <button type="button" onclick="postLike(this)" id="like" name="like" value="True" class="btn btn-light like">
+                                        <i class="fa fa-thumbs-o-up" aria-hidden="true"> </i> {{ review.like|length }}
                                     </button>
                                 {% endif %}
                                 {% if review.user_dislike%}
-                                    <button type="submit" name="like" value="False" class="btn btn-danger">
+                                    <button type="button" onclick="postLike(this)" id="dislike" name="like" value="False" class="btn btn-danger like">
                                         <i class="fa fa-thumbs-down" aria-hidden="true"></i> {{ review.dislike|length }}
                                     </button>
                                 {% else %}
-                                    <button type="submit" name="like" value="False" class="btn btn-light">
-                                        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i> {{ review.dislike|length }}
+                                    <button type="button" onclick="postLike(this)" id="dislike" name="like" value="False" class="btn btn-light like">
+                                        <i class="fa fa-thumbs-o-down" aria-hidden="true"> </i> {{ review.dislike|length }}
                                     </button>
                                 {% endif %}
                            </p>

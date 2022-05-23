@@ -1,3 +1,6 @@
+import json
+
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import TemplateView
@@ -5,6 +8,10 @@ from django.views.generic import TemplateView
 from rating.forms import RatingForm
 from rating.models import Review, ReviewRating
 from theatres.models import Event, Theatre
+
+
+def is_ajax(request):
+    return request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest"
 
 
 class RatingTheatreView(View):
@@ -26,17 +33,23 @@ class RatingTheatreView(View):
         return render(request, template, context)
 
     def post(self, request, **kwargs):
-        review = ReviewRating.objects.filter(review_id=int(request.POST.get("id")))
-        if review:
-            if review.first().star == (request.POST.get("like") == "True"):
-                review.delete()
-                return redirect("rating:rating_theatre", kwargs["id"])
+        review_rating = ReviewRating.objects.filter(review_id=int(request.POST.get("id")))
+        json_file = {
+            "like": request.POST.get("like") == "True",
+            "like_num": int(request.POST.get("like_num")),
+            "dislike_num": int(request.POST.get("dislike_num")),
+        }
+        if review_rating:
+            if review_rating.first().star == (request.POST.get("like") == "True"):
+                review_rating.delete()
+                return JsonResponse(json_file)
         ReviewRating.objects.update_or_create(
             user_id=request.user.id,
             review_id=int(request.POST.get("id")),
             defaults={"star": request.POST.get("like") == "True"},
         )
-        return redirect("rating:rating_theatre", kwargs["id"])
+
+        return JsonResponse(json_file)
 
 
 class RatingCreateView(TemplateView):
