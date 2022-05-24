@@ -17,6 +17,7 @@ django-fieldsignals = "^0.7.0"
 django-colorfield = "^0.7.0"
 dadata = "^21.10.1"
 psycopg2-binary = "^2.9.3"
+gunicorn = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
