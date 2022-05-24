@@ -70,7 +70,11 @@ class ProfileView(LoginRequiredMixin, View):
         }
         context["next_rank"] = Rank.ranks.get_next_rank(context["profile"].experience)
         if context["next_rank"] is not None:
-            context["percent"] = int(context["profile"].experience / context["next_rank"].experience_required * 100)
+            context["percent"] = int(
+                (context["profile"].experience - context["profile"].rank.experience_required)
+                / (context["next_rank"].experience_required - context["profile"].rank.experience_required)
+                * 100
+            )
         context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
         return render(request, template, context)
 

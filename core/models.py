@@ -14,6 +14,9 @@ def modify_fields(**kwargs):
 
 
 class ContactsGroup(models.Model):
+
+    objects = models.Manager()
+
     class Meta:
         verbose_name = "Группа контактов"
         verbose_name_plural = "Группы контактов"
@@ -21,6 +24,8 @@ class ContactsGroup(models.Model):
 
 class ContactType(models.Model):
     name = models.CharField("Название", max_length=100)
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = "Тип контакта"
@@ -36,6 +41,8 @@ class Contact(models.Model):
     )
     type = models.ForeignKey(ContactType, verbose_name="Тип контакта", on_delete=models.CASCADE)
     value = models.CharField("Значение", max_length=100)
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = "Контакт"

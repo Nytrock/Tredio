@@ -32,6 +32,7 @@
                             <div class="mb-3 col" id="first_input">
                                 <p> Актёр </p>
                                 <select name="actor_change0" id="actor_change0" class="form-control selected">
+                                    <option value="" selected="">---------</option>
                                     {% for actor in actors %}
                                         <option>{{ actor }} </option>
                                     {% endfor %}
