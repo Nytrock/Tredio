@@ -12,7 +12,6 @@ from rating.models import ReviewGroup, ReviewRating
 
 
 class Troupe(models.Model):
-
     objects = models.Manager()
 
     class Meta:

@@ -7,7 +7,6 @@ User = get_user_model()
 
 
 class ReviewGroup(models.Model):
-
     objects = models.Manager()
 
     class Meta:

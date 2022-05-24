@@ -14,7 +14,6 @@ def modify_fields(**kwargs):
 
 
 class ContactsGroup(models.Model):
-
     objects = models.Manager()
 
     class Meta:

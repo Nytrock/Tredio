@@ -20,7 +20,7 @@ class MeetupQuerySet(models.QuerySet):
             "description",
         ).annotate(participants_count=models.Count("participants"))
 
-    def meetup_us(self, example: str):
+    def meetup_us(self, search_query: str):
         return (
             self.only(
                 "event__id",
@@ -32,7 +32,7 @@ class MeetupQuerySet(models.QuerySet):
                 "participants_limit",
                 "description",
             )
-            .filter(event__name__icontains=example)
+            .filter(event__name__icontains=search_query)
             .annotate(participants_count=models.Count("participants"))
         )
 
