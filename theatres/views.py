@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
@@ -6,7 +7,7 @@ from core.models import Contact, ContactsGroup, ContactType
 from rating.models import ReviewGroup, ReviewRating
 from theatres.forms import ActorForm, EventForm, TheatreForm
 from theatres.models import City, Event, Theatre, Troupe, TroupeMember
-from users.models import ActorProfile
+from users.models import ActorProfile, add_experience
 
 
 class TheatresListView(TemplateView):
@@ -74,16 +75,21 @@ class EventDetailView(View):
 
     def post(self, request, **kwargs):
         review = ReviewRating.objects.filter(review_id=int(request.POST.get("id")))
+        json_file = {
+            "like": request.POST.get("like") == "True",
+            "like_num": int(request.POST.get("like_num")),
+            "dislike_num": int(request.POST.get("dislike_num")),
+        }
         if review:
             if review.first().star == (request.POST.get("like") == "True"):
                 review.delete()
-                return redirect("theatres:events_detail", kwargs["id"])
+                return JsonResponse(json_file)
         ReviewRating.objects.update_or_create(
             user_id=request.user.id,
             review_id=int(request.POST.get("id")),
             defaults={"star": request.POST.get("like") == "True"},
         )
-        return redirect("theatres:events_detail", kwargs["id"])
+        return JsonResponse(json_file)
 
 
 class ActorCreateView(FormView):
@@ -122,13 +128,9 @@ class ActorCreateView(FormView):
                 type_id=contact_type.id,
                 contacts_group_id_id=group.id,
             )
-        ActorProfile.objects.create(
-            first_name=form.cleaned_data[ActorProfile.first_name.field.name],
-            last_name=form.cleaned_data[ActorProfile.last_name.field.name],
-            description=form.cleaned_data[ActorProfile.description.field.name],
-            birthday=form.cleaned_data[ActorProfile.birthday.field.name],
-            contacts_id=group.id,
-        )
+        new_actor = form.save(commit=False)
+        new_actor.contacts = group
+        new_actor.save()
         return redirect("homepage:home")
 
 
@@ -142,7 +144,7 @@ class EventCreateView(FormView):
         form = self.get_form(form_class)
         context = self.get_context_data(**kwargs)
         context["form"] = form
-        context["actors"] = ActorProfile.objects.all()
+        context["actors"] = ActorProfile.objects.filter(is_published=True)
         return self.render_to_response(context)
 
     def form_valid(self, form):
@@ -164,12 +166,8 @@ class EventCreateView(FormView):
         for name in troupe_data:
             actor = ActorProfile.objects.filter(first_name=name.split()[0], last_name=name.split()[1]).first()
             TroupeMember.objects.create(profile_id=actor.id, troupe_id=troupe.id, role=troupe_data[name])
-        Event.objects.create(
-            image=form.cleaned_data[Event.image.field.name],
-            name=form.cleaned_data[Event.name.field.name],
-            description=form.cleaned_data[Event.description.field.name],
-            reviews_id=reviews.id,
-            theatre_id=form.cleaned_data[Event.theatre.field.name].id,
-            troupe_id=troupe.id,
-        )
+        event = form.save(commit=False)
+        event.troupe = troupe
+        event.reviews = reviews
+        event.save()
         return redirect("theatres:events_list")

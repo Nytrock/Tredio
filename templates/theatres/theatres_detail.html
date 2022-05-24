@@ -134,7 +134,7 @@
             <div class="col">
                 <div class="card shadow sm text-center">
                     <div class="col mb-5 ">
-                        <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}"></a>
+                        <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% if actor.profile.image %} {{ actor.profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
                     </div>
                     <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
                         <div>

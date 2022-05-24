@@ -69,7 +69,11 @@ class Location(models.Model):
 
 class TheatreQuerySet(models.QuerySet):
     def theatres_list(self):
-        return self.only("id", "image", "name", "description", "location__query").order_by("name")
+        return (
+            self.only("id", "image", "name", "description", "location__query")
+            .order_by("name")
+            .filter(is_published=True)
+        )
 
     def theatre_details(self, id: int):
         return (
@@ -88,6 +92,7 @@ class TheatreQuerySet(models.QuerySet):
             self.filter(id=id)
             .prefetch_related(
                 "reviews__reviews",
+                "reviews__reviews__user__user_profile",
                 Prefetch("reviews__reviews__ratings", to_attr="like", queryset=ReviewRating.objects.filter(star=True)),
                 Prefetch(
                     "reviews__reviews__ratings", to_attr="dislike", queryset=ReviewRating.objects.filter(star=False)
@@ -131,9 +136,11 @@ class TheatreImage(GalleryBaseModel):
 
 class EventQuerySet(models.QuerySet):
     def events_list(self):
-        return self.only(
-            "id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query"
-        ).order_by("name")
+        return (
+            self.only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
+            .order_by("name")
+            .filter(is_published=True)
+        )
 
     def event_details(self, id: int):
         return (

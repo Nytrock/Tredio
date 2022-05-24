@@ -124,3 +124,11 @@
 .star-size{
      font-size: 3rem!important;
 }
+
+.img-profile-160{
+    height: 160px;
+    width: 160px;
+    max-width: 160px;
+    min-width: 160px;
+    object-fit:cover;
+}

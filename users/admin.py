@@ -47,8 +47,8 @@ class ModerationActorProfileAdmin(ActorProfileAdmin):
 
 @admin.register(Rank)
 class RankAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "experience_required")
-    fields = ("name", "experience_required")
+    list_display = ("id", "name", "experience_required", "color")
+    fields = ("name", "experience_required", "color")
 
 
 class UserProfileInlined(admin.StackedInline):

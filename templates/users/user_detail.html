@@ -8,7 +8,8 @@
             <div class="row mb-3">
                 <div class="col-lg-4">
                     <div class="card shadow block-profile-img mb-3">
-                        <div class="card-body text-center shadow"><img class="rounded-circle mb-3 mt-4" src="{% static '/img/None.jpg' %}" width="160" height="160">
+                        <div class="card-body text-center shadow">
+                            <img class="rounded-circle mb-3 mt-4" style="border:5px solid {{ profile.rank.color }}" src="{% static '/img/None.jpg' %}" width="160" height="160">
                             <h3 class="text-center text-dark mb-3">{{ user.username }}</h3>
                         </div>
                     </div>

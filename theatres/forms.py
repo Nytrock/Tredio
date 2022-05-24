@@ -36,6 +36,7 @@ class EventForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields[Event.image.field.name].required = False
+        self.fields[Event.theatre.field.name].queryset = Theatre.objects.filter(is_published=True)
 
 
 class ActorForm(ModelForm):
@@ -45,6 +46,7 @@ class ActorForm(ModelForm):
             ActorProfile.first_name.field.name,
             ActorProfile.last_name.field.name,
             ActorProfile.birthday.field.name,
+            ActorProfile.image.field.name,
             ActorProfile.description.field.name,
         )
 
@@ -66,4 +68,5 @@ class ActorForm(ModelForm):
             ActorProfile.last_name.field.name: "Введите фамилию",
             ActorProfile.description.field.name: "Введите описание актёра",
             ActorProfile.birthday.field.name: "Введите дату рождения (необязательно)",
+            ActorProfile.image.field.name: "Загрузите фото актёра (необязательно)",
         }

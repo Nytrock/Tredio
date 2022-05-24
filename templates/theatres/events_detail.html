@@ -50,7 +50,7 @@
         <div class="container py-5">
             {{ event.description }}
         </div>
-        <h2 class="text-center">Место проведения</h2>
+        <h2 class="text-center events">Место проведения</h2>
         <div class="container py-5">
             <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
                 <div class="col mb-5">
@@ -80,7 +80,7 @@
             <div class="col">
                 <div class="card shadow sm text-center">
                     <div class="col mb-5 ">
-                        <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}"></a>
+                        <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% if actor.profile.image %} {{ actor.profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
                     </div>
                     <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
                         <div>
@@ -110,8 +110,8 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="row-md mb-2">
-                            <a href="{% url 'users:users_detail' review.user.id %}">
-                                <img class="border rounded-circle img-profile" src="{% static '/img/None.jpg' %}">
+                            <a href="{% if review.user.id != request.user.id %} {% url 'users:users_detail' review.user.id %} {% else %} {% url 'users:profile' %} {% endif %}">
+                                <img class="border rounded-circle img-profile" style="border:2px solid {{ review.user.user_profile.rank.color }}!important" src="{% if review.user.user_profile.image %} {{ review.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}">
                                 <span class="d-none d-lg-inline me-2 text-gray-600 small">{{ review.user.username }}</span>
                             </a>
                         </div>
@@ -154,27 +154,29 @@
                                 </div>
                             </div>
                         </div>
-                        <form class="row-md-9" action="." method="post">
+                        <form class="row-md-9" action="." class="like-form" method="post">
                             {% csrf_token %}
                             <p>{{ review.content }}</p>
                             <input hidden name="id" value="{{ review.id }}">
-                            <p>
+                            <input hidden id="like_num" name="like_num" value="{{ review.like|length }}">
+                            <input hidden id="dislike_num" name="dislike_num" value="{{ review.dislike|length }}">
+                            <p id="like-div">
                                 {% if review.user_like%}
-                                    <button type="submit" name="like" value="True" class="btn btn-primary">
+                                    <button type="button" onclick="postLike(this)" id="like" name="like" value="True" class="btn btn-primary like">
                                         <i class="fa fa-thumbs-up" aria-hidden="true"></i> {{ review.like|length }}
                                     </button>
                                 {% else %}
-                                    <button type="submit" name="like" value="True" class="btn btn-light">
-                                        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> {{ review.like|length }}
+                                    <button type="button" onclick="postLike(this)" id="like" name="like" value="True" class="btn btn-light like">
+                                        <i class="fa fa-thumbs-o-up" aria-hidden="true"> </i> {{ review.like|length }}
                                     </button>
                                 {% endif %}
                                 {% if review.user_dislike%}
-                                    <button type="submit" name="like" value="False" class="btn btn-danger">
+                                    <button type="button" onclick="postLike(this)" id="dislike" name="like" value="False" class="btn btn-danger like">
                                         <i class="fa fa-thumbs-down" aria-hidden="true"></i> {{ review.dislike|length }}
                                     </button>
                                 {% else %}
-                                    <button type="submit" name="like" value="False" class="btn btn-light">
-                                        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i> {{ review.dislike|length }}
+                                    <button type="button" onclick="postLike(this)" id="dislike" name="like" value="False" class="btn btn-light like">
+                                        <i class="fa fa-thumbs-o-down" aria-hidden="true"> </i> {{ review.dislike|length }}
                                     </button>
                                 {% endif %}
                            </p>
@@ -182,6 +184,8 @@
                     </div>
                 </div>
             </div>
+            {% empty%}
+                <h2 class="text-center">Отзывов нет.</h2>
             {% endfor %}
         </div>
         </div>

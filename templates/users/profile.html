@@ -8,8 +8,10 @@
             <div class="row mb-3">
                 <div class="col-lg-4">
                     <div class="card shadow block-profile-img mb-3">
-                        <div class="card-body text-center shadow"><img class="rounded-circle mb-3 mt-4" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}" width="160" height="160">
+                        <div class="card-body text-center shadow">
+                            <img class="rounded-circle mb-1 mt-4 img-profile-160" style="border:5px solid {{ profile.rank.color }}" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}">
                             <div class="mb-3">
+                                <h3 class="text-center text-dark mb-2">{{ request.user.username }}</h3>
                                 <form id="upload_image_form" method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <input type="file" id="{{ extra_form.image.label }}" name="{{ extra_form.image.html_name }}" style="display:none" onchange="$('#upload_image_form').submit()" accept="image/jpeg, image/png"/> 
@@ -23,10 +25,22 @@
                             <h6 class="text-primary fw-bold m-0">Ранг</h6>
                         </div>
                         <div class="card-body">
-                            <h4 class="small">Получай опыт за активность на сайте (пиши отзывы, организуй группы и т.д.), получай новые ранги и попробуй достигнуть максимума!</h4>
-                            <h4 class="small fw-bold rank-h1">{{profile.rank.name}}<br><span class="float-end num_exp">{{ profile.experience }}/{{ next_rank.experience_required }}</span></h4>
+                            <h4 class="small">
+                                {% if next_rank %}
+                                Получай опыт за активность на сайте (пиши отзывы, организуй группы и т.д.), получай новые ранги и попробуй достигнуть максимума!
+                                {% else %}
+                                Что ж... Вижу вы достигли максимального уровня, позравляю!!! Но это не конец! Совершенствуйтесь до предела!
+                                {% endif %}
+                            </h4>
+                            <h4 class="small fw-bold rank-h1">{{profile.rank.name}}<br><span class="float-end num_exp">{{ profile.experience }}/
+                                {% if next_rank %}
+                                    {{ next_rank.experience_required }}
+                                {% else %}
+                                    ∞
+                                {% endif %}
+                            </span></h4>
                             <div class="progress progress-sm mb-3">
-                                <div class="progress-bar bg-success" aria-valuenow="{{ profile.experience }}" aria-valuemin="0" aria-valuemax="{{ next_rank.experience_required }}" style="width: {{ percent }}%;"></div>
+                                <div style="width: {% if next_rank %}{{ percent }}{% else %}100{% endif %}%; background-color: {% if profile.rank %} {{ profile.rank.color }}!important {% endif %}" class="progress-bar bg-success" aria-valuenow="{{ profile.experience }}" aria-valuemin="0" aria-valuemax="{{ next_rank.experience_required }}"></div>
                             </div>
                         </div>
                     </div>
@@ -138,7 +152,7 @@
                                         {% endfor %}
                                     </div>
                                         <div class="mb-3">
-                                            <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
+                                            <button class="btn btn-primary btn-sm" name="contact-button" value="True" type="submit">Сохранить</button>
                                             <button class="btn btn-primary btn-sm" type="button" id="AddContactProfile">Добавить</button>
                                         </div>
                                         <div id="contact-div" class="mb-3 collapse">
@@ -168,7 +182,7 @@
                         <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="{{ extra_form.description.label }}"><strong>{{ extra_form.description.label }}</strong><br></label>
-                                    <textarea placeholder="Введите описание" class="form-control" id="{{ extra_form.description.label }}" rows="4" name="{{ extra_form.description.html_name }}">{{user.description}}</textarea>
+                                    <textarea placeholder="Введите описание" class="form-control" id="{{ extra_form.description.label }}" rows="4" name="{{ extra_form.description.html_name }}">{% if user.description %}{{user.description}}{% endif %}</textarea>
                                 </div>
                                 <div class="mb-3"></div>
                         </div>
