@@ -159,7 +159,8 @@ class SignupView(FormView):
             password=form.cleaned_data["password2"],
             email=form.cleaned_data[User.email.field.name],
         )
-        UserProfile.objects.filter(user=user).update(
+        UserProfile.objects.create(
+            user=user,
             first_name=first_name,
             last_name=last_name,
             birthday=form.cleaned_data["birthday"],

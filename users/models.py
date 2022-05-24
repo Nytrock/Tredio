@@ -132,13 +132,6 @@ class UserProfile(CommonProfile):
         verbose_name_plural = "Профили пользователей"
 
 
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-    instance.user_profile.save()
-
-
 def update_rank(sender, instance, **kwargs):
     new_rank = Rank.ranks.get_rank(instance.experience)
     if instance.rank != new_rank:
