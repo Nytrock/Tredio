@@ -64,7 +64,7 @@ class ProfileView(LoginRequiredMixin, View):
             "profile": get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id)),
             "user": get_object_or_404(UserProfile.profiles.get_profile(self.user_id)),
             "meetups_host": Meetup.meetups.fetch_by_user(user),
-            "meetups_participant": MeetupParticipant.meetups.fetch_by_user(user),
+            "meetups_participant": MeetupParticipant.meetup_participants.fetch_by_user(user),
             "reviews": Review.reviews.fetch_by_user(user),
             "contacts": ContactType.objects.all(),
         }
@@ -138,7 +138,7 @@ class UserDetailView(TemplateView):
         context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(profile_id))
         user = get_object_or_404(User.objects, pk=context["profile"].user_id)
         context["user"] = get_object_or_404(User.objects, pk=user.id)
-        context["meetups_participant"] = MeetupParticipant.meetups.fetch_by_user(user)
+        context["meetups_participant"] = MeetupParticipant.meetup_participants.fetch_by_user(user)
         context["meetups_host"] = Meetup.meetups.fetch_by_user(user)
         context["profile_contacts"] = Contact.objects.filter(contacts_group=context["profile"].contacts)
 
