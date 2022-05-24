@@ -5,19 +5,29 @@ from django.views.generic import FormView, TemplateView
 
 from core.models import Contact, ContactsGroup, ContactType
 from rating.models import ReviewGroup, ReviewRating
-from theatres.forms import ActorForm, EventForm
+from theatres.forms import ActorForm, EventForm, TheatreForm, SearchForm
 from theatres.models import City, Event, Theatre, Troupe, TroupeMember
 from users.models import ActorProfile
 
 
-class TheatresListView(TemplateView):
+class TheatresListView(FormView):
     template_name = "theatres/theatres_list.html"
+    form_class = SearchForm
 
-    def get_context_data(self, **kwargs):
+    def get(self, request, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context["theatres"] = Theatre.theatres.theatres_list()
         context["cities"] = City.objects.all()
-        return context
+        return self.render_to_response(context)
+
+    def form_valid(self, form, **kwargs):
+        if form.data["search"] == "":
+            return redirect("theatres:theatres_list")
+        context = super().get_context_data(**kwargs)
+        context["theatres"] = Theatre.theatres.theatre_as(form.data["search"])
+        context["current_search"] = form.data["search"]
+        context["cities"] = City.objects.all()
+        return self.render_to_response(context)
 
 
 class TheatresDetailView(TemplateView):
@@ -41,14 +51,25 @@ class TheatresCreateView(TemplateView):
         return context
 
 
-class EventListView(TemplateView):
+class EventListView(FormView):
     template_name = "theatres/events_list.html"
+    form_class = SearchForm
 
-    def get_context_data(self, **kwargs):
+    def get(self, request, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context["events"] = Event.events.events_list()
         context["cities"] = City.objects.all()
-        return context
+        return self.render_to_response(context)
+
+    def form_valid(self, form, **kwargs):
+        if form.data["search"] == "":
+            return redirect("theatres:events_list")
+        context = super().get_context_data(**kwargs)
+        context["events"] = Event.events.event_as(form.data["search"])
+        context["current_search"] = form.data["search"]
+        context["cities"] = City.objects.all()
+        return self.render_to_response(context)
+
 
 
 class EventDetailView(View):

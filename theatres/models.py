@@ -76,16 +76,23 @@ class TheatreQuerySet(models.QuerySet):
     def theatres_list(self):
         return (
             self.only("id", "image", "name", "description", "location__query")
-            .order_by("name")
-            .filter(is_published=True)
+                .order_by("name")
+                .filter(is_published=True)
+        )
+
+    def theatre_as(self, example: str):
+        return (
+            self.only("id", "image", "name", "description", "location__query")
+                .order_by("name")
+                .filter(is_published=True, name__icontains=example)
         )
 
     def theatre_details(self, id: int):
         return (
             self.filter(id=id)
-            .prefetch_related("gallery_images", "reviews__reviews", "events__meetups", "events__meetups__host")
-            .only("name", "description")
-            .annotate(
+                .prefetch_related("gallery_images", "reviews__reviews", "events__meetups", "events__meetups__host")
+                .only("name", "description")
+                .annotate(
                 reviews_count=models.Count("reviews__reviews", distinct=True),
                 reviews_average_score=models.Avg("reviews__reviews__star"),
                 events_count=models.Count("events", distinct=True),
@@ -95,7 +102,7 @@ class TheatreQuerySet(models.QuerySet):
     def theatre_ratings(self, id: int):
         return (
             self.filter(id=id)
-            .prefetch_related(
+                .prefetch_related(
                 "reviews__reviews",
                 "reviews__reviews__user__user_profile",
                 Prefetch("reviews__reviews__ratings", to_attr="like", queryset=ReviewRating.objects.filter(star=True)),
@@ -103,7 +110,7 @@ class TheatreQuerySet(models.QuerySet):
                     "reviews__reviews__ratings", to_attr="dislike", queryset=ReviewRating.objects.filter(star=False)
                 ),
             )
-            .only("id", "name", "image", "location__query", "description")
+                .only("id", "name", "image", "location__query", "description")
         )
 
 
@@ -143,16 +150,23 @@ class EventQuerySet(models.QuerySet):
     def events_list(self):
         return (
             self.only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
-            .order_by("name")
-            .filter(is_published=True)
+                .order_by("name")
+                .filter(is_published=True)
+        )
+
+    def event_as(self, example: str):
+        return (
+            self.only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
+                .order_by("name")
+                .filter(is_published=True, name__icontains=example)
         )
 
     def event_details(self, id: int):
         return (
             self.filter(id=id)
-            .prefetch_related("troupe__members", "reviews__reviews")
-            .only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
-            .annotate(
+                .prefetch_related("troupe__members", "reviews__reviews")
+                .only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
+                .annotate(
                 reviews_count=models.Count("reviews__reviews"),
                 reviews_average_score=models.Avg("reviews__reviews__star"),
             )
@@ -161,14 +175,14 @@ class EventQuerySet(models.QuerySet):
     def event_ratings(self, id: int):
         return (
             self.filter(id=id)
-            .prefetch_related(
+                .prefetch_related(
                 "reviews__reviews",
                 Prefetch("reviews__reviews__ratings", to_attr="like", queryset=ReviewRating.objects.filter(star=True)),
                 Prefetch(
                     "reviews__reviews__ratings", to_attr="dislike", queryset=ReviewRating.objects.filter(star=False)
                 ),
             )
-            .only(
+                .only(
                 "id",
                 "name",
                 "image",

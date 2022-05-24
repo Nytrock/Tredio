@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
 from group.models import MeetupParticipant
+from theatres.forms import SearchForm
 from theatres.models import TroupeMember
 from users.models import add_experience
 
@@ -10,13 +11,22 @@ from .forms import MeetupForm
 from .models import Meetup
 
 
-class GroupListView(TemplateView):
+class GroupListView(FormView):
     template_name = "group/group_list.html"
+    form_class = SearchForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["meetups"] = Meetup.meetups.meetup_list()
         return context
+
+    def form_valid(self, form, **kwargs):
+        if form.data["search"] == "":
+            return redirect("group:group_list")
+        context = super().get_context_data(**kwargs)
+        context["meetups"] = Meetup.meetups.meetup_us(form.data["search"])
+        context["current_search"] = form.data["search"]
+        return self.render_to_response(context)
 
 
 class GroupDetailView(View):

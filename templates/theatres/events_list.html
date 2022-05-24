@@ -9,7 +9,7 @@
                     <h3 class="fw-bold">Поиск постановок</h3>
                     <form class="d-flex justify-content-center flex-wrap my-2" method="post" action=".">
                         {% csrf_token %}
-                        <div class="my-2"><input class="form-control" type="email" name="search" placeholder="Название постановки"></div>
+                        <div class="my-2"><input class="form-control" type="text" name="search" placeholder="Название постановки" value="{{ current_search }}"></div>
                         <div class="my-2"><button class="btn btn-primary ms-sm-2" type="submit">Поиск</button></div>
                         <div style="padding-top: 6px;">
                             <label class="form-label text-nowrap ms-sm-2">Город&nbsp;&nbsp;

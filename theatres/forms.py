@@ -1,4 +1,4 @@
-from django.forms import ModelForm, widgets
+from django.forms import ModelForm, widgets, Form, CharField
 
 from theatres.models import Event, Location, Theatre
 from users.models import ActorProfile
@@ -13,6 +13,10 @@ class TheatreForm(ModelForm):
                 attrs={"minlength": 1, "maxlength": Location._meta.get_field("query").max_length}
             )
         }
+
+
+class SearchForm(Form):
+    search = CharField(max_length=100, required=False)
 
 
 class EventForm(ModelForm):
