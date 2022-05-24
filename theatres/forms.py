@@ -1,10 +1,19 @@
+from django import forms
 from django.forms import ModelForm, widgets
 
+from core.validators import AddressValidator
 from theatres.models import Event, Location, Theatre
 from users.models import ActorProfile
 
 
 class TheatreForm(ModelForm):
+    fias = forms.CharField(widget=forms.HiddenInput(attrs={"id": "location-fias"}))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        address_validator = AddressValidator(cleaned_data.get(Theatre.location.field.name), cleaned_data.get(fias.name))
+        address_validator()
+
     class Meta:
         model = Theatre
         fields = (Theatre.name.field.name, Theatre.location.field.name, Theatre.description.field.name)

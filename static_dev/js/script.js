@@ -116,4 +116,7 @@ function postLike(clickedElement) {
 $("#theatre-location").suggestions({
     token: "6063ae24b88df958c4d542fe267af6783a36dd4c",
     type: "ADDRESS",
+    onSelect: function(suggestion) {
+        $("#location-fias").val(suggestion.data.fias)
+    }
 });

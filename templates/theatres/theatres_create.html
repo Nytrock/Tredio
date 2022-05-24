@@ -9,7 +9,10 @@
             <form id="regForm">
                 <h1 id="register" class="header-text">Добавление театра</h1>
                 <div class="all-steps" id="all-steps"> <span class="step"></span> <span class="step"></span> <span class="step"></span> <span class="step"></span> </div>
-                {% for field in form %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                {% for field in form.visible_fields %}
                     <div class="tab">
                         <h3>{{ field.label }}</h3>
                         <p>{{ field }}</p>
