@@ -6,7 +6,7 @@ from django.views.generic import FormView, TemplateView
 from core.models import Contact, ContactsGroup, ContactType
 from rating.models import ReviewGroup, ReviewRating
 from theatres.forms import ActorForm, EventForm, TheatreForm, SearchForm
-from theatres.models import City, Event, Theatre, Troupe, TroupeMember
+from theatres.models import City, Event, Location, Theatre, Troupe, TroupeMember
 from users.models import ActorProfile
 
 
@@ -40,15 +40,55 @@ class TheatresDetailView(TemplateView):
         return context
 
 
-class TheatresCreateView(TemplateView):
+class TheatresCreateView(FormView):
     template_name = "theatres/theatres_create.html"
+    form_class = TheatreForm
+    success_url = "theatres:theatres_list"
 
     def get_context_data(self, **kwargs):
-        # Replace None with real form
-
         context = super().get_context_data(**kwargs)
-        context["form"] = None
+        context["form"] = TheatreForm()
+        context["actors"] = ActorProfile.objects.filter(is_published=True)
         return context
+
+    def get(self, request, *args, **kwargs):
+        return self.render_to_response(self.get_context_data(**kwargs))
+
+    def form_valid(self, form):
+        num = 1
+        troupe_data = {}
+        while True:
+            try:
+                actor = form.data["actor_change" + str(num)]
+            except:
+                break
+            try:
+                role = form.data["role" + str(num)]
+            except:
+                role = ""
+            troupe_data[actor] = role
+            num += 1
+        reviews = ReviewGroup.objects.create()
+        troupe = Troupe.objects.create()
+        for name in troupe_data:
+            actor = ActorProfile.objects.filter(first_name=name.split()[0], last_name=name.split()[1]).first()
+            TroupeMember.objects.create(profile_id=actor.id, troupe_id=troupe.id, role=troupe_data[name])
+
+        location, _ = Location.objects.get_or_create(
+            query=form.cleaned_data["address"],
+            city=City.objects.get_or_create(name=form.cleaned_data["city"])[0],
+            fias=form.cleaned_data["fias"],
+        )
+
+        theatre = form.save(commit=False)
+
+        theatre.troupe = troupe
+        theatre.reviews = reviews
+        theatre.location = location
+        theatre.contacts = ContactsGroup.objects.create()
+
+        theatre.save()
+        return redirect(TheatresCreateView.success_url)
 
 
 class EventListView(FormView):
