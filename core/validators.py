@@ -36,9 +36,9 @@ class AddressValidator(object):
             if not response:
                 raise ValidationError(f"ФИАС идентификатор {self.fias} не существует")
             if response[0]["value"] != self.query:
-                raise ValidationError(f"ФИАС идентификатор не соответствует адресу")
+                raise ValidationError("ФИАС идентификатор не соответствует адресу")
             if response[0]["data"]["city"] != self.city:
-                raise ValidationError(f"Город, соответсвующий идентификатору ФИАС не соответствует введенному")
+                raise ValidationError("Город, соответсвующий идентификатору ФИАС не соответствует введенному")
 
     def __eq__(self, other):
         return self.query == other.query and self.city == other.city and self.fias == other.fias
