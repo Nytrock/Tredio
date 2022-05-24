@@ -11,6 +11,9 @@ from rating.models import ReviewGroup, ReviewRating
 
 
 class Troupe(models.Model):
+
+    objects = models.Manager()
+
     class Meta:
         verbose_name = "Труппа"
         verbose_name_plural = "Труппы"
@@ -41,6 +44,8 @@ class TroupeMember(models.Model):
 
 class City(models.Model):
     name = models.CharField("Название", max_length=100)
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = "Город"

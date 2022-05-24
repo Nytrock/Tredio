@@ -1,5 +1,3 @@
-import json
-
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
@@ -33,7 +31,8 @@ class RatingTheatreView(View):
             review.user_dislike = dislike
         return render(request, template, context)
 
-    def post(self, request, **kwargs):
+    @staticmethod
+    def post(request, **kwargs):
         review_rating = ReviewRating.objects.filter(
             review_id=int(request.POST.get("id")), user_id=request.user.id
         ).prefetch_related("review")
@@ -79,7 +78,8 @@ class RatingCreateView(TemplateView):
         context["form"] = form
         return context
 
-    def post(self, request, *args, **kwargs):
+    @staticmethod
+    def post(request, *args, **kwargs):
         form = RatingForm(request.POST)
         if kwargs.get("type") == "theatre":
             theatre = get_object_or_404(Theatre.objects, pk=kwargs.get("id"))

@@ -5,9 +5,9 @@ from django.views.generic import FormView, TemplateView
 
 from core.models import Contact, ContactsGroup, ContactType
 from rating.models import ReviewGroup, ReviewRating
-from theatres.forms import ActorForm, EventForm, TheatreForm
+from theatres.forms import ActorForm, EventForm
 from theatres.models import City, Event, Theatre, Troupe, TroupeMember
-from users.models import ActorProfile, add_experience
+from users.models import ActorProfile
 
 
 class TheatresListView(TemplateView):
@@ -73,7 +73,8 @@ class EventDetailView(View):
             review.user_dislike = dislike
         return render(request, template, context)
 
-    def post(self, request, **kwargs):
+    @staticmethod
+    def post(request, **kwargs):
         review = ReviewRating.objects.filter(review_id=int(request.POST.get("id")))
         json_file = {
             "like": request.POST.get("like") == "True",

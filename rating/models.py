@@ -7,7 +7,8 @@ User = get_user_model()
 
 
 class ReviewGroup(models.Model):
-    pass
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = "Группа отзывов"
@@ -48,6 +49,7 @@ class Review(models.Model):
 
 
 class ReviewRating(models.Model):
+    objects = models.Manager()
     review = models.ForeignKey(Review, verbose_name="Отзыв", related_name="ratings", on_delete=models.CASCADE)
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
     star = models.BooleanField("Оценка")
