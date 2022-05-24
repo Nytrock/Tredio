@@ -49,6 +49,36 @@ class Contact(models.Model):
         verbose_name_plural = "Контакты"
 
 
+class City(models.Model):
+    name = models.CharField("Название", max_length=100)
+
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
+
+
+class Location(models.Model):
+    """
+    Информация о местоположении.
+    Полем `query` следует пользоваться лишь в тех случаях, когда идентификатор ФИАС устарел.
+    """
+
+    #: Адрес одной строкой
+    query = models.CharField("Адрес", max_length=250)
+
+    #: Город
+    city = models.ForeignKey(City, verbose_name="Город", on_delete=models.CASCADE)
+
+    #: Уникальный идентификатор ФИАС
+    fias = models.CharField("ФИАС", max_length=50)
+
+    class Meta:
+        verbose_name = "Местоположение"
+        verbose_name_plural = "Местоположения"
+
+
 class ImageBaseModel(models.Model):
     image = models.ImageField("Изображение", upload_to="uploads/", null=True, blank=True)
 

@@ -1,8 +1,9 @@
 from django import forms
 from django.forms import CharField, Form, ModelForm, widgets
 
+from core.models import Location
 from core.validators import AddressValidator
-from theatres.models import Event, Location, Theatre
+from theatres.models import Event, Theatre
 from users.models import ActorProfile
 
 

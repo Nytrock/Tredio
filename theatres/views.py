@@ -3,10 +3,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
-from core.models import Contact, ContactsGroup, ContactType
+from core.models import City, Contact, ContactsGroup, ContactType, Location
 from rating.models import ReviewGroup, ReviewRating
-from theatres.forms import ActorForm, EventForm, TheatreForm, SearchForm
-from theatres.models import City, Event, Location, Theatre, Troupe, TroupeMember
+from theatres.forms import ActorForm, EventForm, SearchForm, TheatreForm
+from theatres.models import Event, Theatre, Troupe, TroupeMember
 from users.models import ActorProfile
 
 

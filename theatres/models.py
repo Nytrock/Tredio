@@ -5,6 +5,7 @@ from core.models import (
     ContactsGroup,
     GalleryBaseModel,
     ImageBaseModel,
+    Location,
     PublishedBaseModel,
 )
 from rating.models import ReviewGroup, ReviewRating
@@ -40,36 +41,6 @@ class TroupeMember(models.Model):
     class Meta:
         verbose_name = "Участник труппы"
         verbose_name_plural = "Участники трупп"
-
-
-class City(models.Model):
-    name = models.CharField("Название", max_length=100)
-
-    objects = models.Manager()
-
-    class Meta:
-        verbose_name = "Город"
-        verbose_name_plural = "Города"
-
-
-class Location(models.Model):
-    """
-    Информация о местоположении.
-    Полем `query` следует пользоваться лишь в тех случаях, когда идентификатор ФИАС устарел.
-    """
-
-    #: Адрес одной строкой
-    query = models.CharField("Адрес", max_length=250)
-
-    #: Город
-    city = models.ForeignKey(City, verbose_name="Город", on_delete=models.CASCADE)
-
-    #: Уникальный идентификатор ФИАС
-    fias = models.CharField("ФИАС", max_length=50)
-
-    class Meta:
-        verbose_name = "Местоположение"
-        verbose_name_plural = "Местоположения"
 
 
 class TheatreQuerySet(models.QuerySet):
