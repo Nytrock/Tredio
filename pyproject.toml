@@ -15,6 +15,7 @@ Pillow = "^9.1.0"
 whitenoise = "^6.1.0"
 django-fieldsignals = "^0.7.0"
 django-colorfield = "^0.7.0"
+dadata = "^21.10.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
