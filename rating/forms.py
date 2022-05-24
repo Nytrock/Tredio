@@ -9,6 +9,6 @@ class RatingForm(ModelForm):
         fields = (Review.category.field.name, Review.content.field.name)
 
         widgets = {
-            Review.content.field.name: widgets.Textarea(attrs={"class": "form-control", "placeholder": "Тескт"}),
+            Review.content.field.name: widgets.Textarea(attrs={"class": "form-control", "placeholder": "Содержание"}),
             Review.category.field.name: widgets.Select(attrs={"class": "form-control"}),
         }
