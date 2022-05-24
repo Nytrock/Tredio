@@ -17,13 +17,13 @@
                             <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".event">Информация о постановке</a>
                             <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".groups">Участники</a>
                             {% if request.user.id != meetup.host_id %}
-                                {% if not in_meetup and meetup.participants_limit is not None %}
-                                    <button class="btn btn-primary btn-lg" name="group_add" style="margin-top: 9px;" value="True" type="submit">Присоединиться к группе</button>
+                                {% if not is_participant and meetup.participants_limit != meetup.participants_count %}
+                                    <button class="btn btn-primary btn-lg" name="group_join" style="margin-top: 9px;" type="submit">Присоединиться к группе</button>
                                 {% elif meetup.participants_count != meetup.participants_limit %}
-                                    <button class="btn btn-primary btn-lg" name="group_add" style="margin-top: 9px;" value="False" type="submit">Покинуть группу</button>
+                                    <button class="btn btn-primary btn-lg" name="group_leave" style="margin-top: 9px;" type="submit">Покинуть группу</button>
                                 {% endif %}
                             {% else %}
-                                <button class="btn btn-danger btn-lg" name="group_delete" style="margin-top: 9px;" value="True" type="submit">Удалить группу</button>
+                                <button class="btn btn-danger btn-lg" name="group_delete" style="margin-top: 9px;" type="submit">Удалить группу</button>
                             {% endif %}
                         </form>
                     </div>

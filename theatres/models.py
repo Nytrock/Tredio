@@ -11,8 +11,20 @@ from core.models import (
 from rating.models import ReviewGroup, ReviewRating
 
 
+class TroupeQuerySet(models.QuerySet):
+    def fetch_members(self, id: int):
+        return TroupeMember.objects.filter(troupe__id=id)
+
+    def fetch_theatres(self, id: int):
+        return Theatre.objects.filter(troupe__id=id)
+
+    def fetch_events(self):
+        return Event.objects.filter(troupe__id=id)
+
+
 class Troupe(models.Model):
     objects = models.Manager()
+    troupes = TroupeQuerySet.as_manager()
 
     class Meta:
         verbose_name = "Труппа"

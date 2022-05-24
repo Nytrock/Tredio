@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
-from django.views.generic import TemplateView, FormView
+from django.views.generic import FormView, TemplateView
 
 from group.models import MeetupParticipant
 from theatres.forms import SearchForm
-from theatres.models import TroupeMember
+from theatres.models import Troupe
 from users.models import add_experience
 
 from .forms import MeetupForm
@@ -17,46 +17,57 @@ class GroupListView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["meetups"] = Meetup.meetups.meetup_list()
+        search_query = kwargs.get("search_query", None)
+
+        if search_query:
+            context["meetups"] = Meetup.meetups.meetup_search(search_query)
+            context["current_search"] = search_query
+        else:
+            context["meetups"] = Meetup.meetups.meetup_list()
+
         return context
 
     def form_valid(self, form, **kwargs):
-        if form.data["search"] == "":
-            return redirect("group:group_list")
-        context = super().get_context_data(**kwargs)
-        context["meetups"] = Meetup.meetups.meetup_us(form.data["search"])
-        context["current_search"] = form.data["search"]
-        return self.render_to_response(context)
+        return self.render_to_response(self.get_context_data(search_query=form.data["search"]))
 
 
 class GroupDetailView(View):
     @staticmethod
     def get(request, **kwargs):
         template = "group/group_detail.html"
-        context = {"meetup": get_object_or_404(Meetup.meetups.meetup_details(kwargs["id"]))}
-        context["actors"] = TroupeMember.objects.filter(troupe=context["meetup"].event.troupe_id).prefetch_related(
-            "profile"
+
+        meetup = get_object_or_404(Meetup.meetups.meetup_details(kwargs["id"]))
+        user = request.user
+
+        return render(
+            request,
+            template,
+            {
+                "meetup": meetup,
+                "actors": Troupe.troupes.fetch_members(meetup.event.troupe_id).prefetch_related("profile"),
+                "is_participant": user in [participant.user for participant in meetup.participants.all()],
+            },
         )
-        in_meetup = False
-        for participant in context["meetup"].participants.all():
-            if participant.user_id == request.user.id:
-                in_meetup = True
-        context["in_meetup"] = in_meetup
-        return render(request, template, context)
 
     @staticmethod
     def post(request, **kwargs):
-        if request.POST.get("group_delete") is not None:
-            Meetup.objects.filter(id=kwargs["id"]).delete()
-            add_experience(request.user.id, -2)
+        user = request.user
+        meetup = get_object_or_404(Meetup, pk=kwargs["id"])
+
+        if "group_delete" in request.POST:
+            if meetup.host == user:
+                meetup.delete()
+                add_experience(user.id, -2)
             return redirect("group:group_list")
-        if request.POST.get("group_add") == "True":
-            meetup = get_object_or_404(Meetup, pk=kwargs["id"])
-            MeetupParticipant.objects.create(meetup_id=meetup.id, user_id=request.user.id)
-            add_experience(meetup.host_id, 15)
-        else:
-            MeetupParticipant.objects.filter(user_id=request.user.id).delete()
-        return redirect("group:group_detail", kwargs["id"])
+        elif "group_join" in request.POST:
+            if not meetup.is_participant(user):
+                MeetupParticipant.objects.create(meetup=meetup, user=user)
+                add_experience(meetup.host_id, 15)
+        elif "group_leave" in request.POST:
+            if meetup.is_participant(user):
+                MeetupParticipant.objects.filter(user=user, meetup=meetup).delete()
+
+        return redirect("group:group_detail", meetup.id)
 
 
 class GroupCreateView(TemplateView):
@@ -70,9 +81,12 @@ class GroupCreateView(TemplateView):
 
     @staticmethod
     def post(request):
-        add_experience(request.user.id, 5)
+        user = request.user
+
         form = MeetupForm(request.POST)
         meetup = form.save(commit=False)
-        meetup.host_id = request.user.id
+        meetup.host = user
         meetup.save()
+        add_experience(user.id, 5)
+
         return redirect("group:group_detail", meetup.id)
