@@ -3,8 +3,8 @@ from django.views import View
 from django.views.generic import TemplateView
 
 from group.models import MeetupParticipant
-from theatres.models import Event, TroupeMember
-from users.models import UserProfile, add_experience
+from theatres.models import TroupeMember
+from users.models import add_experience
 
 from .forms import MeetupForm
 from .models import Meetup
@@ -20,7 +20,8 @@ class GroupListView(TemplateView):
 
 
 class GroupDetailView(View):
-    def get(self, request, **kwargs):
+    @staticmethod
+    def get(request, **kwargs):
         template = "group/group_detail.html"
         context = {"meetup": get_object_or_404(Meetup.meetups.meetup_details(kwargs["id"]))}
         context["actors"] = TroupeMember.objects.filter(troupe=context["meetup"].event.troupe_id).prefetch_related(
@@ -33,7 +34,8 @@ class GroupDetailView(View):
         context["in_meetup"] = in_meetup
         return render(request, template, context)
 
-    def post(self, request, **kwargs):
+    @staticmethod
+    def post(request, **kwargs):
         if request.POST.get("group_delete") is not None:
             Meetup.objects.filter(id=kwargs["id"]).delete()
             add_experience(request.user.id, -2)
@@ -56,7 +58,8 @@ class GroupCreateView(TemplateView):
         context["form"] = form
         return context
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         add_experience(request.user.id, 5)
         form = MeetupForm(request.POST)
         meetup = form.save(commit=False)
