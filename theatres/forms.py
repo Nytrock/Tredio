@@ -7,11 +7,28 @@ from users.models import ActorProfile
 class TheatreForm(ModelForm):
     class Meta:
         model = Theatre
-        fields = (Theatre.name.field.name, Theatre.location.field.name, Theatre.troupe.field.name)
+        fields = (Theatre.name.field.name, Theatre.location.field.name, Theatre.description.field.name)
+
+        labels = {
+            Theatre.name.field.name: "Введите название театра",
+            Theatre.location.field.name: "Введите местоположение театра",
+            Theatre.description.field.name: "Введите описание театра",
+        }
+
         widgets = {
+            Theatre.name.field.name: widgets.TextInput(attrs={"class": "multi-form-input", "placeholder": "Название"}),
             Theatre.location.field.name: widgets.TextInput(
-                attrs={"minlength": 1, "maxlength": Location._meta.get_field("query").max_length}
-            )
+                attrs={
+                    "id": "theatre-location",
+                    "class": "multi-form-input",
+                    "placeholder": "Адрес",
+                    "minlength": 1,
+                    "maxlength": Location._meta.get_field("query").max_length,
+                }
+            ),
+            Theatre.description.field.name: widgets.TextInput(
+                attrs={"class": "multi-form-input", "placeholder": "Описание"}
+            ),
         }
 
 

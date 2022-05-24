@@ -34,10 +34,8 @@ class TheatresCreateView(TemplateView):
     template_name = "theatres/theatres_create.html"
 
     def get_context_data(self, **kwargs):
-        # Replace None with real form
-
         context = super().get_context_data(**kwargs)
-        context["form"] = None
+        context["form"] = TheatreForm()
         return context
 
 
