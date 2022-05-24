@@ -6,21 +6,20 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0007_actorprofile_is_published'),
+        ("users", "0007_actorprofile_is_published"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ModerationActorProfile',
-            fields=[
-            ],
+            name="ModerationActorProfile",
+            fields=[],
             options={
-                'verbose_name': 'Профиль актера на модерации',
-                'verbose_name_plural': 'Профили актеров на модерации',
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "verbose_name": "Профиль актера на модерации",
+                "verbose_name_plural": "Профили актеров на модерации",
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('users.actorprofile',),
+            bases=("users.actorprofile",),
         ),
     ]

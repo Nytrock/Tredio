@@ -71,7 +71,6 @@ class EventListView(FormView):
         return self.render_to_response(context)
 
 
-
 class EventDetailView(View):
     def get(self, request, **kwargs):
         template = "theatres/events_detail.html"
