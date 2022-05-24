@@ -36,6 +36,7 @@ class TheatresCreateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = TheatreForm()
+        context["actors"] = ActorProfile.objects.filter(is_published=True)
         return context
 
 

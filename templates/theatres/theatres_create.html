@@ -9,43 +9,37 @@
             <form id="regForm">
                 <h1 id="register" class="header-text">Добавление театра</h1>
                 <div class="all-steps" id="all-steps"> <span class="step"></span> <span class="step"></span> <span class="step"></span> <span class="step"></span> </div>
+                {% for field in form %}
+                    <div class="tab">
+                        <h3>{{ field.label }}</h3>
+                        <p>{{ field }}</p>
+                        {% if not field.field.required %}
+                            <p class="text-muted small"> Данное поле необязательно</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
                 <div class="tab">
-                    <h3>{{ form.name.label }}</h3>
-                    <p><input class="multi-form-input" type="text" placeholder="Введите название" oninput="this.className = 'multi-form-input'" name="{{ form.name.html_name }}"></p>
+                    <div id="troupe">
+                        <h2><strong> Заполните список актёров, играющих в этом театре. Для добавлнения актёра нажмите кнопку с плюсом.</strong></h2>
+                        <p class="text-muted small">Создание списка необязательно</p>
+                        <div class="row collapse" id="troupe_member">
+                            <div class="mb-3 col" id="first_input">
+                                <p> Актёр </p>
+                                <select name="actor_change0" id="actor_change0" class="form-control selected">
+                                    {% for actor in actors %}
+                                        <option>{{ actor }} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3 col" id="second_input">
+                                <p> Роль (необязательно)</p>
+                                <input name="role0" id="role0" class="form-control" type="text" placeholder="Введите роль">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="button-add form-control" type="button" id="addBtn"><strong>+</strong></button>
+                    <a href="{% url 'theatres:actors_create' %}"><p>Не можете найти нужного актёра? Не проблема, просто создайте его! (Нажмите на текст)</p></a>
                 </div>
-                <div class="tab">
-                    <h3>{{ form.location.label }}</h3>
-                    <p><input id="theatre-location" class="multi-form-input" type="text" placeholder="{{ form.location.label }}" name="{{form.location.html_name}}"/></p>
-                </div>
-                <div class="tab">
-                    <p><input class="multi-form-input" placeholder="Credit Card #" oninput="this.className = 'multi-form-input'" name="email"></p>
-                    <p>Exp Month
-                        <select id="month">
-                            <option value="1">January</option>
-                            <option value="2">February</option>
-                            <option value="3">March</option>
-                            <option value="4">April</option>
-                            <option value="5">May</option>
-                            <option value="6">June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
-                    </p>
-                    <p>Exp Year
-                        <select id="year">
-                            <option value="2021">2021</option>
-                            <option value="2022">2022</option>
-                            <option value="2023">2023</option>
-                            <option value="2024">2024</option>
-                        </select>
-                    </p>
-                    <p><input class="multi-form-input" placeholder="CVV" oninput="this.className = 'multi-form-input'" name="phone"></p>
-                </div>
-
                 <div class="thanks-message text-center" id="text-message"> <img src="https://i.imgur.com/O18mJ1K.png" width="100" class="mb-4">
                     <h3>Спасибо за создание нового театра!</h3> <span>Он был отправлен на модерацию и в ближайшее время будет проверен, и если всё хорошо, добавлен в общий список.</span>
                 </div>
