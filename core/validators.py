@@ -24,8 +24,9 @@ class RangeValidator(object):
 
 @deconstructible
 class AddressValidator(object):
-    def __init__(self, query: str, fias: str):
+    def __init__(self, query: str, city: str, fias: str):
         self.query = query
+        self.city = city
         self.fias = fias
 
     def __call__(self):
@@ -34,8 +35,10 @@ class AddressValidator(object):
 
             if not response:
                 raise ValidationError(f"ФИАС идентификатор {self.fias} не существует")
-            if response[0].query != self.query:
+            if response[0]["value"] != self.query:
                 raise ValidationError(f"ФИАС идентификатор не соответствует адресу")
+            if response[0]["data"]["city"] != self.city:
+                raise ValidationError(f"Город, соответсвующий идентификатору ФИАС не соответствует введенному")
 
     def __eq__(self, other):
-        return self.query == other.query and self.fias == other.fias
+        return self.query == other.query and self.city == other.city and self.fias == other.fias
