@@ -1,18 +1,52 @@
+from django import forms
 from django.forms import ModelForm, widgets
 
+from core.validators import AddressValidator
 from theatres.models import Event, Location, Theatre
 from users.models import ActorProfile
 
 
 class TheatreForm(ModelForm):
+    fias = forms.CharField(widget=forms.HiddenInput(attrs={"id": "location-fias"}))
+    city = forms.CharField(widget=forms.HiddenInput(attrs={"id": "location-city"}))
+    address = forms.CharField(
+        label="Введите адрес театра",
+        required=True,
+        widget=widgets.TextInput(
+            attrs={
+                "id": "theatre-location",
+                "class": "multi-form-input",
+                "placeholder": "Адрес",
+                "minlength": 1,
+                "maxlength": Location._meta.get_field("query").max_length,
+            }
+        ),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        address_validator = AddressValidator(
+            cleaned_data.get("address"), cleaned_data.get("city"), cleaned_data.get("fias")
+        )
+        address_validator()
+
     class Meta:
         model = Theatre
-        fields = (Theatre.name.field.name, Theatre.location.field.name, Theatre.troupe.field.name)
-        widgets = {
-            Theatre.location.field.name: widgets.TextInput(
-                attrs={"minlength": 1, "maxlength": Location._meta.get_field("query").max_length}
-            )
+        fields = (Theatre.name.field.name, Theatre.description.field.name)
+
+        labels = {
+            Theatre.name.field.name: "Введите название театра",
+            Theatre.description.field.name: "Введите описание театра",
         }
+
+        widgets = {
+            Theatre.name.field.name: widgets.TextInput(attrs={"class": "multi-form-input", "placeholder": "Название"}),
+            Theatre.description.field.name: widgets.TextInput(
+                attrs={"class": "multi-form-input", "placeholder": "Описание"}
+            ),
+        }
+
+    field_order = [Theatre.name.field.name, "address", Theatre.description.field.name]
 
 
 class EventForm(ModelForm):
