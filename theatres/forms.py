@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import ModelForm, widgets
+from django.forms import ModelForm, widgetss, Form, CharField
 
 from core.validators import AddressValidator
 from theatres.models import Event, Location, Theatre
@@ -47,6 +47,10 @@ class TheatreForm(ModelForm):
         }
 
     field_order = [Theatre.name.field.name, "address", Theatre.description.field.name]
+
+
+class SearchForm(Form):
+    search = CharField(max_length=100, required=False)
 
 
 class EventForm(ModelForm):

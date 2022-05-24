@@ -80,6 +80,13 @@ class TheatreQuerySet(models.QuerySet):
             .filter(is_published=True)
         )
 
+    def theatre_as(self, example: str):
+        return (
+            self.only("id", "image", "name", "description", "location__query")
+            .order_by("name")
+            .filter(is_published=True, name__icontains=example)
+        )
+
     def theatre_details(self, id: int):
         return (
             self.filter(id=id)
@@ -145,6 +152,13 @@ class EventQuerySet(models.QuerySet):
             self.only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
             .order_by("name")
             .filter(is_published=True)
+        )
+
+    def event_as(self, example: str):
+        return (
+            self.only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
+            .order_by("name")
+            .filter(is_published=True, name__icontains=example)
         )
 
     def event_details(self, id: int):
