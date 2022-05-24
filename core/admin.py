@@ -16,5 +16,5 @@ class ContactTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
-    list_display = ("id", "contacts_group_id", "type", "value")
-    fields = ("contacts_group_id", "type", "value")
+    list_display = ("id", "contacts_group", "type", "value")
+    fields = ("contacts_group", "type", "value")

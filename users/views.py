@@ -38,7 +38,7 @@ class ActorProfileView(TemplateView):
                 troupe_id=theatre.troupe.pk, profile_id=actor_profile_id
             ).first()
             theatre.role = troupe_member.role
-        context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
+        context["profile_contacts"] = Contact.objects.filter(contacts_group=context["profile"].contacts)
 
         return context
 
@@ -75,7 +75,7 @@ class ProfileView(LoginRequiredMixin, View):
                 / (context["next_rank"].experience_required - context["profile"].rank.experience_required)
                 * 100
             )
-        context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
+        context["profile_contacts"] = Contact.objects.filter(contacts_group=context["profile"].contacts)
         return render(request, template, context)
 
     def post(self, request):
@@ -113,7 +113,7 @@ class ProfileView(LoginRequiredMixin, View):
             num += 1
 
         if request.POST.get("contact-button") == "True":
-            contacts = Contact.objects.filter(contacts_group_id=profile.contacts)
+            contacts = Contact.objects.filter(contacts_group=profile.contacts)
             for contact in contacts:
                 contact.value = request.POST.get(contact.type.name)
                 contact.save()
@@ -121,7 +121,7 @@ class ProfileView(LoginRequiredMixin, View):
             for name, value in contact_data.items():
                 Contact.objects.update_or_create(
                     type_id=int(name),
-                    contacts_group_id_id=profile.contacts_id,
+                    contacts_group_id=profile.contacts_id,
                     defaults={"value": value},
                 )
 
@@ -140,7 +140,7 @@ class UserDetailView(TemplateView):
         context["user"] = get_object_or_404(User.objects, pk=user.id)
         context["meetups_participant"] = MeetupParticipant.meetups.fetch_by_user(user)
         context["meetups_host"] = Meetup.meetups.fetch_by_user(user)
-        context["profile_contacts"] = Contact.objects.filter(contacts_group_id=context["profile"].contacts)
+        context["profile_contacts"] = Contact.objects.filter(contacts_group=context["profile"].contacts)
 
         return context
 

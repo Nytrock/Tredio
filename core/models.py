@@ -35,7 +35,7 @@ class ContactType(models.Model):
 
 
 class Contact(models.Model):
-    contacts_group_id = models.ForeignKey(
+    contacts_group = models.ForeignKey(
         ContactsGroup, related_name="contacts", verbose_name="Группа контактов", on_delete=models.CASCADE
     )
     type = models.ForeignKey(ContactType, verbose_name="Тип контакта", on_delete=models.CASCADE)

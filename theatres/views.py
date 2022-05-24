@@ -187,7 +187,7 @@ class ActorCreateView(FormView):
             Contact.objects.create(
                 value=contact_data[name],
                 type_id=contact_type.id,
-                contacts_group_id_id=group.id,
+                contacts_group_id=group.id,
             )
         new_actor = form.save(commit=False)
         new_actor.contacts = group
