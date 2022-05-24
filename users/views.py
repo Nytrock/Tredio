@@ -118,11 +118,11 @@ class ProfileView(LoginRequiredMixin, View):
                 contact.value = request.POST.get(contact.type.name)
                 contact.save()
 
-            for name in contact_data:
+            for name, value in contact_data.items():
                 Contact.objects.update_or_create(
                     type_id=int(name),
                     contacts_group_id_id=profile.contacts_id,
-                    defaults={"value": contact_data[name]},
+                    defaults={"value": value},
                 )
 
         return redirect("users:profile")
@@ -151,7 +151,6 @@ class SignupView(FormView):
     success_url = "users:login"
 
     def form_valid(self, form):
-        User = get_user_model()
         first_name = form.cleaned_data[UserProfile.first_name.field.name]
         last_name = form.cleaned_data[UserProfile.last_name.field.name]
         contacts = ContactsGroup.objects.create()

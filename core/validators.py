@@ -8,7 +8,8 @@ from django.utils.deconstruct import deconstructible
 @deconstructible
 class RangeValidator(object):
     def __init__(self, min_value=1, max_value=5):
-        assert min_value < max_value
+        if min_value >= max_value:
+            raise RuntimeError(f"{min_value} должно быть меньше, чем {max_value}")
         self.min_value, self.max_value = min_value, max_value
         self.validators = [MinValueValidator(min_value), MaxValueValidator(max_value)]
 

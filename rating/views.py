@@ -50,11 +50,10 @@ class RatingTheatreView(View):
                     add_experience(review_rating.review.user_id, 2)
                 review_rating.delete()
                 return JsonResponse(json_file)
-            else:
-                if request.POST.get("like") == "True":
-                    add_experience(review_rating.review.user_id, 2)
-                else:
-                    add_experience(review_rating.review.user_id, -2)
+        if request.POST.get("like") == "True":
+            add_experience(review_rating.review.user_id, 2)
+        else:
+            add_experience(review_rating.review.user_id, -2)
         review_rating = ReviewRating.objects.update_or_create(
             user_id=request.user.id,
             review_id=int(request.POST.get("id")),
