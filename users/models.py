@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from core.models import ContactsGroup, ImageBaseModel, PublishedBaseModel
-from theatres.models import Event, Theatre
+from theatres.models import Event, Theatre, TroupeMember
 
 User = get_user_model()
 
@@ -55,13 +55,13 @@ class CommonProfile(ImageBaseModel):
 class ActorProfileQuerySet(models.QuerySet):
     def get_theatres(self, id: int, troupes_ids=None):
         if troupes_ids is None:
-            troupes_ids = get_troupes_ids(id)
+            troupes_ids = TroupeMember.troupe_members.fetch_troupes_ids(id)
 
         return Theatre.objects.filter(troupe__id__in=troupes_ids)
 
     def get_events(self, id: int, troupes_ids=None):
         if troupes_ids is None:
-            troupes_ids = get_troupes_ids()
+            troupes_ids = TroupeMember.troupe_members.fetch_troupes_ids(id)
 
         return Event.objects.filter(troupe__id__in=troupes_ids)
 

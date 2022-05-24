@@ -16,7 +16,7 @@ class RangeValidator(object):
         try:
             [validator(value) for validator in self.validators]
         except ValidationError:
-            raise ValidationError(f"{value} должен лежать в диапазоне от {min_value} до {max_value}")
+            raise ValidationError(f"{value} должен лежать в диапазоне от {self.min_value} до {self.max_value}")
 
     def __eq__(self, other):
         return self.min_value == other.min_value and self.max_value == other.max_value
