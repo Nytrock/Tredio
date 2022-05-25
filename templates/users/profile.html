@@ -149,7 +149,7 @@
                                                 <input class="form-control" name="{{ contact.type }}" type="text" id="{{ contact.type }}" value="{{ contact.value }}" placeholder="Введите значение" name="сontacts">
                                             </div>
                                         {% empty %}
-                                            <p class="small">Контакты отсутствуют.</p>
+                                            <p class="small" id="contact-not">Контакты отсутствуют.</p>
                                         {% endfor %}
                                     </div>
                                         <div class="mb-3">
@@ -159,6 +159,7 @@
                                         <div id="contact-div" class="mb-3 collapse">
                                             <label class="form-label"><strong>Тип контакта</strong></label>
                                             <select id="contact-label" class="form-control selected">
+                                                <option value="" selected="">---------</option>
                                                 {% for contact in contacts %}
                                                     <option value="{{ contact.id }}">{{ contact }} </option>
                                                 {% endfor %}

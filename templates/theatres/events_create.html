@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Создать событие{% endblock %}
+{% block title %}Создание постановки{% endblock %}
 {% block content %}
     <div class="container">
     <section style="margin-top: 6vh;margin-bottom: 10vh;">
@@ -27,7 +27,8 @@
                 {% endfor %}
                 <div class="tab">
                     <div id="troupe">
-                        <h2><strong> Заполните список актёров, играющих в этой постановке. Для добавлнения актёра нажмите кнопку с плюсом. Создание списка необязательно.</strong></h2>
+                        <h2><strong> Заполните список актёров, играющих в этой постановке. Для добавлнения актёра нажмите кнопку с плюсом.</strong></h2>
+                        <p class="text-muted small">Создание списка необязательно</p>
                         <div class="row collapse" id="troupe_member">
                             <div class="mb-3 col" id="first_input">
                                 <p> Актёр </p>

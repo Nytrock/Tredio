@@ -11,10 +11,10 @@
                             <h1 class="text-uppercase fw-bold text-white">{{ theatre.name }}</h1>
                             {% if theatre.description %}
                                 <p class="my-3 text-white">{{ theatre.description | truncatewords:10 }}</p>
+                                <a class="btn btn-primary btn-lg me-2 menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".description">Описание</a>
                             {% endif %}
-                            <a class="btn btn-primary btn-lg me-2 menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".description">Описание</a>
                             <a class="btn btn-primary btn-lg me-2 menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".events">Постановки</a>
-                            <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".groups">Группы</a>
+                            <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".groups">Встречи</a>
                             {% if actors %}
                             <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".actors">Актёры</a>
                             {% endif %}
@@ -37,7 +37,7 @@
                     </div>
                     <div class="col">
                         <div class="p-3">
-                            <h4 class="display-5 fw-bold text-white mb-0"><i class="far fa-star"></i>{{ theatre.reviews_average_score|floatformat:1 }}</h4>
+                            <h4 class="display-5 fw-bold text-white mb-0"><i class="far fa-star"></i>{% if theatre.reviews_average_score %}{{ theatre.reviews_average_score|floatformat:1 }}{% else %}0,0{% endif %}</h4>
                             <p class="mb-0">Средний рейтинг по 5 бальной шкале</p>
                         </div>
                     </div>
@@ -53,10 +53,12 @@
     </section>
     <section>
         <div class="hobbies group events" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-            <h2 class="text-center description">Полное описание</h2>
-            <div class="container py-5">
-                {{ theatre.description }}
-            </div>
+            {% if theatre.description %}
+                <h2 class="text-center description">Полное описание</h2>
+                <div class="container py-5">
+                    {{ theatre.description }}
+                </div>
+            {% endif %}
             <h2 class="text-center">Постановки</h2>
             <div class="album py-5">
             <div class="container">
@@ -93,7 +95,7 @@
             </div>
         </div>
         <div class="hobbies group groups" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-            <h2 class="text-center">Группы</h2>
+            <h2 class="text-center">Встречи</h2>
             <div class="album py-5">
             <div class="container">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
