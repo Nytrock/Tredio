@@ -3,32 +3,33 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
+from core.forms import SearchForm
 from core.models import City, Contact, ContactsGroup, ContactType, Location
 from rating.models import ReviewGroup, ReviewRating
 from theatres.forms import ActorForm, EventForm, TheatreForm
 from theatres.models import Event, Theatre, Troupe, TroupeMember
 from users.models import ActorProfile
-from core.forms import SearchForm
 
 
 class TheatresListView(FormView):
     template_name = "theatres/theatres_list.html"
     form_class = SearchForm
 
-    def get(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["theatres"] = Theatre.theatres.theatres_list()
+        search_query = kwargs.get("search_query", None)
+
+        if search_query:
+            context["theatres"] = Theatre.theatres.theatre_search(search_query)
+            context["current_search"] = search_query
+        else:
+            context["theatres"] = Theatre.theatres.theatres_list()
         context["cities"] = City.objects.all()
-        return self.render_to_response(context)
+
+        return context
 
     def form_valid(self, form, **kwargs):
-        if form.data["search"] == "":
-            return redirect("theatres:theatres_list")
-        context = super().get_context_data(**kwargs)
-        context["theatres"] = Theatre.theatres.theatre_as(form.data["search"])
-        context["current_search"] = form.data["search"]
-        context["cities"] = City.objects.all()
-        return self.render_to_response(context)
+        return self.render_to_response(context=self.get_context_data(search_query=form.data["search"]))
 
 
 class TheatresDetailView(TemplateView):
@@ -36,8 +37,12 @@ class TheatresDetailView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         context["theatre"] = get_object_or_404(Theatre.theatres.theatre_details(kwargs["id"]))
-        context["actors"] = TroupeMember.objects.filter(troupe=context["theatre"].troupe_id).prefetch_related("profile")
+        context["actors"] = TroupeMember.objects.filter(
+            troupe=context["theatre"].troupe, profile__is_published=True
+        ).prefetch_related("profile")
+
         return context
 
 
@@ -96,61 +101,66 @@ class EventListView(FormView):
     template_name = "theatres/events_list.html"
     form_class = SearchForm
 
-    def get(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["events"] = Event.events.events_list()
+        search_query = kwargs.get("search_query", None)
+
+        if search_query:
+            context["events"] = Event.events.event_search(search_query)
+            context["current_search"] = search_query
+        else:
+            context["events"] = Event.events.events_list()
         context["cities"] = City.objects.all()
-        return self.render_to_response(context)
+
+        return context
 
     def form_valid(self, form, **kwargs):
-        if form.data["search"] == "":
-            return redirect("theatres:events_list")
-        context = super().get_context_data(**kwargs)
-        context["events"] = Event.events.event_as(form.data["search"])
-        context["current_search"] = form.data["search"]
-        context["cities"] = City.objects.all()
-        return self.render_to_response(context)
+        return self.render_to_response(context=self.get_context_data(search_query=form.data["search"]))
 
 
 class EventDetailView(View):
     def get(self, request, **kwargs):
         template = "theatres/events_detail.html"
-        context = {
-            "reviews": get_object_or_404(Event.events.event_ratings(kwargs["id"])),
-            "event": get_object_or_404(Event.events.event_details(kwargs["id"])),
-        }
-        context["actors"] = TroupeMember.objects.filter(troupe=context["event"].troupe_id).prefetch_related("profile")
-        self.user = request.user.id
-        for review in context["reviews"].reviews.reviews.all():
-            like = False
-            dislike = False
-            for rat in review.like:
-                if rat.user_id == self.user:
-                    like = True
-            for rat in review.dislike:
-                if rat.user_id == self.user:
-                    dislike = True
-            review.user_like = like
-            review.user_dislike = dislike
-        return render(request, template, context)
+        user = request.user
+
+        reviews = get_object_or_404(Theatre.theatres.theatre_ratings(kwargs["id"]))
+        event = get_object_or_404(Event.events.event_details(kwargs["id"]))
+
+        for review in reviews.reviews.reviews.all():
+            review.user_like = user in [review.user for review in review.like]
+            review.user_dislike = user in [review.user for review in review.dislike]
+
+        return render(
+            request,
+            template,
+            {
+                "reviews": reviews,
+                "event": event,
+                "actors": TroupeMember.objects.filter(troupe=event.troupe).prefetch_related("profile"),
+            },
+        )
 
     @staticmethod
     def post(request, **kwargs):
-        review = ReviewRating.objects.filter(review_id=int(request.POST.get("id")))
+        review_id = int(request.POST.get("id"))
+        like = request.POST.get("like") == "True"
+        review = ReviewRating.objects.filter(review_id=review_id).first()
+
         json_file = {
-            "like": request.POST.get("like") == "True",
+            "like": like,
             "like_num": int(request.POST.get("like_num")),
             "dislike_num": int(request.POST.get("dislike_num")),
         }
-        if review:
-            if review.first().star == (request.POST.get("like") == "True"):
-                review.delete()
-                return JsonResponse(json_file)
-        ReviewRating.objects.update_or_create(
-            user_id=request.user.id,
-            review_id=int(request.POST.get("id")),
-            defaults={"star": request.POST.get("like") == "True"},
-        )
+
+        if review and review.star == like:
+            review.delete()
+        else:
+            ReviewRating.objects.update_or_create(
+                user_id=request.user.id,
+                review_id=review_id,
+                defaults={"star": like},
+            )
+
         return JsonResponse(json_file)
 
 
