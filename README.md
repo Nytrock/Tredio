@@ -8,6 +8,7 @@ Tredio это площадка-агрегатор для поиска инфор
 Сайт - https://squid-app-536wx.ondigitalocean.app/
 
 > Если вы столкнулись с какой либо ошибкой, пожалуйста сойзайте [issue](https://github.com/Jubastik/YlPlusProject/issues).
+> 
 > PS для ревьютеров. На сайте могут быть неожиданные ошибки. Если вы столкнулись с ними, попробуйте запустить сайт на локальной машине. Ну и конечно мы всегда рады вышим [issue](https://github.com/Jubastik/YlPlusProject/issues).
 
 
