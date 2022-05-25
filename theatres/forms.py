@@ -32,11 +32,12 @@ class TheatreForm(ModelForm):
 
     class Meta:
         model = Theatre
-        fields = (Theatre.name.field.name, Theatre.description.field.name)
+        fields = (Theatre.name.field.name, Theatre.description.field.name, Theatre.image.field.name)
 
         labels = {
             Theatre.name.field.name: "Введите название театра",
             Theatre.description.field.name: "Введите описание театра",
+            Theatre.image.field.name: "Выберите картинку театра",
         }
 
         widgets = {
