@@ -13,9 +13,9 @@ function showTab(n) {
         document.getElementById("prevBtn").style.display = "inline";
     }
     if (n == (x.length - 1)) {
-        document.getElementById("nextBtn").innerHTML = "Submit";
+        document.getElementById("nextBtn").innerHTML = "Отправить";
     } else {
-        document.getElementById("nextBtn").innerHTML = "Next";
+        document.getElementById("nextBtn").innerHTML = "Вперед";
     }
     fixStepIndicator(n)
 }
@@ -34,10 +34,6 @@ function nextPrev(n) {
         document.getElementById("all-steps").style.display = "none";
         document.getElementById("register").style.display = "none";
         document.getElementById("text-message").style.display = "block";
-
-
-
-
     }
     showTab(currentTab);
 }
