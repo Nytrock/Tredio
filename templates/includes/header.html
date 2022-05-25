@@ -25,16 +25,16 @@
                     </a>
                     <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in">
                         <a class="dropdown-item" href="{% url 'users:profile' %}">
-                            <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile
+                            <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Профиль
                         </a>
                         {% if request.user.is_superuser %}
                         <a class="dropdown-item" href="/admin/">
-                            <i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Site admin
+                            <i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Админка
                         </a>
                         {% endif %}
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'logout' %}">
-                            <i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout
+                            <i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Выйти
                         </a>
                     </div>
                 </div>

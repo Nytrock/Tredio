@@ -13,16 +13,17 @@ $("#addContBtn").click(function () {
     num_actors += 1;
     var $div = $("#actor_contact");
     var $klon = $div.clone().attr("class", "row");
-    $klon.children("#first_input").children("#contact_type0").attr("name", "contact_type" + num_actors);
+    $klon.children("#first_input").children("#contact_type0").attr("name", "contact_type" + num_actors).prop("required", true);
     $klon.children("#second_input").children("#value0").attr("name", "value" + num_actors).val("").prop("required", true);
     $klon.appendTo("#contacts" );
 });
 
 $("#AddContactProfile").click(function () {
     num_actors += 1;
+    $("#contact-not").remove()
     var $div = $("#contact-div");
     var $klon = $div.clone().attr("class", "mb-3");
-    $klon.children("#contact-label").attr("name", "contact-label" + num_actors);
+    $klon.children("#contact-label").attr("name", "contact-label" + num_actors).prop("required", true);
     $klon.children("#contact-text").attr("name", "contact-text" + num_actors).prop("required", true);
     $klon.appendTo("#contact-container");
 });

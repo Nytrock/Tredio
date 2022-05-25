@@ -9,7 +9,7 @@
                 <div class="col-lg-4">
                     <div class="card shadow block-profile-img mb-3">
                         <div class="card-body text-center shadow">
-                            <img class="rounded-circle mb-3 mt-4" style="border:5px solid {{ profile.rank.color }}" src="{% static '/img/None.jpg' %}" width="160" height="160">
+                            <img class="rounded-circle mb-3 mt-4 img-profile-160" style="border:5px solid {{ profile.rank.color }}" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}" width="160" height="160">
                             <h3 class="text-center text-dark mb-3">{{ user.username }}</h3>
                         </div>
                     </div>
@@ -43,7 +43,11 @@
                                         <div class="row mb-2">
                                             <div class="col">
                                                 <p class="m-0"><strong>Встреча на постановке "{{ meetup.event }}"</strong></p>
-                                                <p class="m-0">{{ meetup.description }}</p>
+                                                {% if meetup.description %}
+                                                    <p class="m-0">{{ meetup.description }}</p>
+                                                {% else %}
+                                                    <p class="m-0">Описание отсутствует</p>
+                                                {% endif %}
                                             </div>
                                             <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
                                         </div>
@@ -56,17 +60,21 @@
                         {% endfor %}
                         {% for meetup in meetups_participant %}
                             <div class="col">
-                                <a href="{% url 'group:group_detail' meetup.id %}">
+                                <a href="{% url 'group:group_detail' meetup.meetup.id %}">
                                 <div class="card textwhite bg-primary text-white shadow">
                                     <div class="card-body">
                                         <div class="row mb-2">
                                             <div class="col">
-                                                <p class="m-0"><strong>Встреча на постановке "{{ meetup.event }}"</strong></p>
-                                                <p class="m-0">{{ meetup.description }}</p>
+                                                <p class="m-0"><strong>Встреча на постановке "{{ meetup.meetup.event }}"</strong></p>
+                                                {% if meetup.description %}
+                                                    <p class="m-0">{{ meetup.meetup.description }}</p>
+                                                {% else %}
+                                                    <p class="m-0">Описание отсутствует</p>
+                                                {% endif %}
                                             </div>
                                             <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
                                         </div>
-                                        <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.start }}</p>
+                                        <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.meetup.start }}</p>
                                         <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Роль: участник</p>
                                     </div>
                                 </div>
@@ -84,7 +92,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <div class="mb-3">
-                                                <label class="form-label" for="{{ main_form.username.id_for_label }}"><strong>Имя пользователя</strong></label>
+                                                <label class="form-label" for="{{ main_form.username.id_for_label }}"><strong>Логин</strong></label>
                                                 <input readonly class="form-control" required type="text" id="{{ main_form.username.id_for_label }}" placeholder="Отсутствует" name="{{ main_form.username.html_name }}" value="{{ user.username }}">
                                             </div>
                                         </div>
@@ -116,13 +124,16 @@
                                                 <input readonly class="form-control" type="text" name="{{ extra_form.birthday.html_name }}" value="{{profile.rank.name}}">
                                             </div>
                                         </div>
-                                        <div class="col">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="{{ extra_form.birthday.label }}"><strong>День рождения</strong></label>
-                                                <input readonly class="form-control" type="date" id="{{ extra_form.birthday.label }}" name="{{ extra_form.birthday.html_name }}" value="{{ profile.birthday|date:'Y-m-d' }}">
+                                        {% if extra_form.birthday %}
+                                            <div class="col">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="{{ extra_form.birthday.label }}"><strong>День рождения</strong></label>
+                                                    <input readonly class="form-control" type="date" id="{{ extra_form.birthday.label }}" name="{{ extra_form.birthday.html_name }}" value="{{ profile.birthday|date:'Y-m-d' }}">
+                                                </div>
                                             </div>
-                                        </div>
+                                        {% endif %}
                                     </div>
+                                    {% if extra_form.description %}
                                     <div class="row">
                                         <div class="card-body">
                                             <div class="mb-3">
@@ -131,6 +142,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

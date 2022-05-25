@@ -47,13 +47,16 @@
                                                 <input readonly class="form-control" type="text" id="{{ main_form.first_name.id_for_label }}" placeholder="Отсутствует" name="{{ main_form.first_name.html_name }}" value="{{ profile.first_name }} {{ profile.last_name }}">
                                             </div>
                                         </div>
+                                        {% if profile.birthday %}
                                         <div class="col">
                                             <div class="mb-3">
                                                 <label class="form-label" for="{{ extra_form.birthday.label }}"><strong>День рождения</strong></label>
                                                 <input readonly class="form-control" type="date" id="{{ extra_form.birthday.label }}" name="{{ extra_form.birthday.html_name }}" value="{{ profile.birthday|date:'Y-m-d' }}">
                                             </div>
                                         </div>
+                                        {% endif %}
                                     </div>
+                                    {% if profile.description %}
                                     <div class="row">
                                         <div class="card-body">
                                             <div class="mb-3">
@@ -62,6 +65,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -135,7 +139,7 @@
             </div>
         </div>
         {% empty %}
-            <h4 class="text-center">Постановок нет.</h4>
+            <h4 class="text-center">Театров нет.</h4>
         {% endfor %}
         </div>
         </div>
