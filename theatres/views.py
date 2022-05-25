@@ -53,47 +53,19 @@ class TheatresCreateView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         context["form"] = TheatreForm()
         context["actors"] = ActorProfile.objects.filter(is_published=True)
+
         return context
 
-    def get(self, request, *args, **kwargs):
-        return self.render_to_response(self.get_context_data(**kwargs))
+    def post(self, request, *args, **kwargs):
+        form = TheatreForm(request.POST, actor_fields=request.POST.get("actor_field_count"))
 
-    def form_valid(self, form):
-        num = 1
-        troupe_data = {}
-        while True:
-            try:
-                actor = form.data["actor_change" + str(num)]
-            except:
-                break
-            try:
-                role = form.data["role" + str(num)]
-            except:
-                role = ""
-            troupe_data[actor] = role
-            num += 1
-        reviews = ReviewGroup.objects.create()
-        troupe = Troupe.objects.create()
-        for name in troupe_data:
-            actor = ActorProfile.objects.filter(first_name=name.split()[0], last_name=name.split()[1]).first()
-            TroupeMember.objects.create(profile_id=actor.id, troupe_id=troupe.id, role=troupe_data[name])
+        if not form.is_valid():
+            return self.render_to_response(self.get_context_data().update({"form": form}))
+        form.save()
 
-        location, _ = Location.objects.get_or_create(
-            query=form.cleaned_data["address"],
-            city=City.objects.get_or_create(name=form.cleaned_data["city"])[0],
-            fias=form.cleaned_data["fias"],
-        )
-
-        theatre = form.save(commit=False)
-
-        theatre.troupe = troupe
-        theatre.reviews = reviews
-        theatre.location = location
-        theatre.contacts = ContactsGroup.objects.create()
-
-        theatre.save()
         return redirect(TheatresCreateView.success_url)
 
 
@@ -211,35 +183,19 @@ class EventCreateView(FormView):
     form_class = EventForm
     success_url = "theatres:events_list"
 
-    def get(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        context = self.get_context_data(**kwargs)
-        context["form"] = form
-        context["actors"] = ActorProfile.objects.filter(is_published=True)
-        return self.render_to_response(context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-    def form_valid(self, form):
-        num = 1
-        troupe_data = {}
-        while True:
-            try:
-                actor = form.data["actor_change" + str(num)]
-            except:
-                break
-            try:
-                role = form.data["role" + str(num)]
-            except:
-                role = ""
-            troupe_data[actor] = role
-            num += 1
-        reviews = ReviewGroup.objects.create()
-        troupe = Troupe.objects.create()
-        for name in troupe_data:
-            actor = ActorProfile.objects.filter(first_name=name.split()[0], last_name=name.split()[1]).first()
-            TroupeMember.objects.create(profile_id=actor.id, troupe_id=troupe.id, role=troupe_data[name])
-        event = form.save(commit=False)
-        event.troupe = troupe
-        event.reviews = reviews
-        event.save()
-        return redirect("theatres:events_list")
+        context["form"] = EventForm()
+        context["actors"] = ActorProfile.objects.filter(is_published=True)
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = EventForm(request.POST, actor_fields=request.POST.get("actor_field_count"))
+
+        if not form.is_valid():
+            return self.render_to_response(self.get_context_data().update({"form": form}))
+        form.save()
+
+        return redirect(TheatresCreateView.success_url)

@@ -1,13 +1,16 @@
-var num_actors = 0;
+let form_count = Number($("[name=actor_field_count]").val());
+// get extra form count so we know what index to use for the next item.
 
-$("#addBtn").click(function () {
-    num_actors += 1;
+$("#addBtn").click(function() {
     var $div = $("#troupe_member");
     var $klon = $div.clone().attr("class", "row");
-    $klon.children("#first_input").children("#actor_change0").attr("name", "actor_change" + num_actors).prop("required", true);
-    $klon.children("#second_input").children("#role0").attr("name", "role" + num_actors).val("");
-    $klon.appendTo("#troupe" );
-});
+    $klon.children("#first_input").children("#actor_stub").attr("name", "actor_" + form_count).attr("id", "id_actor_" + form_count).prop("required", true);
+    $klon.children("#second_input").children("#role_stub").attr("name", "role_" + form_count).attr("id", "id_role_" + form_count);
+    $klon.appendTo("#troupe");
+
+    form_count++;
+    $("[name=actor_field_count]").val(form_count);
+})
 
 $("#addContBtn").click(function () {
     num_actors += 1;

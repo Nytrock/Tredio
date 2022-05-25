@@ -1,13 +1,49 @@
 from django import forms
 from django.forms import CharField, Form, ModelForm, widgets
 
-from core.models import Location
+from core.models import City, ContactsGroup, Location
 from core.validators import AddressValidator
-from theatres.models import Event, Theatre
+from rating.models import ReviewGroup
+from theatres.models import Event, Theatre, Troupe, TroupeMember
 from users.models import ActorProfile
 
 
-class TheatreForm(ModelForm):
+class CreateTroupeMembersForm(ModelForm):
+    actor_field_count = forms.IntegerField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        self.actor_fields_count = int(kwargs.pop("actor_fields", 0))
+
+        super().__init__(*args, **kwargs)
+        self.fields["actor_field_count"].initial = self.actor_fields_count
+
+        for index in range(self.actor_fields_count):
+            self.fields[f"actor_{index}"] = forms.ModelChoiceField(
+                queryset=ActorProfile.objects.filter(is_published=True)
+            )
+            self.fields[f"role_{index}"] = forms.CharField(
+                max_length=TroupeMember._meta.get_field("role").max_length, required=False
+            )
+
+    def actor_fields(self):
+        fields = []
+        for index in range(self.actor_fields_count):
+            fields.append((f"actor_{index}", f"role_{index}"))
+        return fields
+
+    def save(self, commit=True):
+        troupe_data = {self.cleaned_data[key]: self.cleaned_data[value] for (key, value) in self.actor_fields()}
+
+        troupe = Troupe.objects.create()
+        troupe_members = []
+        for profile, role in troupe_data.items():
+            troupe_members.append(TroupeMember(profile=profile, troupe=troupe, role=role if role else None))
+        TroupeMember.objects.bulk_create(troupe_members)
+
+        return troupe
+
+
+class TheatreForm(CreateTroupeMembersForm):
     fias = forms.CharField(widget=forms.HiddenInput(attrs={"id": "location-fias"}))
     city = forms.CharField(widget=forms.HiddenInput(attrs={"id": "location-city"}))
     address = forms.CharField(
@@ -23,6 +59,25 @@ class TheatreForm(ModelForm):
             }
         ),
     )
+
+    def save(self, commit=True):
+        theatre = ModelForm.save(self, commit=False)
+        troupe = CreateTroupeMembersForm.save(self, commit=True)
+
+        location, _ = Location.objects.get_or_create(
+            query=self.cleaned_data["address"],
+            city=City.objects.get_or_create(name=self.cleaned_data["city"])[0],
+            fias=self.cleaned_data["fias"],
+        )
+
+        theatre.troupe = troupe
+        theatre.reviews = ReviewGroup.objects.create()
+        theatre.location = location
+        theatre.contacts = ContactsGroup.objects.create()
+
+        if commit:
+            theatre.save()
+        return theatre
 
     def clean(self):
         cleaned_data = super().clean()
@@ -50,7 +105,22 @@ class TheatreForm(ModelForm):
     field_order = [Theatre.name.field.name, "address", Theatre.description.field.name]
 
 
-class EventForm(ModelForm):
+class EventForm(CreateTroupeMembersForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[Event.theatre.field.name].queryset = Theatre.objects.filter(is_published=True)
+
+    def save(self, commit=True):
+        event = ModelForm.save(self, commit=False)
+        troupe = CreateTroupeMembersForm.save(self, commit=True)
+
+        event.troupe = troupe
+        event.reviews = ReviewGroup.objects.create()
+
+        if commit:
+            event.save()
+        return event
+
     class Meta:
         model = Event
         fields = (Event.name.field.name, Event.theatre.field.name, Event.image.field.name, Event.description.field.name)
@@ -65,13 +135,10 @@ class EventForm(ModelForm):
         widgets = {
             Event.theatre.field.name: widgets.Select(attrs={"class": "multi-form-input"}),
             Event.name.field.name: widgets.TextInput(attrs={"class": "multi-form-input", "placeholder": "Название"}),
-            Event.description.field.name: widgets.Textarea(attrs={"class": "multi-form-input", "placeholder": "Описание"}),
+            Event.description.field.name: widgets.Textarea(
+                attrs={"class": "multi-form-input", "placeholder": "Описание"}
+            ),
         }
-
-    def __init__(self, *args, **kwargs):
-        super(EventForm, self).__init__(*args, **kwargs)
-        self.fields[Event.image.field.name].required = False
-        self.fields[Event.theatre.field.name].queryset = Theatre.objects.filter(is_published=True)
 
 
 class ActorForm(ModelForm):
@@ -92,7 +159,9 @@ class ActorForm(ModelForm):
             ActorProfile.last_name.field.name: widgets.TextInput(
                 attrs={"class": "multi-form-input", "placeholder": "Фамилия"}
             ),
-            ActorProfile.description.field.name: widgets.Textarea(attrs={"class": "multi-form-input", "placeholder": "Описание"}),
+            ActorProfile.description.field.name: widgets.Textarea(
+                attrs={"class": "multi-form-input", "placeholder": "Описание"}
+            ),
             ActorProfile.birthday.field.name: widgets.DateTimeInput(
                 attrs={"class": "multi-form-input", "placeholder": "День рождения", "type": "date"}
             ),
