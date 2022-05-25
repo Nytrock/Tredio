@@ -9,7 +9,7 @@
             <form id="regForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <h1 id="register" class="header-text">Добавление театра</h1>
-                <div class="all-steps" id="all-steps"> <span class="step"></span> <span class="step"></span> <span class="step"></span> <span class="step"></span> </div>
+                <div class="all-steps" id="all-steps"> <span class="step"></span> <span class="step"></span> <span class="step"></span> <span class="step"></span> <span class="step"></span></div>
                 {% for hidden in form.hidden_fields %}
                     {{ hidden }}
                 {% endfor %}

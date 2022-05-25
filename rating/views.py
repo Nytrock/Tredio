@@ -81,6 +81,7 @@ class RatingCreateView(TemplateView):
     @staticmethod
     def post(request, *args, **kwargs):
         form = RatingForm(request.POST)
+        add_experience(request.user.id, 10)
         if kwargs.get("type") == "theatre":
             theatre = get_object_or_404(Theatre.objects, pk=kwargs.get("id"))
             Review.objects.create(
@@ -90,6 +91,7 @@ class RatingCreateView(TemplateView):
                 review_group_id_id=theatre.reviews.id,
                 user_id=request.user.id,
             )
+            return redirect(f"rating:rating_theatre", kwargs.get("id"))
         else:
             event = get_object_or_404(Event.objects, pk=kwargs.get("id"))
             Review.objects.create(
@@ -99,5 +101,4 @@ class RatingCreateView(TemplateView):
                 review_group_id_id=event.reviews.id,
                 user_id=request.user.id,
             )
-        add_experience(request.user.id, 10)
-        return redirect(f"rating:rating_{kwargs.get('type')}", kwargs.get("id"))
+            return redirect(f"theatres:events_detail", kwargs.get("id"))
