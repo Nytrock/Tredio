@@ -5,9 +5,10 @@ from django.views.generic import FormView, TemplateView
 
 from core.models import City, Contact, ContactsGroup, ContactType, Location
 from rating.models import ReviewGroup, ReviewRating
-from theatres.forms import ActorForm, EventForm, SearchForm, TheatreForm
+from theatres.forms import ActorForm, EventForm, TheatreForm
 from theatres.models import Event, Theatre, Troupe, TroupeMember
 from users.models import ActorProfile
+from core.forms import SearchForm
 
 
 class TheatresListView(FormView):

@@ -50,10 +50,6 @@ class TheatreForm(ModelForm):
     field_order = [Theatre.name.field.name, "address", Theatre.description.field.name]
 
 
-class SearchForm(Form):
-    search = CharField(max_length=100, required=False)
-
-
 class EventForm(ModelForm):
     class Meta:
         model = Event

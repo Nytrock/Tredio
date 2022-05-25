@@ -3,9 +3,9 @@ from django.views import View
 from django.views.generic import FormView, TemplateView
 
 from group.models import MeetupParticipant
-from theatres.forms import SearchForm
 from theatres.models import Troupe
 from users.models import add_experience
+from core.forms import SearchForm
 
 from .forms import MeetupForm
 from .models import Meetup
