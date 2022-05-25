@@ -1,63 +1,69 @@
 {% extends "base.html" %}
 {% block title %}Создать событие{% endblock %}
 {% block content %}
-    <div class="container">
+<div class="container">
     <section style="margin-top: 6vh;margin-bottom: 10vh;">
         <div class="container multi-form-container-with-no-point mt-5">
-        <div class="row d-flex justify-content-center align-items-center">
-        <div class="col-md-6">
-            <form id="regForm" action="." method="post" enctype='multipart/form-data'>
-                {% csrf_token %}
-                <h1 id="register" class="header-text">Добавление постановки</h1>
-                <div class="all-steps" id="all-steps">
-                    {% for field in form %}
-                        <span class="step"></span>
-                    {% endfor %}
-                    <span class="step"></span>
-                </div>
-
-                {% for field in form %}
-                    <div class="tab">
-                        <h3>{{ field.label }}</h3>
-                        <p>{{ field }}</p>
-                        {% if not field.field.required %}
-                            <p class="text-muted small"> Данное поле необязательно</p>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-                <div class="tab">
-                    <div id="troupe">
-                        <h2><strong> Заполните список актёров, играющих в этой постановке. Для добавлнения актёра нажмите кнопку с плюсом. Создание списка необязательно.</strong></h2>
-                        <div class="row collapse" id="troupe_member">
-                            <div class="mb-3 col" id="first_input">
-                                <p> Актёр </p>
-                                <select name="actor_change0" id="actor_change0" class="form-control selected">
-                                    <option value="" selected="">---------</option>
-                                    {% for actor in actors %}
-                                        <option>{{ actor }} </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="mb-3 col" id="second_input">
-                                <p> Роль (необязательно)</p>
-                                <input name="role0" id="role0" class="form-control" type="text" placeholder="Введите роль">
-                            </div>
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col-md-6">
+                    <form id="regForm" method="post" enctype='multipart/form-data'>
+                        {% csrf_token %}
+                        <h1 id="register" class="header-text">Добавление постановки</h1>
+                        <div class="all-steps" id="all-steps">
+                            {% for field in form.visible_fields %}
+                                <span class="step"></span>
+                            {% endfor %}
+                            <span class="step"></span>
                         </div>
-                    </div>
-                    <button class="button-add form-control" type="button" id="addBtn"><strong>+</strong></button>
-                    <a href="{% url 'theatres:actors_create' %}"><p>Не можете найти нужного актёра? Не проблема, просто создайте его! (Нажмите на текст)</p></a>
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                        {% for field in form.visible_fields %}
+                            <div class="tab">
+                                <h3>{{ field.label }}</h3>
+                                <p>{{ field }}</p>
+                                {% if not field.field.required %}
+                                    <p class="text-muted small"> Данное поле необязательно</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <div class="tab">
+                            <div id="troupe">
+                                <h2>Заполните список актёров, играющих в этой постановке</h2>
+                                <p class="text-muted small">Создание списка необязательно</p>
+                                <div class="row collapse" id="troupe_member">
+                                    <div class="mb-3 col" id="first_input">
+                                        <p>Актёр</p>
+                                        <select name="actor_stub" id="actor_stub" class="form-control selected">
+                                            <option value="" selected="">---------</option>
+                                            {% for actor in actors %}
+                                                <option value={{ actor.id }}>{{ actor }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col" id="second_input">
+                                        <p>Роль <span class="text-muted small">(необязательно)</span></p>
+                                        <input name="role_stub" id="role_stub" class="form-control" type="text" placeholder="Введите роль">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="button-add form-control" type="button" id="addBtn"><strong>+</strong></button>
+                            <a href="{% url 'theatres:actors_create' %}">
+                                <p>Не можете найти нужного актёра? Не проблема, просто создайте его! <span class="text-muted small">(нажмите на текст)</span></p>
+                            </a>
+                        </div>
+                        <div class="thanks-message text-center" id="text-message">
+                            <img src="https://i.imgur.com/O18mJ1K.png" width="100" class="mb-4">
+                            <h3>Спасибо за создание новой постановки!</h3>
+                            <span>Она была отправлена на модерацию и в ближайшее время будет проверена.</span>
+                        </div>
+                        <div style="overflow:auto;" id="nextprevious">
+                            <div style="float:right;"> <button type="button" id="prevBtn" onclick="nextPrev(-1)">Назад</button> <button type="button" id="nextBtn" onclick="nextPrev(1)">Вперед</button> </div>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="thanks-message text-center" id="text-message"> <img src="https://i.imgur.com/O18mJ1K.png" width="100" class="mb-4">
-                    <h3>Спасибо за создание новой постановки!</h3> <span>Она была отправлена на модерацию и в ближайшее время будет проверена, и если всё хорошо, добавлена в общий список.</span>
-                </div>
-                <div style="overflow:auto;" id="nextprevious">
-                    <div style="float:right;"> <button type="button" id="prevBtn" onclick="nextPrev(-1)">Назад</button> <button type="button" id="nextBtn" onclick="nextPrev(1)">Вперед</button> </div>
-                </div>
-                </form>
-        </div>
-        </div>
+            </div>
         </div>
     </section>
-    </div>
+</div>
 {% endblock %}
