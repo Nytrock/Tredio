@@ -65,7 +65,7 @@ class EventForm(ModelForm):
         widgets = {
             Event.theatre.field.name: widgets.Select(attrs={"class": "multi-form-input"}),
             Event.name.field.name: widgets.TextInput(attrs={"class": "multi-form-input", "placeholder": "Название"}),
-            Event.description.field.name: widgets.Textarea(attrs={"class": "multi-form-input"}),
+            Event.description.field.name: widgets.Textarea(attrs={"class": "multi-form-input", "placeholder": "Описание"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -92,7 +92,7 @@ class ActorForm(ModelForm):
             ActorProfile.last_name.field.name: widgets.TextInput(
                 attrs={"class": "multi-form-input", "placeholder": "Фамилия"}
             ),
-            ActorProfile.description.field.name: widgets.Textarea(attrs={"class": "multi-form-input"}),
+            ActorProfile.description.field.name: widgets.Textarea(attrs={"class": "multi-form-input", "placeholder": "Описание"}),
             ActorProfile.birthday.field.name: widgets.DateTimeInput(
                 attrs={"class": "multi-form-input", "placeholder": "День рождения", "type": "date"}
             ),
@@ -102,6 +102,6 @@ class ActorForm(ModelForm):
             ActorProfile.first_name.field.name: "Введите имя",
             ActorProfile.last_name.field.name: "Введите фамилию",
             ActorProfile.description.field.name: "Введите описание актёра",
-            ActorProfile.birthday.field.name: "Введите дату рождения (необязательно)",
-            ActorProfile.image.field.name: "Загрузите фото актёра (необязательно)",
+            ActorProfile.birthday.field.name: "Введите дату рождения",
+            ActorProfile.image.field.name: "Загрузите фото актёра",
         }

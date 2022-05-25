@@ -10,19 +10,24 @@
                 {% csrf_token %}
                 <h1 id="register" class="header-text">Добавление актёра</h1>
                 <div class="all-steps" id="all-steps">
-                    <span class="step"></span>
-                    <span class="step"></span>
-                </div>
-                <div class="tab">
-                    <h2><strong> Заполните основную информацию об актёре.</strong></h2>
                     {% for field in form %}
-                        <h3>{{ field.label }}</h3>
-                            <p>{{ field }}</p>
+                        <span class="step"></span>
                     {% endfor %}
+                    <span class="step"></span>
                 </div>
+                {% for field in form %}
+                    <div class="tab">
+                        <h3>{{ field.label }}</h3>
+                        <p>{{ field }}</p>
+                        {% if not field.field.required %}
+                            <p class="text-muted small"> Данное поле необязательно</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
                 <div class="tab">
                     <div id="contacts">
-                        <h2><strong> Введите список контактов актёра. Для добавления контакта нажмите кнопку с плюсом. Создание списка необязательно.</strong></h2>
+                        <h2><strong> Введите список контактов актёра. Для добавления контакта нажмите кнопку с плюсом.</strong></h2>
+                        <p class="text-muted small"> Данное поле необязательно</p>
                         <div class="row collapse" id="actor_contact">
                             <div class="mb-3 col" id="first_input">
                                 <p> Тип контакта </p>
@@ -42,7 +47,7 @@
                 </div>
 
                 <div class="thanks-message text-center" id="text-message"> <img src="https://i.imgur.com/O18mJ1K.png" width="100" class="mb-4">
-                    <h3>Thanks for your Donation!</h3> <span>Your donation has been entered! We will contact you shortly!</span>
+                    <h3>Спасибо!</h3> <span>Актёр был отправлен на модерацию</span>
                 </div>
                 <div style="overflow:auto;" id="nextprevious">
                     <div style="float:right;"> <button type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button> <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button> </div>
