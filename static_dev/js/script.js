@@ -1,24 +1,27 @@
 let form_count = Number($("[name=field_count]").val());
 // get extra form count so we know what index to use for the next item.
 
-$("#addBtn").click(function() {
+function addMultipleField() {
     var $div = $("#multiple_field");
-    var $klon = $div.clone().attr("class", "row");
-    $klon.children("#first_input").children("#key_stub").attr("name", "key_" + form_count).attr("id", "id_key_" + form_count).prop("required", true);
-    $klon.children("#second_input").children("#value_stub").attr("name", "value_" + form_count).attr("id", "id_value_" + form_count);
+    var $klon = $div.clone();
+    $klon.children("#key_stub").attr("name", "key_" + form_count).attr("id", "id_key_" + form_count).prop("required", true);
+    $klon.children("#value_stub").attr("name", "value_" + form_count).attr("id", "id_value_" + form_count);
     $klon.appendTo("#multiple_fields");
 
     form_count++;
     $("[name=field_count]").val(form_count);
+    return $klon;
+}
+
+$("#addBtn").click(function() {
+    $field = addMultipleField();
+    $field.attr("class", "row");
 })
 
 $("#AddContactProfile").click(function () {
-    num_actors += 1;
-    var $div = $("#contact-div");
-    var $klon = $div.clone().attr("class", "mb-3");
-    $klon.children("#contact-label").attr("name", "contact-label" + num_actors);
-    $klon.children("#contact-text").attr("name", "contact-text" + num_actors).prop("required", true);
-    $klon.appendTo("#contact-container");
+    $field = addMultipleField();
+    $field.attr("class", "mb-3");
+    $field.children("#id_value_" + form_count - 1).prop("required", true);
 });
 
 const menuLinks = document.querySelectorAll('.menu_linked[data-goto]');
