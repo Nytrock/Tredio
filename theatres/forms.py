@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import CharField, Form, ModelForm, widgets
 
-from core.models import City, ContactsGroup, Location
+from core.models import City, Contact, ContactsGroup, ContactType, Location
 from core.validators import AddressValidator
 from rating.models import ReviewGroup
 from theatres.models import Event, Theatre, Troupe, TroupeMember
@@ -36,7 +36,6 @@ class CreateTroupeMembersForm(MultipleKeyValueForm):
         )
 
     def save(self, commit=True):
-        print(self.cleaned_data)
         troupe_data = {self.cleaned_data[key]: self.cleaned_data[value] for (key, value) in self.multiple_fields()}
 
         troupe = Troupe.objects.create()
@@ -46,6 +45,27 @@ class CreateTroupeMembersForm(MultipleKeyValueForm):
         TroupeMember.objects.bulk_create(troupe_members)
 
         return troupe
+
+
+class CreateContactsForm(MultipleKeyValueForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(
+            forms.ModelChoiceField(queryset=ContactType.objects.all()),
+            forms.CharField(max_length=Contact._meta.get_field("value").max_length),
+            *args,
+            **kwargs,
+        )
+
+    def save(self, commit=True):
+        contacts_data = {self.cleaned_data[key]: self.cleaned_data[value] for (key, value) in self.multiple_fields()}
+
+        contacts = ContactsGroup.objects.create()
+        contacts_objects = []
+        for contact_type, contact_value in contacts_data.items():
+            contacts_objects.append(Contact(contacts_group=contacts, type=contact_type, value=contact_value))
+        Contact.objects.bulk_create(contacts_objects)
+
+        return contacts
 
 
 class TheatreForm(CreateTroupeMembersForm):
@@ -146,7 +166,17 @@ class EventForm(CreateTroupeMembersForm):
         }
 
 
-class ActorForm(ModelForm):
+class ActorForm(CreateContactsForm):
+    def save(self, commit=True):
+        actor = ModelForm.save(self, commit=False)
+        contacts = CreateContactsForm.save(self, commit=True)
+
+        actor.contacts = contacts
+
+        if commit:
+            actor.save()
+        return actor
+
     class Meta:
         model = ActorProfile
         fields = (

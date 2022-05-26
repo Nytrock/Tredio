@@ -61,9 +61,8 @@ class TheatresCreateView(FormView):
 
     def post(self, request, *args, **kwargs):
         form = TheatreForm(request.POST, fields=request.POST.get("field_count"))
-
         if not form.is_valid():
-            return self.render_to_response(self.get_context_data().update({"form": form}))
+            return self.render_to_response(context=self.get_context_data().update({"form": form}))
         form.save()
 
         return redirect(TheatresCreateView.success_url)
@@ -139,43 +138,27 @@ class EventDetailView(View):
 class ActorCreateView(FormView):
     template_name = "theatres/actors_create.html"
     form_class = ActorForm
-    success_url = "theatres:events_list"
+    success_url = "homepage:home"
 
-    def get(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        context = self.get_context_data(**kwargs)
-        context["form"] = form
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["form"] = ActorForm()
         context["contacts"] = ContactType.objects.all()
         context["id"] = kwargs.get("id")
-        return self.render_to_response(context)
 
-    def form_valid(self, form):
-        num = 1
-        contact_data = {}
-        while True:
-            try:
-                actor = form.data["contact_type" + str(num)]
-            except:
-                break
-            try:
-                role = form.data["value" + str(num)]
-            except:
-                break
-            contact_data[actor] = role
-            num += 1
-        group = ContactsGroup.objects.create()
-        for name in contact_data:
-            contact_type = ContactType.objects.filter(name=name).first()
-            Contact.objects.create(
-                value=contact_data[name],
-                type_id=contact_type.id,
-                contacts_group_id=group.id,
-            )
-        new_actor = form.save(commit=False)
-        new_actor.contacts = group
-        new_actor.save()
-        return redirect("homepage:home")
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = ActorForm(request.POST, fields=request.POST.get("field_count"))
+        print(form.data)
+        print(form.errors)
+
+        if not form.is_valid():
+            return self.render_to_response(context=self.get_context_data().update({"form": form}))
+        form.save()
+
+        return redirect(ActorCreateView.success_url)
 
 
 class EventCreateView(FormView):
@@ -195,7 +178,7 @@ class EventCreateView(FormView):
         form = EventForm(request.POST, fields=request.POST.get("field_count"))
 
         if not form.is_valid():
-            return self.render_to_response(self.get_context_data().update({"form": form}))
+            return self.render_to_response(context=self.get_context_data().update({"form": form}))
         form.save()
 
         return redirect(TheatresCreateView.success_url)
