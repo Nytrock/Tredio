@@ -54,6 +54,9 @@ class RankAdmin(admin.ModelAdmin):
 class UserProfileInlined(admin.StackedInline):
     model = UserProfile
     can_delete = False
+    min_num = 1
+    max_num = 1
+    extra = 1
 
 
 class UserAdmin(BaseUserAdmin):
