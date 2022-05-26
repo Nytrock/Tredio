@@ -1,6 +1,7 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
-from django.views.generic import TemplateView, FormView
+from django.views.generic import FormView, TemplateView
 
 from group.models import MeetupParticipant
 from theatres.forms import SearchForm
@@ -59,7 +60,7 @@ class GroupDetailView(View):
         return redirect("group:group_detail", kwargs["id"])
 
 
-class GroupCreateView(TemplateView):
+class GroupCreateView(LoginRequiredMixin, TemplateView):
     template_name = "group/group_create.html"
 
     def get_context_data(self, **kwargs):

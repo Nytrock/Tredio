@@ -8,6 +8,7 @@
         <div class="col-md-6">
             <form id="regForm" action="." method="post" enctype='multipart/form-data'>
                 {% csrf_token %}
+                <input type="hidden" name="previous_page" value="{{ previous_page }}">
                 <h1 id="register" class="header-text">Добавление актёра</h1>
                 <div class="all-steps" id="all-steps">
                     <span class="step"></span>
