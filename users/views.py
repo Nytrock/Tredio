@@ -53,8 +53,11 @@ class ActorProfileView(TemplateView):
 class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
         template = "users/profile.html"
-        self.user_id: int = request.user.id
-        user = get_object_or_404(User.objects, pk=self.user_id)
+
+        user = request.user
+        profile = get_object_or_404(UserProfile.common_profiles.get_profile(user.id))
+        user_profile = get_object_or_404(UserProfile.profiles.get_profile(user.id, private=True))
+
         form_main = ChangeMainProfileForm(
             request.POST or None,
             initial={
@@ -62,27 +65,30 @@ class ProfileView(LoginRequiredMixin, View):
                 User.username.field.name: user.username,
             },
         )
-
         form_extra = ChangeExtraProfileForm(request.POST or None)
 
         context = {
             "main_form": form_main,
             "extra_form": form_extra,
-            "profile": get_object_or_404(UserProfile.common_profiles.get_profile(self.user_id)),
-            "user": get_object_or_404(UserProfile.profiles.get_profile(self.user_id)),
+            "profile": profile,
+            "profile": profile,
+            "user": user_profile,
             "meetups_host": Meetup.meetups.fetch_by_user(user),
             "meetups_participant": MeetupParticipant.meetup_participants.fetch_by_user(user),
             "reviews": Review.reviews.fetch_by_user(user),
             "contacts": ContactType.objects.all(),
         }
-        context["next_rank"] = Rank.ranks.get_next_rank(context["profile"].experience)
+        context["next_rank"] = Rank.ranks.get_next_rank(user_profile.experience)
+
         if context["next_rank"] is not None:
+            rank_experience_required = user_profile.rank.experience_required
             context["percent"] = int(
-                (context["profile"].experience - context["profile"].rank.experience_required)
-                / (context["next_rank"].experience_required - context["profile"].rank.experience_required)
+                (user_profile.experience - rank_experience_required)
+                / (context["next_rank"].experience_required - rank_experience_required)
                 * 100
             )
-        context["profile_contacts"] = Contact.objects.filter(contacts_group=context["profile"].contacts)
+        context["profile_contacts"] = Contact.objects.filter(contacts_group=profile.contacts)
+
         return render(request, template, context)
 
     def post(self, request):

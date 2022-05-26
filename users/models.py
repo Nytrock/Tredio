@@ -108,11 +108,11 @@ class Rank(models.Model):
 
 class UserProfileQuerySet(models.QuerySet):
     def get_profile(self, id: int, private: bool = False):
-        PUBLIC_FIELDS = ["rank__name"]
+        PUBLIC_FIELDS = ["rank"]
         PRIVATE_FIELDS = ["experience"]
         return (
             self.filter(id=id)
-            .prefetch_related("contacts")
+            .select_related("rank")
             .only(*(PUBLIC_FIELDS + PRIVATE_FIELDS if private else PUBLIC_FIELDS))
         )
 
