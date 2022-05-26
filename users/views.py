@@ -10,7 +10,12 @@ from rating.models import Review
 from theatres.models import TroupeMember
 from users.models import ActorProfile, Rank, UserProfile
 
-from .forms import ChangeExtraProfileForm, ChangeMainProfileForm, CustomUserCreationForm
+from .forms import (
+    ChangeContactsProfileForm,
+    ChangeExtraProfileForm,
+    ChangeMainProfileForm,
+    CustomUserCreationForm,
+)
 
 User = get_user_model()
 
@@ -66,11 +71,12 @@ class ProfileView(LoginRequiredMixin, View):
             },
         )
         form_extra = ChangeExtraProfileForm(request.POST or None)
+        form_contacts = ChangeContactsProfileForm()
 
         context = {
             "main_form": form_main,
             "extra_form": form_extra,
-            "profile": profile,
+            "contacts_form": form_contacts,
             "profile": profile,
             "user": user_profile,
             "meetups_host": Meetup.meetups.fetch_by_user(user),
@@ -92,19 +98,18 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, template, context)
 
     def post(self, request):
-        user = get_object_or_404(User.objects, pk=request.user.id)
+        user = request.user
         profile = user.user_profile
 
         form_main = ChangeMainProfileForm(request.POST)
         form_extra = ChangeExtraProfileForm(request.POST, request.FILES, instance=profile)
+        form_contacts = ChangeContactsProfileForm(
+            request.POST, fields=request.POST.get("field_count"), instance=profile.contacts
+        )
 
         if form_main.is_valid():
-            first_name = form_main.cleaned_data["first_name"]
-            last_name = form_main.cleaned_data["last_name"]
-            user.first_name = first_name
-            profile.first_name = first_name
-            user.last_name = last_name
-            profile.last_name = last_name
+            profile.first_name = form_main.cleaned_data["first_name"]
+            profile.last_name = form_main.cleaned_data["last_name"]
             user.email = form_main.cleaned_data["email"]
             user.username = form_main.cleaned_data["username"]
 
@@ -114,29 +119,15 @@ class ProfileView(LoginRequiredMixin, View):
         if form_extra.is_valid():
             form_extra.save()
 
-        num = 1
-        contact_data = {}
-        while True:
-            selection = request.POST.get("contact-label" + str(num))
-            text = request.POST.get("contact-text" + str(num))
-            if selection is not None and text is not None:
-                contact_data[selection] = text
-            else:
-                break
-            num += 1
-
         if request.POST.get("contact-button") == "True":
             contacts = Contact.objects.filter(contacts_group=profile.contacts)
             for contact in contacts:
-                contact.value = request.POST.get(contact.type.name)
+                value = request.POST.get(f"contact_{contact.id}")
+                contact.value = value if value else None
                 contact.save()
 
-            for name, value in contact_data.items():
-                Contact.objects.update_or_create(
-                    type_id=int(name),
-                    contacts_group_id=profile.contacts_id,
-                    defaults={"value": value},
-                )
+        if form_contacts.is_valid():
+            form_contacts.save()
 
         return redirect("users:profile")
 

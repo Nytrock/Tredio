@@ -121,13 +121,13 @@
                                             <div class="col">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="{{ main_form.first_name.id_for_label }}"><strong>{{ main_form.first_name.label }}</strong></label>
-                                                    <input class="form-control" type="text" id="{{ main_form.first_name.auto_id }}" placeholder="Введите имя" name="{{ main_form.first_name.html_name }}" value="{{ user.first_name }}">
+                                                    <input class="form-control" type="text" id="{{ main_form.first_name.auto_id }}" placeholder="Введите имя" name="{{ main_form.first_name.html_name }}" value="{{ profile.first_name }}">
                                                 </div>
                                             </div>
                                             <div class="col">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="{{ main_form.last_name.id_for_label }}"><strong>{{ main_form.last_name.label }}</strong></label>
-                                                    <input class="form-control" type="text" id="{{ main_form.last_name.auto_id }}" placeholder="Введите фамилию" name="{{ main_form.last_name.html_name }}" value="{{ user.last_name }}">
+                                                    <input class="form-control" type="text" id="{{ main_form.last_name.auto_id }}" placeholder="Введите фамилию" name="{{ main_form.last_name.html_name }}" value="{{ profile.last_name }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -137,15 +137,18 @@
                             </div>
                             <form class="card shadow" action="." method="post">
                                 {% csrf_token %}
+                                {% for hidden in contacts_form.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
                                 <div class="card-header py-3">
                                     <p class="text-primary m-0 fw-bold">Контакты</p>
                                 </div>
                                 <div class="card-body">
-                                    <div id="contact-container">
+                                    <div id="multiple_fields">
                                         {% for contact in profile_contacts %}
                                             <div class="mb-3">
                                                 <label class="form-label"><strong>{{ contact.type }}</strong><br></label>
-                                                <input class="form-control" name="{{ contact.type }}" type="text" id="{{ contact.type }}" value="{{ contact.value }}" placeholder="Введите значение" name="сontacts">
+                                                <input class="form-control" name="contact_{{ contact.id }}" type="text" id="id_contact_{{ contact.id }}" value="{{ contact.value }}" placeholder="Введите значение" name="сontacts" required>
                                             </div>
                                         {% empty %}
                                             <p class="small">Контакты отсутствуют.</p>
@@ -155,15 +158,15 @@
                                             <button class="btn btn-primary btn-sm" name="contact-button" value="True" type="submit">Сохранить</button>
                                             <button class="btn btn-primary btn-sm" type="button" id="AddContactProfile">Добавить</button>
                                         </div>
-                                        <div id="contact-div" class="mb-3 collapse">
+                                        <div id="multiple_field" class="mb-3 collapse">
                                             <label class="form-label"><strong>Тип контакта</strong></label>
-                                            <select id="contact-label" class="form-control selected">
+                                            <select id="key_stub" class="form-control selected">
                                                 {% for contact in contacts %}
                                                     <option value="{{ contact.id }}">{{ contact }} </option>
                                                 {% endfor %}
                                             </select>
                                             <label class="form-label"><strong>Значение (обязательно)</strong></label>
-                                            <input id="contact-text" class="form-control" type="text" placeholder="Введите значение" name="сontacts">
+                                            <input id="value_stub" class="form-control" type="text" placeholder="Введите значение" name="сontacts">
                                         </div>
                                 </div>
                             </form>
