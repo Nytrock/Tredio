@@ -8,7 +8,7 @@
             <div class="row mb-3">
                 <div class="col-lg-4">
                     <div class="card shadow block-profile-img mb-3">
-                        <div class="card-body text-center shadow"><img class="rounded-circle mb-3 mt-4" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}" width="160" height="160">
+                        <div class="card-body text-center shadow"><img class="rounded-circle mb-3 mt-4" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser.jpg' %} {% endif %}" width="160" height="160">
                             <h3 class="text-center text-dark mb-3">{{ profile.first_name }} {{ profile.last_name }}</h3>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                     {% if event.image %}
                         <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
                     {% else %}
-                        <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                        <img class="rounded img-fluid shadow" src="{% static 'img/NoneEvent400x300.jpg' %}">
                     {% endif %}
                 </div>
                 <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
@@ -120,7 +120,7 @@
                     {% if event.image %}
                         <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
                     {% else %}
-                        <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                        <img class="rounded img-fluid shadow" src="{% static 'img/NoneTheatre400x300.jpg' %}">
                     {% endif %}
                 </div>
                 <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
