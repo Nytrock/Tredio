@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.forms import ModelForm, widgets
 
+from core.models import Contact, ContactsGroup, ContactType
+from theatres.forms import MultipleKeyValueForm
 from users.models import UserProfile
 
 User = get_user_model()
@@ -129,6 +131,33 @@ class ChangeMainProfileForm(ModelForm):
         labels = {
             User.email.field.name: "Почта",
         }
+
+
+class ChangeContactsProfileForm(MultipleKeyValueForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(
+            forms.ModelChoiceField(queryset=ContactType.objects.all()),
+            forms.CharField(max_length=Contact._meta.get_field("value").max_length),
+            *args,
+            **kwargs,
+        )
+
+    def save(self, commit=True):
+        contacts_data = {self.cleaned_data[key]: self.cleaned_data[value] for (key, value) in self.multiple_fields()}
+
+        contacts = self.instance
+        contacts_objects = []
+        for contact_type, contact_value in contacts_data.items():
+            contacts_objects.append(Contact(contacts_group=contacts, type=contact_type, value=contact_value))
+        Contact.objects.bulk_create(contacts_objects)
+
+        if commit:
+            contacts.save()
+        return contacts
+
+    class Meta:
+        model = ContactsGroup
+        fields = tuple()
 
 
 class ChangeExtraProfileForm(ModelForm):
