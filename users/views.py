@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
@@ -139,12 +140,14 @@ class UserDetailView(TemplateView):
         context = super().get_context_data(**kwargs)
         profile_id = kwargs["id"]
 
-        context["profile"] = get_object_or_404(UserProfile.common_profiles.get_profile(profile_id))
-        user = get_object_or_404(User.objects, pk=context["profile"].user_id)
-        context["user"] = get_object_or_404(User.objects, pk=user.id)
+        user = get_object_or_404(User.objects, pk=profile_id)
+        profile = get_object_or_404(UserProfile.common_profiles.get_profile(profile_id))
+
+        context["profile"] = profile
+        context["user"] = user
         context["meetups_participant"] = MeetupParticipant.meetup_participants.fetch_by_user(user)
         context["meetups_host"] = Meetup.meetups.fetch_by_user(user)
-        context["profile_contacts"] = Contact.objects.filter(contacts_group=context["profile"].contacts)
+        context["profile_contacts"] = Contact.objects.filter(contacts_group=profile.contacts)
 
         return context
 
@@ -152,25 +155,8 @@ class UserDetailView(TemplateView):
 class SignupView(FormView):
     template_name = "users/signup.html"
     form_class = CustomUserCreationForm
-    success_url = "users:login"
+    success_url = reverse_lazy("users:login")
 
     def form_valid(self, form):
-        first_name = form.cleaned_data[UserProfile.first_name.field.name]
-        last_name = form.cleaned_data[UserProfile.last_name.field.name]
-        contacts = ContactsGroup.objects.create()
-        user = User.objects.create_user(
-            username=form.cleaned_data[User.username.field.name],
-            password=form.cleaned_data["password2"],
-            email=form.cleaned_data[User.email.field.name],
-        )
-        UserProfile.objects.create(
-            user=user,
-            first_name=first_name,
-            last_name=last_name,
-            birthday=form.cleaned_data["birthday"],
-            description=form.cleaned_data["description"],
-            experience=0,
-            rank=Rank.objects.filter(experience_required=0).first(),
-            contacts_id=contacts.id,
-        )
-        return redirect("users:login")
+        form.save()
+        return super().form_valid(form)

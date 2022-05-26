@@ -4,7 +4,7 @@ from django.forms import ModelForm, widgets
 
 from core.models import Contact, ContactsGroup, ContactType
 from theatres.forms import MultipleKeyValueForm
-from users.models import UserProfile
+from users.models import Rank, UserProfile
 
 User = get_user_model()
 
@@ -95,6 +95,10 @@ class CustomUserCreationForm(ModelForm):
             User.email.field.name: "Почта",
         }
 
+    def __init__(self, *args, **kwargs):
+        super(CustomUserCreationForm, self).__init__(*args, **kwargs)
+        self.fields[User.email.field.name].required = True
+
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
@@ -105,9 +109,26 @@ class CustomUserCreationForm(ModelForm):
             raise forms.ValidationError("Your passwords do not match")
         return password2
 
-    def __init__(self, *args, **kwargs):
-        super(CustomUserCreationForm, self).__init__(*args, **kwargs)
-        self.fields[User.email.field.name].required = True
+    def save(self):
+        first_name = self.cleaned_data[UserProfile.first_name.field.name]
+        last_name = self.cleaned_data[UserProfile.last_name.field.name]
+        contacts = ContactsGroup.objects.create()
+        user = User.objects.create_user(
+            username=self.cleaned_data[User.username.field.name],
+            password=self.cleaned_data["password2"],
+            email=self.cleaned_data[User.email.field.name],
+        )
+        UserProfile.objects.create(
+            id=user.id,
+            user=user,
+            first_name=first_name,
+            last_name=last_name,
+            birthday=self.cleaned_data["birthday"],
+            description=self.cleaned_data["description"],
+            experience=0,
+            rank=Rank.objects.filter(experience_required=0).first(),
+            contacts_id=contacts.id,
+        )
 
 
 class ChangeMainProfileForm(ModelForm):
