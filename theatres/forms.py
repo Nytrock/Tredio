@@ -8,31 +8,36 @@ from theatres.models import Event, Theatre, Troupe, TroupeMember
 from users.models import ActorProfile
 
 
-class CreateTroupeMembersForm(ModelForm):
-    actor_field_count = forms.IntegerField(widget=forms.HiddenInput())
+class MultipleKeyValueForm(ModelForm):
+    field_count = forms.IntegerField(widget=forms.HiddenInput())
 
-    def __init__(self, *args, **kwargs):
-        self.actor_fields_count = int(kwargs.pop("actor_fields", 0))
+    def __init__(self, key_field, value_field, *args, **kwargs):
+        self.fields_count = int(kwargs.pop("fields", 0))
 
         super().__init__(*args, **kwargs)
-        self.fields["actor_field_count"].initial = self.actor_fields_count
+        self.fields["field_count"].initial = self.fields_count
 
-        for index in range(self.actor_fields_count):
-            self.fields[f"actor_{index}"] = forms.ModelChoiceField(
-                queryset=ActorProfile.objects.filter(is_published=True)
-            )
-            self.fields[f"role_{index}"] = forms.CharField(
-                max_length=TroupeMember._meta.get_field("role").max_length, required=False
-            )
+        for index in range(self.fields_count):
+            self.fields[f"key_{index}"] = key_field
+            self.fields[f"value_{index}"] = value_field
 
-    def actor_fields(self):
-        fields = []
-        for index in range(self.actor_fields_count):
-            fields.append((f"actor_{index}", f"role_{index}"))
-        return fields
+    def multiple_fields(self):
+        for index in range(self.fields_count):
+            yield (f"key_{index}", f"value_{index}")
+
+
+class CreateTroupeMembersForm(MultipleKeyValueForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(
+            forms.ModelChoiceField(queryset=ActorProfile.objects.filter(is_published=True)),
+            forms.CharField(max_length=TroupeMember._meta.get_field("role").max_length, required=False),
+            *args,
+            **kwargs,
+        )
 
     def save(self, commit=True):
-        troupe_data = {self.cleaned_data[key]: self.cleaned_data[value] for (key, value) in self.actor_fields()}
+        print(self.cleaned_data)
+        troupe_data = {self.cleaned_data[key]: self.cleaned_data[value] for (key, value) in self.multiple_fields()}
 
         troupe = Troupe.objects.create()
         troupe_members = []

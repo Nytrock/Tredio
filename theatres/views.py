@@ -60,7 +60,7 @@ class TheatresCreateView(FormView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = TheatreForm(request.POST, actor_fields=request.POST.get("actor_field_count"))
+        form = TheatreForm(request.POST, fields=request.POST.get("field_count"))
 
         if not form.is_valid():
             return self.render_to_response(self.get_context_data().update({"form": form}))
@@ -192,7 +192,7 @@ class EventCreateView(FormView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = EventForm(request.POST, actor_fields=request.POST.get("actor_field_count"))
+        form = EventForm(request.POST, fields=request.POST.get("field_count"))
 
         if not form.is_valid():
             return self.render_to_response(self.get_context_data().update({"form": form}))

@@ -34,7 +34,7 @@
                                 <div class="row collapse" id="troupe_member">
                                     <div class="mb-3 col" id="first_input">
                                         <p>Актёр</p>
-                                        <select name="actor_stub" id="actor_stub" class="form-control selected">
+                                        <select name="key_stub" id="key_stub" class="form-control selected">
                                             <option value="" selected="">---------</option>
                                             {% for actor in actors %}
                                                 <option value={{ actor.id }}>{{ actor }}</option>
@@ -43,7 +43,7 @@
                                     </div>
                                     <div class="mb-3 col" id="second_input">
                                         <p>Роль <span class="text-muted small">(необязательно)</span></p>
-                                        <input name="role_stub" id="role_stub" class="form-control" type="text" placeholder="Введите роль">
+                                        <input name="value_stub" id="value_stub" class="form-control" type="text" placeholder="Введите роль">
                                     </div>
                                 </div>
                             </div>
