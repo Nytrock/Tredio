@@ -24,21 +24,28 @@ class ActorProfileView(TemplateView):
         troupes = list(TroupeMember.troupe_members.fetch_troupes_ids(actor_profile_id))
 
         context["profile"] = get_object_or_404(ActorProfile.common_profiles.get_profile(actor_profile_id))
-        context["theatres"] = ActorProfile.actor_profiles.get_theatres(actor_profile_id, troupes).only(
-            "id", "image", "name", "description", "troupe"
+        context["theatres"] = (
+            ActorProfile.actor_profiles.get_theatres(actor_profile_id, troupes)
+            .select_related("troupe", "location")
+            .only("id", "image", "name", "description", "troupe", "location")
         )
         context["events"] = ActorProfile.actor_profiles.get_events(actor_profile_id, troupes).only(
             "id", "image", "name", "description", "troupe"
         )
-        for event in context["events"]:
-            troupe_member = TroupeMember.objects.filter(troupe_id=event.troupe.pk, profile_id=actor_profile_id).first()
-            event.role = troupe_member.role
-        for theatre in context["theatres"]:
-            troupe_member = TroupeMember.objects.filter(
-                troupe_id=theatre.troupe.pk, profile_id=actor_profile_id
-            ).first()
-            theatre.role = troupe_member.role
         context["profile_contacts"] = Contact.objects.filter(contacts_group=context["profile"].contacts)
+
+        troupe_roles = dict()
+        for (troupe, role) in TroupeMember.objects.filter(profile=actor_profile_id).values_list("troupe", "role").all():
+            if troupe in troupe_roles:
+                troupe_roles[troupe].append(role)
+            elif role != None:
+                troupe_roles[troupe] = [role]
+
+        for event in context["events"]:
+            event.roles = troupe_roles.get(event.troupe.id, [])
+
+        for theatre in context["theatres"]:
+            theatre.roles = troupe_roles.get(theatre.troupe.id, [])
 
         return context
 

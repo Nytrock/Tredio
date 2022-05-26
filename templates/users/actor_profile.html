@@ -89,10 +89,14 @@
                         {% if event.description %}
                             <p>{{ event.description | truncatewords:10 }}</p>
                         {% else %}
-                            <p class="text-muted">Описание отсутсвует</p>
+                            <p class="text-muted">Описание отсутствует</p>
                         {% endif %}
                         <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}<br>
-                        <i class="fas fa-user" style="padding-right: 8px;"></i>Роль: {{ event.role }}</p>
+                        {% if event.roles|length > 0 %}
+                            <i class="fas fa-user" style="padding-right: 8px;"></i>
+                                {% if event.roles|length == 1 %}Роль{% else %}Роли{% endif %}: {% filter lower %} {{ event.roles|join:", " }} {% endfilter %}
+                        {% endif %}
+                        </p>
                         <a href="{% url 'theatres:events_detail' event.id %}" class="btn btn-primary shadow" type="button">Больше</a>
                     </div>
                 </div>
@@ -109,27 +113,31 @@
         <div class="album py-5">
         <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-        {% for event in theatres %}
+        {% for theatre in theatres %}
         <div class="col">
             <div class="card shadow sm text-center">
                 <div class="col mb-5 ">
-                    {% if event.image %}
-                        <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
+                    {% if theatre.image %}
+                        <img class="rounded img-fluid shadow" src="{{ theatre.get_image_400x300.url}}">
                     {% else %}
                         <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
                     {% endif %}
                 </div>
                 <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
                     <div>
-                        <h5 class="fw-bold">{{ event.name }}</h5>
-                        {% if event.description %}
-                            <p>{{ event.description | truncatewords:10 }}</p>
+                        <h5 class="fw-bold">{{ theatre.name }}</h5>
+                        {% if theatre.description %}
+                            <p>{{ theatre.description | truncatewords:10 }}</p>
                         {% else %}
-                            <p class="text-muted">Описание отсутсвует</p>
+                            <p class="text-muted">Описание отсутствует</p>
                         {% endif %}
-                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.location.query }}<br>
-                        <i class="fas fa-user" style="padding-right: 8px;"></i>Роль: {{ event.role }}</p>
-                        <a href="{% url 'theatres:theatres_detail' event.id %}" class="btn btn-primary shadow" type="button">Больше</a>
+                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ theatre.location.query }}<br>
+                        {% if theatre.roles|length > 0 %}
+                            <i class="fas fa-user" style="padding-right: 8px;"></i>
+                                {% if theatre.roles|length == 1 %}Роль{% else %}Роли{% endif %}: {% filter lower %} {{ theatre.roles|join:", " }} {% endfilter %}
+                        {% endif %}
+                        </p>
+                        <a href="{% url 'theatres:theatres_detail' theatre.id %}" class="btn btn-primary shadow" type="button">Больше</a>
                     </div>
                 </div>
             </div>
