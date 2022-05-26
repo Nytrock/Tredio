@@ -1,11 +1,12 @@
-from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
 from core.models import Contact, ContactsGroup, ContactType
 from rating.models import ReviewGroup, ReviewRating
-from theatres.forms import ActorForm, EventForm, TheatreForm, SearchForm
+from theatres.forms import ActorForm, EventForm, SearchForm, TheatreForm
 from theatres.models import City, Event, Location, Theatre, Troupe, TroupeMember
 from users.models import ActorProfile
 
@@ -40,7 +41,7 @@ class TheatresDetailView(TemplateView):
         return context
 
 
-class TheatresCreateView(FormView):
+class TheatresCreateView(LoginRequiredMixin, FormView):
     template_name = "theatres/theatres_create.html"
     form_class = TheatreForm
     success_url = "theatres:theatres_list"
@@ -153,10 +154,9 @@ class EventDetailView(View):
         return JsonResponse(json_file)
 
 
-class ActorCreateView(FormView):
+class ActorCreateView(LoginRequiredMixin, FormView):
     template_name = "theatres/actors_create.html"
     form_class = ActorForm
-    success_url = "theatres:events_list"
 
     def get(self, request, *args, **kwargs):
         form_class = self.get_form_class()
@@ -165,11 +165,14 @@ class ActorCreateView(FormView):
         context["form"] = form
         context["contacts"] = ContactType.objects.all()
         context["id"] = kwargs.get("id")
+        context["previous_page"] = request.META.get("HTTP_REFERER")
         return self.render_to_response(context)
 
-    def form_valid(self, form):
+    def post(self, request, *args, **kwargs):
         num = 1
         contact_data = {}
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
         while True:
             try:
                 actor = form.data["contact_type" + str(num)]
@@ -192,10 +195,11 @@ class ActorCreateView(FormView):
         new_actor = form.save(commit=False)
         new_actor.contacts = group
         new_actor.save()
-        return redirect("homepage:home")
+        print(request.POST.get("previous_page"))
+        return HttpResponseRedirect(request.POST.get("previous_page"))
 
 
-class EventCreateView(FormView):
+class EventCreateView(LoginRequiredMixin, FormView):
     template_name = "theatres/events_create.html"
     form_class = EventForm
     success_url = "theatres:events_list"

@@ -9,7 +9,7 @@
                 <div class="col-lg-4">
                     <div class="card shadow block-profile-img mb-3">
                         <div class="card-body text-center shadow">
-                            <img class="rounded-circle mb-1 mt-4 img-profile-160" style="border:5px solid {{ profile.rank.color }}" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}">
+                            <img class="rounded-circle mb-1 mt-4 img-profile-160" style="border:5px solid {{ profile.rank.color }}" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser.jpg' %} {% endif %}">
                             <div class="mb-3">
                                 <h3 class="text-center text-dark mb-2">{{ request.user.username }}</h3>
                                 <form id="upload_image_form" method="post" enctype="multipart/form-data">

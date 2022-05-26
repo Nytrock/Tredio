@@ -3,7 +3,7 @@
 {% block title %}Постановка{% endblock %}
 {% block content %}
     <section>
-        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if event.image %} {{event.image.url}} {% else %} {% static '/img/None400x300.jpg' %} {% endif %} );background-position: center;background-size: cover;">
+        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if event.image %} {{event.image.url}} {% else %} {% static '/img/NoneEvent400x300.jpg' %} {% endif %} );background-position: center;background-size: cover;">
             <div class="container h-100">
                 <div class="row h-100">
                     <div class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center">
@@ -61,7 +61,7 @@
                     {% if event.theatre.image %}
                         <img class="rounded img-fluid shadow" src="{{ event.theatre.get_image_400x300.url}}">
                     {% else %}
-                        <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                        <img class="rounded img-fluid shadow" src="{% static 'img/NoneTheatre400x300.jpg' %}">
                     {% endif %}
                 </div>
                 <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
@@ -84,7 +84,7 @@
             <div class="col">
                 <div class="card shadow sm text-center">
                     <div class="col mb-5 ">
-                        <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% if actor.profile.image %} {{ actor.profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
+                        <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% if actor.profile.image %} {{ actor.profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser400x300.jpg' %} {% endif %}"></a>
                     </div>
                     <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
                         <div>
@@ -115,7 +115,7 @@
                     <div class="row">
                         <div class="row-md mb-2">
                             <a href="{% if review.user.id != request.user.id %} {% url 'users:users_detail' review.user.id %} {% else %} {% url 'users:profile' %} {% endif %}">
-                                <img class="border rounded-circle img-profile" style="border:2px solid {{ review.user.user_profile.rank.color }}!important" src="{% if review.user.user_profile.image %} {{ review.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}">
+                                <img class="border rounded-circle img-profile" style="border:2px solid {{ review.user.user_profile.rank.color }}!important" src="{% if review.user.user_profile.image %} {{ review.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser.jpg' %} {% endif %}">
                                 <span class="d-none d-lg-inline me-2 text-gray-600 small">{{ review.user.username }}</span>
                             </a>
                         </div>
