@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Prefetch
 
 from core.models import (
     ContactsGroup,
@@ -8,35 +7,14 @@ from core.models import (
     Location,
     PublishedBaseModel,
 )
-from rating.models import ReviewGroup, ReviewRating
-
-
-class TroupeQuerySet(models.QuerySet):
-    def fetch_members(self, id: int):
-        return TroupeMember.objects.filter(troupe__id=id)
-
-    def fetch_theatres(self, id: int):
-        return Theatre.objects.filter(troupe__id=id)
-
-    def fetch_events(self):
-        return Event.objects.filter(troupe__id=id)
+from rating.models import ReviewGroup
+from theatres.querysets import EventQuerySet, TheatreQuerySet, TroupeMemberQuerySet
 
 
 class Troupe(models.Model):
-    objects = models.Manager()
-    troupes = TroupeQuerySet.as_manager()
-
     class Meta:
         verbose_name = "Труппа"
         verbose_name_plural = "Труппы"
-
-
-class TroupeMemberQuerySet(models.QuerySet):
-    def fetch_troupes_ids(self, profile: int):
-        return self.filter(profile__id=profile).values_list("troupe", flat=True)
-
-    def fetch_troupes_roles(self, profile: int):
-        return self.filter(profile__id=profile).values_list("role", flat=True)
 
 
 class TroupeMember(models.Model):
@@ -52,44 +30,6 @@ class TroupeMember(models.Model):
     class Meta:
         verbose_name = "Участник труппы"
         verbose_name_plural = "Участники трупп"
-
-
-class TheatreQuerySet(models.QuerySet):
-    def theatres_list(self):
-        return (
-            self.only("id", "image", "name", "description", "location__query")
-            .order_by("name")
-            .filter(is_published=True)
-        )
-
-    def theatre_search(self, search_query: str):
-        return self.theatres_list().filter(name__icontains=search_query)
-
-    def theatre_details(self, id: int):
-        return (
-            self.filter(id=id)
-            .prefetch_related("gallery_images", "reviews__reviews", "events__meetups", "events__meetups__host")
-            .only("name", "description")
-            .annotate(
-                reviews_count=models.Count("reviews__reviews", distinct=True),
-                reviews_average_score=models.Avg("reviews__reviews__star"),
-                events_count=models.Count("events", distinct=True),
-            )
-        )
-
-    def theatre_ratings(self, id: int):
-        return (
-            self.filter(id=id)
-            .prefetch_related(
-                "reviews__reviews",
-                "reviews__reviews__user__user_profile",
-                Prefetch("reviews__reviews__ratings", to_attr="like", queryset=ReviewRating.objects.filter(star=True)),
-                Prefetch(
-                    "reviews__reviews__ratings", to_attr="dislike", queryset=ReviewRating.objects.filter(star=False)
-                ),
-            )
-            .only("id", "name", "image", "location__query", "description")
-        )
 
 
 class Theatre(PublishedBaseModel, ImageBaseModel):
@@ -122,51 +62,6 @@ class ModerationTheatre(Theatre):
 
 class TheatreImage(GalleryBaseModel):
     theatre = models.ForeignKey(Theatre, on_delete=models.CASCADE, related_name="gallery_images")
-
-
-class EventQuerySet(models.QuerySet):
-    def events_list(self):
-        return (
-            self.only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
-            .order_by("name")
-            .filter(is_published=True)
-        )
-
-    def event_search(self, search_query: str):
-        return self.events_list().filter(name__icontains=search_query)
-
-    def event_details(self, id: int):
-        return (
-            self.filter(id=id)
-            .prefetch_related("troupe__members", "reviews__reviews")
-            .only("id", "image", "name", "description", "theatre__id", "theatre__name", "theatre__location__query")
-            .annotate(
-                reviews_count=models.Count("reviews__reviews"),
-                reviews_average_score=models.Avg("reviews__reviews__star"),
-            )
-        )
-
-    def event_ratings(self, id: int):
-        return (
-            self.filter(id=id)
-            .prefetch_related(
-                "reviews__reviews",
-                Prefetch("reviews__reviews__ratings", to_attr="like", queryset=ReviewRating.objects.filter(star=True)),
-                Prefetch(
-                    "reviews__reviews__ratings", to_attr="dislike", queryset=ReviewRating.objects.filter(star=False)
-                ),
-            )
-            .only(
-                "id",
-                "name",
-                "image",
-                "description",
-                "theatre__id",
-                "theatre__name",
-                "theatre__image",
-                "theatre__location__query",
-            )
-        )
 
 
 class Event(PublishedBaseModel, ImageBaseModel):

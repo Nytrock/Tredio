@@ -32,11 +32,14 @@ class ActorProfileView(TemplateView):
         context["profile"] = get_object_or_404(ActorProfile.common_profiles.get_profile(actor_profile_id))
         context["theatres"] = (
             ActorProfile.actor_profiles.get_theatres(actor_profile_id, troupes)
+            .filter(is_published=True)
             .select_related("troupe", "location")
             .only("id", "image", "name", "description", "troupe", "location")
         )
-        context["events"] = ActorProfile.actor_profiles.get_events(actor_profile_id, troupes).only(
-            "id", "image", "name", "description", "troupe"
+        context["events"] = (
+            ActorProfile.actor_profiles.get_events(actor_profile_id, troupes)
+            .filter(is_published=True)
+            .only("id", "image", "name", "description", "troupe")
         )
         context["profile_contacts"] = Contact.objects.filter(contacts_group=context["profile"].contacts)
 

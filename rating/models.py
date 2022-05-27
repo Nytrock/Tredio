@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from core.validators import RangeValidator
+from rating.querysets import ReviewQuerySet
 
 User = get_user_model()
 
@@ -23,11 +24,6 @@ class ReviewCategory(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class ReviewQuerySet(models.QuerySet):
-    def fetch_by_user(self, user: User):
-        return self.filter(user=user)
 
 
 class Review(models.Model):

@@ -2,10 +2,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
-from group.models import MeetupParticipant
-from theatres.models import Troupe
-from users.models import add_experience
 from core.forms import SearchForm
+from group.models import MeetupParticipant
+from theatres.models import Troupe, TroupeMember
+from users.models import add_experience
 
 from .forms import MeetupForm
 from .models import Meetup
@@ -44,7 +44,7 @@ class GroupDetailView(View):
             template,
             {
                 "meetup": meetup,
-                "actors": Troupe.troupes.fetch_members(meetup.event.troupe_id).prefetch_related("profile"),
+                "actors": TroupeMember.troupe_members.fetch(meetup.event.troupe_id).prefetch_related("profile"),
                 "is_participant": user in [participant.user for participant in meetup.participants.all()],
             },
         )
