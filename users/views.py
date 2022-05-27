@@ -9,14 +9,13 @@ from core.models import Contact, ContactsGroup, ContactType
 from group.models import Meetup, MeetupParticipant
 from rating.models import Review
 from theatres.models import TroupeMember
-from users.models import ActorProfile, Rank, UserProfile
-
-from .forms import (
+from users.forms import (
     ChangeContactsProfileForm,
     ChangeExtraProfileForm,
     ChangeMainProfileForm,
     CustomUserCreationForm,
 )
+from users.models import ActorProfile, Rank, UserProfile
 
 User = get_user_model()
 

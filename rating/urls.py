@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views import RatingCreateView, RatingTheatreView
+from rating.views import RatingCreateView, RatingTheatreView
 
 app_name = "rating"
 urlpatterns = [

@@ -3,12 +3,10 @@ from django.views import View
 from django.views.generic import FormView, TemplateView
 
 from core.forms import SearchForm
-from group.models import MeetupParticipant
+from group.forms import MeetupForm
+from group.models import Meetup, MeetupParticipant
 from theatres.models import Troupe, TroupeMember
 from users.models import add_experience
-
-from .forms import MeetupForm
-from .models import Meetup
 
 
 class GroupListView(FormView):

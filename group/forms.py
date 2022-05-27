@@ -1,8 +1,7 @@
 from django.forms import ModelForm, widgets
 
+from group.models import Meetup
 from theatres.models import Event
-
-from .models import Meetup
 
 
 class MeetupForm(ModelForm):
