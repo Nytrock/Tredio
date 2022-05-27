@@ -147,7 +147,7 @@ class ActorCreateView(TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = ActorForm(request.POST, fields=request.POST.get("field_count"))
+        form = ActorForm(request.POST, request.FILES, fields=request.POST.get("field_count"))
 
         if not form.is_valid():
             return self.render_to_response(context=dict(self.get_context_data(), form=form))
@@ -168,7 +168,7 @@ class EventCreateView(TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = EventForm(request.POST, fields=request.POST.get("field_count"))
+        form = EventForm(request.POST, request.FILES, fields=request.POST.get("field_count"))
 
         if not form.is_valid():
             return self.render_to_response(context=dict(self.get_context_data(), form=form))
