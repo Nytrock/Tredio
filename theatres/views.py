@@ -46,10 +46,8 @@ class TheatresDetailView(TemplateView):
         return context
 
 
-class TheatresCreateView(FormView):
+class TheatresCreateView(TemplateView):
     template_name = "theatres/theatres_create.html"
-    form_class = TheatreForm
-    success_url = "theatres:theatres_list"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -61,11 +59,12 @@ class TheatresCreateView(FormView):
 
     def post(self, request, *args, **kwargs):
         form = TheatreForm(request.POST, fields=request.POST.get("field_count"))
+
         if not form.is_valid():
-            return self.render_to_response(context=self.get_context_data().update({"form": form}))
+            return self.render_to_response(context=dict(self.get_context_data(), form=form))
         form.save()
 
-        return redirect(TheatresCreateView.success_url)
+        return redirect("theatres:theatres_list")
 
 
 class EventListView(FormView):
@@ -135,10 +134,8 @@ class EventDetailView(View):
         return JsonResponse(json_file)
 
 
-class ActorCreateView(FormView):
+class ActorCreateView(TemplateView):
     template_name = "theatres/actors_create.html"
-    form_class = ActorForm
-    success_url = "homepage:home"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -151,20 +148,16 @@ class ActorCreateView(FormView):
 
     def post(self, request, *args, **kwargs):
         form = ActorForm(request.POST, fields=request.POST.get("field_count"))
-        print(form.data)
-        print(form.errors)
 
         if not form.is_valid():
-            return self.render_to_response(context=self.get_context_data().update({"form": form}))
+            return self.render_to_response(context=dict(self.get_context_data(), form=form))
         form.save()
 
-        return redirect(ActorCreateView.success_url)
+        return redirect("homepage:home")
 
 
-class EventCreateView(FormView):
+class EventCreateView(TemplateView):
     template_name = "theatres/events_create.html"
-    form_class = EventForm
-    success_url = "theatres:events_list"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -178,7 +171,7 @@ class EventCreateView(FormView):
         form = EventForm(request.POST, fields=request.POST.get("field_count"))
 
         if not form.is_valid():
-            return self.render_to_response(context=self.get_context_data().update({"form": form}))
+            return self.render_to_response(context=dict(self.get_context_data(), form=form))
         form.save()
 
-        return redirect(TheatresCreateView.success_url)
+        return redirect("theatres:events_list")
