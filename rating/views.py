@@ -75,7 +75,7 @@ class RatingCreateView(TemplateView):
         form = RatingForm(request.POST)
         review_type = kwargs.get("type")
         object_id = kwargs.get("id")
-        
+
         redirect_url = {"event": "theatres:events_detail", "theatre": "rating:rating_theatre"}
 
         if review_type in ["event", "theatre"]:
