@@ -93,7 +93,7 @@ class EventDetailView(View):
         template = "theatres/events_detail.html"
         user = request.user
 
-        reviews = get_object_or_404(Theatre.theatres.theatre_ratings(kwargs["id"]))
+        reviews = get_object_or_404(Event.events.event_ratings(kwargs["id"]))
         event = get_object_or_404(Event.events.event_details(kwargs["id"]))
 
         for review in reviews.reviews.reviews.all():
