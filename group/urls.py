@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views import GroupCreateView, GroupDetailView, GroupListView
+from group.views import GroupCreateView, GroupDetailView, GroupListView
 
 app_name = "group"
 urlpatterns = [

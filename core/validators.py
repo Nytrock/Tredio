@@ -8,7 +8,8 @@ from django.utils.deconstruct import deconstructible
 @deconstructible
 class RangeValidator(object):
     def __init__(self, min_value=1, max_value=5):
-        assert min_value < max_value
+        if min_value >= max_value:
+            raise RuntimeError(f"{min_value} должно быть меньше, чем {max_value}")
         self.min_value, self.max_value = min_value, max_value
         self.validators = [MinValueValidator(min_value), MaxValueValidator(max_value)]
 
@@ -16,7 +17,7 @@ class RangeValidator(object):
         try:
             [validator(value) for validator in self.validators]
         except ValidationError:
-            raise ValidationError(f"{value} должен лежать в диапазоне от {min_value} до {max_value}")
+            raise ValidationError(f"{value} должен лежать в диапазоне от {self.min_value} до {self.max_value}")
 
     def __eq__(self, other):
         return self.min_value == other.min_value and self.max_value == other.max_value
@@ -36,9 +37,9 @@ class AddressValidator(object):
             if not response:
                 raise ValidationError(f"ФИАС идентификатор {self.fias} не существует")
             if response[0]["value"] != self.query:
-                raise ValidationError(f"ФИАС идентификатор не соответствует адресу")
+                raise ValidationError("ФИАС идентификатор не соответствует адресу")
             if response[0]["data"]["city"] != self.city:
-                raise ValidationError(f"Город, соответсвующий идентификатору ФИАС не соответствует введенному")
+                raise ValidationError("Город, соответсвующий идентификатору ФИАС не соответствует введенному")
 
     def __eq__(self, other):
         return self.query == other.query and self.city == other.city and self.fias == other.fias

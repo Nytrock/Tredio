@@ -9,7 +9,8 @@ from django.contrib.auth.views import (
     PasswordResetView,
 )
 from django.urls import include, path
-from .views import ActorProfileView, ProfileView, SignupView, UserDetailView
+
+from users.views import ActorProfileView, ProfileView, SignupView, UserDetailView
 
 app_name = "users"
 urlpatterns = [

@@ -1,11 +1,14 @@
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from core.models import ContactsGroup, ImageBaseModel, PublishedBaseModel
-from theatres.models import Event, Theatre
+from users.querysets import (
+    ActorProfileQuerySet,
+    ProfileQuerySet,
+    RankQuerySet,
+    UserProfileQuerySet,
+)
 
 User = get_user_model()
 
@@ -27,15 +30,6 @@ class UserAchievement(models.Model):
         verbose_name_plural = "Достижения пользователей"
 
 
-class ProfileQuerySet(models.QuerySet):
-    def get_profile(self, id: int):
-        return (
-            self.filter(id=id)
-            .select_related("contacts")
-            .only("first_name", "last_name", "birthday", "description", "contacts")
-        )
-
-
 class CommonProfile(ImageBaseModel):
     first_name = models.CharField("Имя", max_length=100)
     last_name = models.CharField("Фамилия", max_length=100)
@@ -50,20 +44,6 @@ class CommonProfile(ImageBaseModel):
 
     class Meta:
         abstract = True
-
-
-class ActorProfileQuerySet(models.QuerySet):
-    def get_theatres(self, id: int, troupes_ids=None):
-        if troupes_ids is None:
-            troupes_ids = get_troupes_ids(id)
-
-        return Theatre.objects.filter(troupe__id__in=troupes_ids)
-
-    def get_events(self, id: int, troupes_ids=None):
-        if troupes_ids is None:
-            troupes_ids = get_troupes_ids()
-
-        return Event.objects.filter(troupe__id__in=troupes_ids)
 
 
 class ActorProfile(CommonProfile, PublishedBaseModel):
@@ -85,14 +65,6 @@ class ModerationActorProfile(ActorProfile):
         proxy = True
 
 
-class RankQuerySet(models.QuerySet):
-    def get_rank(self, experience: int):
-        return self.filter(experience_required__lte=experience).order_by("-experience_required").first()
-
-    def get_next_rank(self, experience: int):
-        return self.filter(experience_required__gt=experience).order_by("experience_required").first()
-
-
 class Rank(models.Model):
     name = models.CharField("Название", max_length=100)
     color = ColorField(null=True, blank=True)
@@ -104,17 +76,6 @@ class Rank(models.Model):
     class Meta:
         verbose_name = "Ранг"
         verbose_name_plural = "Ранги"
-
-
-class UserProfileQuerySet(models.QuerySet):
-    def get_profile(self, id: int, private: bool = False):
-        PUBLIC_FIELDS = ["rank__name"]
-        PRIVATE_FIELDS = ["experience"]
-        return (
-            self.filter(id=id)
-            .prefetch_related("contacts")
-            .only(*(PUBLIC_FIELDS + PRIVATE_FIELDS if private else PUBLIC_FIELDS))
-        )
 
 
 class UserProfile(CommonProfile):
@@ -130,13 +91,6 @@ class UserProfile(CommonProfile):
     class Meta:
         verbose_name = "Профиль пользователя"
         verbose_name_plural = "Профили пользователей"
-
-
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-    instance.user_profile.save()
 
 
 def update_rank(sender, instance, **kwargs):

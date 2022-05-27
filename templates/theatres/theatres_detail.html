@@ -53,44 +53,41 @@
     </section>
     <section>
         <div class="hobbies group events" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-            {% if theatre.description %}
-                <h2 class="text-center description">Полное описание</h2>
-                <div class="container py-5">
-                    {{ theatre.description }}
-                </div>
-            {% endif %}
+            {% include 'includes/description_block.html' with description=theatre.description only %}
             <h2 class="text-center">Постановки</h2>
             <div class="album py-5">
             <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            {% for event in theatre.events.all %}
-            <div class="col">
-                <div class="card shadow sm text-center">
-                    <div class="col mb-5 ">
-                        {% if event.image %}
-                            <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
-                        {% else %}
-                            <img class="rounded img-fluid shadow" src="{% static 'img/NoneEvent400x300.jpg' %}">
-                        {% endif %}
-                    </div>
-                    <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
-                        <div>
-                            <h5 class="fw-bold">{{ event.name }}</h5>
-                            {% if event.description %}
-                                <p>{{ event.description | truncatewords:10 }}</p>
+            {% if theatre.events.exists %}
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for event in theatre.events.all %}
+                <div class="col">
+                    <div class="card shadow sm text-center">
+                        <div class="col mb-5 ">
+                            {% if event.image %}
+                                <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
                             {% else %}
-                                <p class="text-muted">Описание отсутсвует</p>
+                                <img class="rounded img-fluid shadow" src="{% static 'img/NoneEvent400x300.jpg' %}">
                             {% endif %}
-                            <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}</p>
-                            <a href="{% url 'theatres:events_detail' event.id %}" class="btn btn-primary shadow" type="button">Больше</a>
+                        </div>
+                        <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
+                            <div>
+                                <h5 class="fw-bold">{{ event.name }}</h5>
+                                {% if event.description %}
+                                    <p>{{ event.description | truncatewords:10 }}</p>
+                                {% else %}
+                                    <p class="text-muted">Описание отсутствует</p>
+                                {% endif %}
+                                <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{ event.theatre.location.query }}</p>
+                                <a href="{% url 'theatres:events_detail' event.id %}" class="btn btn-primary shadow" type="button">Больше</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            {% empty %}
-                <h4 class="text-center">Постановок нет.</h4>
-            {% endfor %}
-            </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <h4>Постановок нет.</h4>
+            {% endif %}
             </div>
             </div>
         </div>
@@ -98,66 +95,39 @@
             <h2 class="text-center">Встречи</h2>
             <div class="album py-5">
             <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            {% for event in theatre.events.all %}
-            {% for meetup in event.meetups.all %}
-            <div class="col">
-                <a href="{% url 'group:group_detail' meetup.id %}">
-                <div class="card textwhite bg-primary text-white shadow">
-                    <div class="card-body">
-                        <div class="row mb-2">
-                            <div class="col">
-                                <p class="m-0"><strong>Встреча на постановке "{{ meetup.event }}"</strong></p>
-                                {% if meetup.description %}
-                                <p class="m-0">{{ meetup.description | truncatewords:10 }}</p>
-                                {% endif %}
+            {% if theatre.events.exists %}
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for event in theatre.events.all %}
+                {% for meetup in event.meetups.all %}
+                <div class="col">
+                    <a href="{% url 'group:group_detail' meetup.id %}">
+                    <div class="card textwhite bg-primary text-white shadow">
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <p class="m-0"><strong>Встреча на постановке "{{ meetup.event }}"</strong></p>
+                                    {% if meetup.description %}
+                                        <p class="m-0">{{ meetup.description | truncatewords:10 }}</p>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
+                            <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.start }}</p>
+                            <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Лидер: {{ meetup.host.username }}</p>
                         </div>
-                        <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.start }}</p>
-                        <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Лидер: {{ meetup.host.username }}</p>
                     </div>
+                    </a>
                 </div>
-                </a>
-            </div>
-            {% endfor %}
-            {% empty %}
-                <h4 class="text-center">Встреч нет.</h4>
-            {% endfor %}
-            </div>
+                {% endfor %}
+                {% endfor %}
+                </div>
+            {% else %}
+                    <h4>Встреч нет.</h4>
+            {% endif %}
             </div>
             </div>
         </div>
         {% if actors %}
-        <div class="hobbies group actors" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-            <h2 class="text-center">Актёры</h2>
-            <div class="album py-5">
-            <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            {% for actor in actors %}
-            <div class="col">
-                <div class="card shadow sm text-center">
-                    <div class="col mb-5 ">
-                        <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% if actor.profile.image %} {{ actor.profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser400x300.jpg' %} {% endif %}"></a>
-                    </div>
-                    <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
-                        <div>
-                            <h5 class="fw-bold">{{ actor.profile.first_name }} {{ actor.profile.last_name }}</h5>
-                            {% if actor.profile.description %}
-                                <p>{{ actor.profile.description | truncatewords:10 }}</p>
-                            {% else %}
-                                <p class="text-muted">Описание отсутсвует</p>
-                            {% endif %}
-                            <p class="text-muted mb-4"><i class="fa fa-user"></i>&nbsp;Роль: {{ actor.role }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-            </div>
-            </div>
-            </div>
-        </div>
+            {% include 'includes/actors_block.html' with actors=actors only %}
         {% endif %}
         <div class="simple-slider mb-5">
             <h2 class="text-center">Галерея</h2>

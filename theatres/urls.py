@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views import (
+from theatres.views import (
     ActorCreateView,
     EventCreateView,
     EventDetailView,

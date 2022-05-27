@@ -1,10 +1,9 @@
 from django.contrib import admin
 
+from core.models import City, Location
 from theatres.models import (
-    City,
     Event,
     EventImage,
-    Location,
     ModerationEvent,
     ModerationTheatre,
     Theatre,

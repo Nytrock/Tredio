@@ -1,8 +1,7 @@
 from django.forms import ModelForm, widgets
 
+from group.models import Meetup
 from theatres.models import Event
-
-from .models import Meetup
 
 
 class MeetupForm(ModelForm):
@@ -26,8 +25,8 @@ class MeetupForm(ModelForm):
         }
 
         labels = {
-            Meetup.event.field.name: "Постановка, ради которой создаётся группа",
+            Meetup.event.field.name: "Постановка",
             Meetup.start.field.name: "Дата встречи",
-            Meetup.description.field.name: "Описание группы",
-            Meetup.participants_limit.field.name: "Лимит участников группы",
+            Meetup.description.field.name: "Описание",
+            Meetup.participants_limit.field.name: "Максимальное количество участников",
         }

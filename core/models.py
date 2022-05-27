@@ -14,7 +14,6 @@ def modify_fields(**kwargs):
 
 
 class ContactsGroup(models.Model):
-
     objects = models.Manager()
 
     class Meta:
@@ -36,7 +35,7 @@ class ContactType(models.Model):
 
 
 class Contact(models.Model):
-    contacts_group_id = models.ForeignKey(
+    contacts_group = models.ForeignKey(
         ContactsGroup, related_name="contacts", verbose_name="Группа контактов", on_delete=models.CASCADE
     )
     type = models.ForeignKey(ContactType, verbose_name="Тип контакта", on_delete=models.CASCADE)
@@ -47,6 +46,36 @@ class Contact(models.Model):
     class Meta:
         verbose_name = "Контакт"
         verbose_name_plural = "Контакты"
+
+
+class City(models.Model):
+    name = models.CharField("Название", max_length=100)
+
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
+
+
+class Location(models.Model):
+    """
+    Информация о местоположении.
+    Полем `query` следует пользоваться лишь в тех случаях, когда идентификатор ФИАС устарел.
+    """
+
+    #: Адрес одной строкой
+    query = models.CharField("Адрес", max_length=250)
+
+    #: Город
+    city = models.ForeignKey(City, verbose_name="Город", on_delete=models.CASCADE)
+
+    #: Уникальный идентификатор ФИАС
+    fias = models.CharField("ФИАС", max_length=50)
+
+    class Meta:
+        verbose_name = "Местоположение"
+        verbose_name_plural = "Местоположения"
 
 
 class ImageBaseModel(models.Model):

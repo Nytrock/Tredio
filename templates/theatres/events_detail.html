@@ -48,12 +48,7 @@
         </div>
     </section>
     <section>
-        {% if event.description %}
-            <h2 class="text-center description">Полное описание</h2>
-            <div class="container py-5">
-                {{ event.description }}
-            </div>
-        {% endif %}
+        {% include 'includes/description_block.html' with description=event.description only %}
         <h2 class="text-center events">Место проведения</h2>
         <div class="container py-5">
             <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
@@ -65,133 +60,102 @@
                     {% endif %}
                 </div>
                 <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
-                    <div>
-                        <h5 class="fw-bold">{{  event.theatre.name }}</h5>
-                        <p>{{  event.theatre.description | truncatewords:10 }}</p>
-                        <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{  event.theatre.location.query }}</p>
-                        <a href="{% url 'theatres:theatres_detail' event.theatre.id %}" class="btn btn-primary shadow" type="button">Больше</a>
-                    </div>
+                    {% include 'includes/theatre_block.html' with theatre=event.theatre only %}
                 </div>
             </div>
         </div>
         {% if actors %}
-        <div class="hobbies group actors" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-            <h2 class="text-center">Актёры</h2>
-            <div class="album py-5">
-            <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            {% for actor in actors %}
-            <div class="col">
-                <div class="card shadow sm text-center">
-                    <div class="col mb-5 ">
-                        <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% if actor.profile.image %} {{ actor.profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser400x300.jpg' %} {% endif %}"></a>
-                    </div>
-                    <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
-                        <div>
-                            <h5 class="fw-bold">{{ actor.profile.first_name }} {{ actor.profile.last_name }}</h5>
-                            {% if actor.profile.description %}
-                                <p>{{ actor.profile.description | truncatewords:10 }}</p>
-                            {% else %}
-                                <p class="text-muted">Описание отсутсвует</p>
-                            {% endif %}
-                            <p class="text-muted mb-4"><i class="fa fa-user"></i>&nbsp;Роль: {{ actor.role }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-            </div>
-            </div>
-            </div>
-        </div>
+            {% include 'includes/actors_block.html' with actors=actors only %}
         {% endif %}
         <h2 class="text-center ratings">Отзывы</h2>
         <div class="album py-5">
         <div class="container">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-3 ">
-            {% for review in reviews.reviews.reviews.all %}
-            <div class="card card-inner mx-auto">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="row-md mb-2">
-                            <a href="{% if review.user.id != request.user.id %} {% url 'users:users_detail' review.user.id %} {% else %} {% url 'users:profile' %} {% endif %}">
-                                <img class="border rounded-circle img-profile" style="border:2px solid {{ review.user.user_profile.rank.color }}!important" src="{% if review.user.user_profile.image %} {{ review.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser.jpg' %} {% endif %}">
-                                <span class="d-none d-lg-inline me-2 text-gray-600 small">{{ review.user.username }}</span>
-                            </a>
-                        </div>
-                        <div>
-                            <div class="form-group">
-                                <div class="star-rating mb-3">
-                                    <div class="star-rating__wrap">
-                                        {% if review.star == 5 %}
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                        {% elif review.star == 4 %}
-                                            <label class="fa fa-star-o fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                        {% elif review.star == 3 %}
-                                            <label class="fa fa-star-o fa-lg cool-star"></label>
-                                            <label class="fa fa-star-o fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                        {% elif review.star == 2 %}
-                                            <label class="fa fa-star-o fa-lg cool-star"></label>
-                                            <label class="fa fa-star-o fa-lg cool-star"></label>
-                                            <label class="fa fa-star-o fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                            <label class="fa fa-star fa-lg cool-star"></label>
-                                        {% elif review.star == 1 %}
-                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
-                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
-                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
-                                            <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
-                                            <label class="star-rating__ico fa fa-star fa-lg cool-star"></label>
-                                        {% endif %}
+        {% if reviews.reviews.reviews.exists %}
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-3 ">
+                {% for review in reviews.reviews.reviews.all %}
+                <div class="card card-inner mx-auto">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="row-md mb-2">
+                                <a href="{% if review.user.id != request.user.id %} {% url 'users:users_detail' review.user.id %} {% else %} {% url 'users:profile' %} {% endif %}">
+                                    <img class="border rounded-circle img-profile" style="border:2px solid {{ review.user.user_profile.rank.color }}!important" src="{% if review.user.user_profile.image %} {{ review.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser.jpg' %} {% endif %}">
+                                    <span class="d-none d-lg-inline me-2 text-gray-600 small">{{ review.user.username }}</span>
+                                </a>
+                            </div>
+                            <div>
+                                <div class="form-group">
+                                    <div class="star-rating mb-3">
+                                        <div class="star-rating__wrap">
+                                            {% if review.star == 5 %}
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                            {% elif review.star == 4 %}
+                                                <label class="fa fa-star-o fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                            {% elif review.star == 3 %}
+                                                <label class="fa fa-star-o fa-lg cool-star"></label>
+                                                <label class="fa fa-star-o fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                            {% elif review.star == 2 %}
+                                                <label class="fa fa-star-o fa-lg cool-star"></label>
+                                                <label class="fa fa-star-o fa-lg cool-star"></label>
+                                                <label class="fa fa-star-o fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                                <label class="fa fa-star fa-lg cool-star"></label>
+                                            {% elif review.star == 1 %}
+                                                <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                                <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                                <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                                <label class="star-rating__ico fa fa-star-o fa-lg cool-star"></label>
+                                                <label class="star-rating__ico fa fa-star fa-lg cool-star"></label>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <form class="row-md-9" action="." class="like-form" method="post">
+                                {% csrf_token %}
+                                <p>{{ review.content }}</p>
+                                <input hidden name="id" value="{{ review.id }}">
+                                <input hidden id="like_num" name="like_num" value="{{ review.like|length }}">
+                                <input hidden id="dislike_num" name="dislike_num" value="{{ review.dislike|length }}">
+                                <p id="like-div">
+                                    {% if review.user_like%}
+                                        <button type="button" onclick="postLike(this)" id="like" name="like" value="True" class="btn btn-primary like">
+                                            <i class="fa fa-thumbs-up" aria-hidden="true"></i> {{ review.like|length }}
+                                        </button>
+                                    {% else %}
+                                        <button type="button" onclick="postLike(this)" id="like" name="like" value="True" class="btn btn-light like">
+                                            <i class="fa fa-thumbs-o-up" aria-hidden="true"> </i> {{ review.like|length }}
+                                        </button>
+                                    {% endif %}
+                                    {% if review.user_dislike%}
+                                        <button type="button" onclick="postLike(this)" id="dislike" name="like" value="False" class="btn btn-danger like">
+                                            <i class="fa fa-thumbs-down" aria-hidden="true"></i> {{ review.dislike|length }}
+                                        </button>
+                                    {% else %}
+                                        <button type="button" onclick="postLike(this)" id="dislike" name="like" value="False" class="btn btn-light like">
+                                            <i class="fa fa-thumbs-o-down" aria-hidden="true"> </i> {{ review.dislike|length }}
+                                        </button>
+                                    {% endif %}
+                               </p>
+                            </form>
                         </div>
-                        <form class="row-md-9" action="." class="like-form" method="post">
-                            {% csrf_token %}
-                            <p>{{ review.content }}</p>
-                            <input hidden name="id" value="{{ review.id }}">
-                            <input hidden id="like_num" name="like_num" value="{{ review.like|length }}">
-                            <input hidden id="dislike_num" name="dislike_num" value="{{ review.dislike|length }}">
-                            <p id="like-div">
-                                {% if review.user_like%}
-                                    <button type="button" onclick="postLike(this)" id="like" name="like" value="True" class="btn btn-primary like">
-                                        <i class="fa fa-thumbs-up" aria-hidden="true"></i> {{ review.like|length }}
-                                    </button>
-                                {% else %}
-                                    <button type="button" onclick="postLike(this)" id="like" name="like" value="True" class="btn btn-light like">
-                                        <i class="fa fa-thumbs-o-up" aria-hidden="true"> </i> {{ review.like|length }}
-                                    </button>
-                                {% endif %}
-                                {% if review.user_dislike%}
-                                    <button type="button" onclick="postLike(this)" id="dislike" name="like" value="False" class="btn btn-danger like">
-                                        <i class="fa fa-thumbs-down" aria-hidden="true"></i> {{ review.dislike|length }}
-                                    </button>
-                                {% else %}
-                                    <button type="button" onclick="postLike(this)" id="dislike" name="like" value="False" class="btn btn-light like">
-                                        <i class="fa fa-thumbs-o-down" aria-hidden="true"> </i> {{ review.dislike|length }}
-                                    </button>
-                                {% endif %}
-                           </p>
-                        </form>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% empty%}
-                <h2 class="text-center">Отзывов нет.</h2>
-            {% endfor %}
-        </div>
+        {% else %}
+            <h4>Отзывы отсутствуют.</h4>
+        {% endif %}
         </div>
         </div>
         <div class="simple-slider mb-5">

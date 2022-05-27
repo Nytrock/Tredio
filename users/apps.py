@@ -5,6 +5,7 @@ from fieldsignals import pre_save_changed
 class UsersConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "users"
+    verbose_name = "Пользователи"
 
     def ready(self):
         from .models import UserProfile, update_rank
