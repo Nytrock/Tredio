@@ -1,4 +1,3 @@
-from django.apps import apps
 from django.db import models
 
 from theatres.models import Event, Theatre, TroupeMember

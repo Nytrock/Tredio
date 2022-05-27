@@ -1,14 +1,13 @@
-from django.db.models import Prefetch
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
 from core.forms import SearchForm
-from core.models import City, Contact, ContactsGroup, ContactType, Location
-from rating.models import ReviewGroup, ReviewRating
+from core.models import City, ContactType
+from rating.models import ReviewRating
 from theatres.forms import ActorForm, EventForm, TheatreForm
-from theatres.models import Event, Theatre, Troupe, TroupeMember
+from theatres.models import Event, Theatre, TroupeMember
 from users.models import ActorProfile
 
 

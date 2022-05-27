@@ -1,11 +1,8 @@
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from core.models import ContactsGroup, ImageBaseModel, PublishedBaseModel
-from theatres.models import Event, Theatre, TroupeMember
 from users.querysets import (
     ActorProfileQuerySet,
     ProfileQuerySet,

@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import CharField, Form, ModelForm, widgets
+from django.forms import ModelForm, widgets
 
 from core.models import City, Contact, ContactsGroup, ContactType, Location
 from core.validators import AddressValidator

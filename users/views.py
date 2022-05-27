@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
-from core.models import Contact, ContactsGroup, ContactType
+from core.models import Contact, ContactType
 from group.models import Meetup, MeetupParticipant
 from rating.models import Review
 from theatres.models import TroupeMember
@@ -46,7 +46,7 @@ class ActorProfileView(TemplateView):
         for (troupe, role) in TroupeMember.objects.filter(profile=actor_profile_id).values_list("troupe", "role").all():
             if troupe in troupe_roles:
                 troupe_roles[troupe].append(role)
-            elif role != None:
+            elif role is not None:
                 troupe_roles[troupe] = [role]
 
         for event in context["events"]:
