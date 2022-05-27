@@ -1,8 +1,8 @@
+from django.core.exceptions import BadRequest
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import TemplateView
-from django.core.exceptions import BadRequest
 
 from rating.forms import RatingForm
 from rating.models import Review, ReviewRating
@@ -24,18 +24,18 @@ class RatingTheatreView(View):
             review.user_like = user in [review.user for review in review.like]
             review.user_dislike = user in [review.user for review in review.dislike]
 
-        return render(request, template, {
-            "reviews": reviews
-        })
+        return render(request, template, {"reviews": reviews})
 
     @staticmethod
     def post(request, **kwargs):
         user = request.user
         like = request.POST.get("like") == "True"
 
-        review_rating = ReviewRating.objects.filter(
-            review_id=int(request.POST.get("id")), user_id=user.id
-        ).prefetch_related("review").first()
+        review_rating = (
+            ReviewRating.objects.filter(review_id=int(request.POST.get("id")), user_id=user.id)
+            .prefetch_related("review")
+            .first()
+        )
         json_file = {
             "like": like,
             "like_num": int(request.POST.get("like_num")),
@@ -44,7 +44,7 @@ class RatingTheatreView(View):
 
         if review_rating:
             star = review_rating.star
-            modifier = 1 if (like == (star == like)) else -1 
+            modifier = 1 if (like == (star == like)) else -1
             add_experience(review_rating.review.user_id, 2 * modifier)
             if like == star:
                 review_rating.delete()
