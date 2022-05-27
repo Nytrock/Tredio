@@ -151,6 +151,11 @@ class UserDetailView(TemplateView):
 
         return context
 
+    def get(self, request, *args, **kwargs):
+        if kwargs["id"] == request.user.id:
+            return redirect("users:profile")
+        return self.render_to_response(context=self.get_context_data(**kwargs))
+
 
 class SignupView(FormView):
     template_name = "users/signup.html"
