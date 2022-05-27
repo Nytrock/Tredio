@@ -3,9 +3,10 @@ let form_count = Number($("[name=field_count]").val());
 
 function addMultipleField() {
     var $div = $("#multiple_field");
+
     var $klon = $div.clone();
-    $klon.children("#key_stub").attr("name", "key_" + form_count).attr("id", "id_key_" + form_count).prop("required", true);
-    $klon.children("#value_stub").attr("name", "value_" + form_count).attr("id", "id_value_" + form_count);
+    $klon.find("#key_stub").attr("name", "key_" + form_count).attr("id", "id_key_" + form_count).prop("required", true);
+    $klon.find("#value_stub").attr("name", "value_" + form_count).attr("id", "id_value_" + form_count);
     $klon.appendTo("#multiple_fields");
 
     form_count++;
@@ -21,7 +22,7 @@ $("#addBtn").click(function() {
 $("#AddContactProfile").click(function () {
     $field = addMultipleField();
     $field.attr("class", "mb-3");
-    $field.children("#id_value_" + form_count - 1).prop("required", true);
+    $field.find("#id_value_" + form_count - 1).prop("required", true);
 });
 
 const menuLinks = document.querySelectorAll('.menu_linked[data-goto]');
