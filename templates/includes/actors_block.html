@@ -1,0 +1,23 @@
+{% load static %}
+
+<div class="hobbies group actors" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
+    <h2 class="text-center">Актёры</h2>
+    <div class="album py-5">
+    <div class="container">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+    {% for actor in actors %}
+    <div class="col">
+        <div class="card shadow sm text-center">
+            <div class="col mb-5 ">
+                <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% if actor.profile.image %} {{ actor.profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
+            </div>
+            <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
+                {% include 'includes/actor_block.html' with actor=actor only %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+    </div>
+    </div>
+</div>

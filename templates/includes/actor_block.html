@@ -1,0 +1,13 @@
+<div>
+    <h5 class="fw-bold">{{ actor.profile.first_name }} {{ actor.profile.last_name }}</h5>
+    {% if actor.profile.description %}
+        <p>{{ actor.profile.description | truncatewords:10 }}</p>
+    {% else %}
+        <p class="text-muted">Описание отсутствует</p>
+    {% endif %}
+    <p class="text-muted mb-4">
+        {% if actor.role %}
+            <i class="fa fa-user"></i>&nbsp;Роль: {{ actor.role }}
+        {% endif %}
+    </p>
+</div>

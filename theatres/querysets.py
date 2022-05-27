@@ -1,6 +1,6 @@
 from django.apps import apps
 from django.db import models
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 from rating.models import ReviewRating
 
@@ -28,14 +28,22 @@ class TheatreQuerySet(models.QuerySet):
         return self.theatres_list().filter(name__icontains=search_query)
 
     def theatre_details(self, id: int):
+        from theatres.models import Event
+
         return (
             self.filter(id=id)
-            .prefetch_related("gallery_images", "reviews__reviews", "events__meetups", "events__meetups__host")
+            .prefetch_related(
+                "gallery_images",
+                "reviews__reviews",
+                Prefetch("events", queryset=Event.objects.filter(is_published=True)),
+                "events__meetups",
+                "events__meetups__host",
+            )
             .only("name", "description")
             .annotate(
                 reviews_count=models.Count("reviews__reviews", distinct=True),
                 reviews_average_score=models.Avg("reviews__reviews__star"),
-                events_count=models.Count("events", distinct=True),
+                events_count=models.Count("events", filter=Q(events__is_published=True), distinct=True),
             )
         )
 

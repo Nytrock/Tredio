@@ -67,10 +67,7 @@
     </section>
     <section>
         <div class="hobbies group events" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-            <h2 class="text-center description">Полное описание</h2>
-            <div class="container py-5">
-                {{ meetup.description }}
-            </div>
+            {% include 'includes/description_block.html' with description=meetup.description only %}
             <h2 class="text-center event mb-3">Постановка</h2>
             <h4 class="text-center">Краткая информация</h4>
             <div class="container py-5">
@@ -104,81 +101,50 @@
                         {% endif %}
                     </div>
                     <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
-                        <div>
-                            <h5 class="fw-bold">{{  meetup.event.theatre.name }}</h5>
-                            <p>{{  meetup.event.theatre.description }}</p>
-                            <p class="text-muted mb-4"><i class="fas fa-map-marker-alt" style="padding-right: 8px;"></i>{{  meetup.event.theatre.location.query }}</p>
-                            <a href="{% url 'theatres:theatres_detail' meetup.event.theatre.id %}" class="btn btn-primary shadow" type="button">Больше</a>
-                        </div>
+                        {% include 'includes/theatre_block.html' with theatre=meetup.event.theatre only %}
                     </div>
                 </div>
             </div>
             {% if actors %}
-            <div class="hobbies group actors" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-                <h4 class="text-center">Актёрский состав</h4>
-                <div class="album py-5">
-                <div class="container">
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                {% for actor in actors %}
-                <div class="col">
-                    <div class="card shadow sm text-center">
-                        <div class="col mb-5 ">
-                            <a href="{% url 'users:actor_profile' actor.profile.id %}"><img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}"></a>
-                        </div>
-                        <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
-                            <div>
-                                <h5 class="fw-bold">{{ actor.profile.first_name }} {{ actor.profile.last_name }}</h5>
-                                {% if actor.profile.description %}
-                                    <p>{{ actor.profile.description }}</p>
-                                {% else %}
-                                    <p class="text-muted">Описание отсутсвует</p>
-                                {% endif %}
-                                <p class="text-muted mb-4"><i class="fa fa-user"></i>&nbsp;Роль: {{ actor.role }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                </div>
-                </div>
-                </div>
-            </div>
+                {% include 'includes/actors_block.html' with actors=actors only %}
             {% endif %}
         </div>
         <div class="hobbies group groups" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
             <h2 class="text-center">Участники</h2>
             <div class="album py-5">
             <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            {% for user in meetup.participants.all %}
-            <div class="col">
-                <div class="card shadow sm text-center">
-                    <div class="col mb-5 ">
-                        {% if user.user.id != request.user.id %}
-                            <a href="{% url 'users:users_detail' user.user.user_profile.id %}"><img class="rounded img-fluid shadow" style="border:2px solid {{ user.user.user_profile.rank.color }}" src="{% if user.user.user_profile.image %} {{ user.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
-                        {% else %}
-                            <a href="{% url 'users:profile' %}"><img class="rounded img-fluid shadow" style="border:2px solid {{ user.user.user_profile.rank.color }}" src="{% if user.user.user_profile.image %} {{ user.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
-                        {% endif %}
-                    </div>
-                    <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
-                        <div>
-                            <h5 class="fw-bold">{{  user.user.user_profile.first_name }} {{  user.user.user_profile.last_name }} ({{  user.user.username }})</h5>
-                            {% if user.user.user_profile.description %}
-                                <p>{{ user.user.user_profile.description }}</p>
+            {% if meetup.participants.exists %}
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for user in meetup.participants.all %}
+                <div class="col">
+                    <div class="card shadow sm text-center">
+                        <div class="col mb-5 ">
+                            {% if user.user.id != request.user.id %}
+                                <a href="{% url 'users:users_detail' user.user.user_profile.id %}"><img class="rounded img-fluid shadow" style="border:2px solid {{ user.user.user_profile.rank.color }}" src="{% if user.user.user_profile.image %} {{ user.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
                             {% else %}
-                                <p class="text-muted">Описание отсутсвует</p>
+                                <a href="{% url 'users:profile' %}"><img class="rounded img-fluid shadow" style="border:2px solid {{ user.user.user_profile.rank.color }}" src="{% if user.user.user_profile.image %} {{ user.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
                             {% endif %}
-                            {% if user.user.email %}
-                                <p class="text-muted mb-4"><i class="fa fa-envelope"></i>&nbsp;{{ user.user.email }}</p>
-                            {% endif %}
+                        </div>
+                        <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
+                            <div>
+                                <h5 class="fw-bold">{{  user.user.user_profile.first_name }} {{  user.user.user_profile.last_name }} ({{  user.user.username }})</h5>
+                                {% if user.user.user_profile.description %}
+                                    <p>{{ user.user.user_profile.description }}</p>
+                                {% else %}
+                                    <p class="text-muted">Описание отсутствует</p>
+                                {% endif %}
+                                {% if user.user.email %}
+                                    <p class="text-muted mb-4"><i class="fa fa-envelope"></i>&nbsp;{{ user.user.email }}</p>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            {% empty %}
-                <h4 class="text-center">Участников нет.</h4>
-            {% endfor %}
-            </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <h4>Участники отсутствуют.</h4>
+            {% endif %}
             </div>
             </div>
         </div>
