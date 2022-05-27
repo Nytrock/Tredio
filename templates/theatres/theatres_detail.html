@@ -3,7 +3,7 @@
 {% block title %}Театр{% endblock %}
 {% block content %}
     <section>
-        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if theatre.image %} {{theatre.image.url}} {% else %} {% static '/img/None400x300.jpg' %} {% endif %});background-position: center;background-size: cover;">
+        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if theatre.image %} {{theatre.image.url}} {% else %} {% static '/img/NoneTheatre400x300.jpg' %} {% endif %});background-position: center;background-size: cover;">
             <div class="container h-100">
                 <div class="row h-100">
                     <div class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center">
@@ -11,10 +11,10 @@
                             <h1 class="text-uppercase fw-bold text-white">{{ theatre.name }}</h1>
                             {% if theatre.description %}
                                 <p class="my-3 text-white">{{ theatre.description | truncatewords:10 }}</p>
+                                <a class="btn btn-primary btn-lg me-2 menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".description">Описание</a>
                             {% endif %}
-                            <a class="btn btn-primary btn-lg me-2 menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".description">Описание</a>
                             <a class="btn btn-primary btn-lg me-2 menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".events">Постановки</a>
-                            <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".groups">Группы</a>
+                            <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".groups">Встречи</a>
                             {% if actors %}
                             <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".actors">Актёры</a>
                             {% endif %}
@@ -37,7 +37,7 @@
                     </div>
                     <div class="col">
                         <div class="p-3">
-                            <h4 class="display-5 fw-bold text-white mb-0"><i class="far fa-star"></i>{{ theatre.reviews_average_score|floatformat:1 }}</h4>
+                            <h4 class="display-5 fw-bold text-white mb-0"><i class="far fa-star"></i>{% if theatre.reviews_average_score %}{{ theatre.reviews_average_score|floatformat:1 }}{% else %}0,0{% endif %}</h4>
                             <p class="mb-0">Средний рейтинг по 5 бальной шкале</p>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                             {% if event.image %}
                                 <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
                             {% else %}
-                                <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                                <img class="rounded img-fluid shadow" src="{% static 'img/NoneEvent400x300.jpg' %}">
                             {% endif %}
                         </div>
                         <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
@@ -92,7 +92,7 @@
             </div>
         </div>
         <div class="hobbies group groups" style="padding-right: 15vh;padding-left: 15vh;padding-top: 0vh;padding-bottom: 4vh;">
-            <h2 class="text-center">Группы</h2>
+            <h2 class="text-center">Встречи</h2>
             <div class="album py-5">
             <div class="container">
             {% if theatre.events.exists %}
@@ -110,7 +110,6 @@
                                         <p class="m-0">{{ meetup.description | truncatewords:10 }}</p>
                                     {% endif %}
                                 </div>
-                                <div class="col-auto"><i class="fas fa-university fa-2x"></i></div>
                             </div>
                             <p class="text-white-50 small m-0"><i class="fa fa-clock"></i>&nbsp;Дата проведения: {{ meetup.start }}</p>
                             <p class="text-white-50 small m-0"><i class="fa fa-user"></i>&nbsp;Лидер: {{ meetup.host.username }}</p>

@@ -9,7 +9,7 @@
                 <div class="col-lg-4">
                     <div class="card shadow block-profile-img mb-3">
                         <div class="card-body text-center shadow">
-                            <img class="rounded-circle mb-1 mt-4 img-profile-160" style="border:5px solid {{ user.rank.color }}" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}">
+                            <img class="rounded-circle mb-1 mt-4 img-profile-160" style="border:5px solid {{ user.rank.color }}" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser.jpg' %} {% endif %}">
                             <div class="mb-3">
                                 <h3 class="text-center text-dark mb-2">{{ request.user.username }}</h3>
                                 <form id="upload_image_form" method="post" enctype="multipart/form-data">
@@ -131,6 +131,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="mb-2"><a  href="{% url 'password_change' %}">Изменить пароль</a></div>
                                         <div class="mb-3"><button class="btn btn-primary btn-sm" type="submit">Сохранить</button></div>
                                     </form>
                                 </div>
@@ -151,7 +152,7 @@
                                                 <input class="form-control" name="contact_{{ contact.id }}" type="text" id="id_contact_{{ contact.id }}" value="{{ contact.value }}" placeholder="Введите значение" name="сontacts" required>
                                             </div>
                                         {% empty %}
-                                            <p class="small">Контакты отсутствуют.</p>
+                                            <p class="small" id="contact-not">Контакты отсутствуют.</p>
                                         {% endfor %}
                                     </div>
                                         <div class="mb-3">
@@ -161,6 +162,7 @@
                                         <div id="multiple_field" class="mb-3 collapse">
                                             <label class="form-label"><strong>Тип контакта</strong></label>
                                             <select id="key_stub" class="form-control selected">
+                                                <option value="" selected="">---------</option>
                                                 {% for contact in contacts %}
                                                     <option value="{{ contact.id }}">{{ contact }} </option>
                                                 {% endfor %}

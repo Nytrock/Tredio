@@ -3,7 +3,7 @@
 {% block title %}Отзывы на театр{% endblock %}
 {% block content %}
     <section>
-        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if reviews.image %}{{reviews.image.url}} {% else %} {% static '/img/None400x300.jpg' %} {% endif %});background-position: center;background-size: cover;">
+        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if reviews.image %}{{reviews.image.url}} {% else %} {% static '/img/NoneTheatre400x300.jpg' %} {% endif %});background-position: center;background-size: cover;">
             <div class="container h-100">
                 <div class="row h-100">
                     <div class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center">
@@ -27,7 +27,7 @@
                     <div class="row">
                         <div class="row-md mb-2">
                             <a href="{% if review.user.id != request.user.id %} {% url 'users:users_detail' review.user.id %} {% else %} {% url 'users:profile' %} {% endif %}">
-                                <img class="border rounded-circle img-profile" style="border:2px solid {{ review.user.user_profile.rank.color }}!important" src="{% if review.user.user_profile.image %} {{ review.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}">
+                                <img class="border rounded-circle img-profile" style="border:2px solid {{ review.user.user_profile.rank.color }}!important" src="{% if review.user.user_profile.image %} {{ review.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser.jpg' %} {% endif %}">
                                 <span class="d-none d-lg-inline me-2 text-gray-600 small">{{ review.user.username }}</span>
                             </a>
                         </div>
@@ -100,6 +100,8 @@
                     </div>
                 </div>
             </div>
+            {% empty %}
+                <h4 class="text-center">Отзывов нет. Напишите первый!</h4>
             {% endfor %}
         </div>
         </div>

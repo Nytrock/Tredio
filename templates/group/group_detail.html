@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Запрос{% endblock %}
+{% block title %}Встреча{% endblock %}
 {% block content %}
     <section>
-        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if meetup.event.image %} {{ meetup.event.image.url}} {% else %} {% static '/img/None400x300.jpg' %} {% endif %});background-position: center;background-size: cover;">
+        <div data-bss-parallax-bg="true" style="height: 600px;background-image: url({% if meetup.event.image %} {{ meetup.event.image.url}} {% else %} {% static '/img/NoneGroup400x300.jpg' %} {% endif %});background-position: center;background-size: cover;">
             <div class="container h-100">
                 <div class="row h-100">
                     <div class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center">
@@ -12,8 +12,8 @@
                             <h1 class="text-uppercase fw-bold text-white">Встреча на постановке "{{ meetup.event.name }}"</h1>
                             {% if meetup.description %}
                                 <p class="my-3 text-white">{{ meetup.description | truncatewords:10 }}</p>
+                                <a class="btn btn-primary btn-lg menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".description">Описание</a>
                             {% endif %}
-                            <a class="btn btn-primary btn-lg menu_sub_link menu_linked" role="button" style="margin-top: 9px;" data-goto=".description">Описание</a>
                             <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".event">Информация о постановке</a>
                             <a class="btn btn-primary btn-lg menu_sub_link menu_linked" type="button" style="margin-top: 9px;" data-goto=".groups">Участники</a>
                             {% if request.user.id != meetup.host_id %}
@@ -76,7 +76,7 @@
                         {% if meetup.event.image %}
                             <img class="rounded img-fluid shadow" src="{{ meetup.event.get_image_400x300.url}}">
                         {% else %}
-                            <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                            <img class="rounded img-fluid shadow" src="{% static 'img/NoneEvent400x300.jpg' %}">
                         {% endif %}
                     </div>
                     <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
@@ -97,7 +97,7 @@
                         {% if meetup.event.theatre.image %}
                             <img class="rounded img-fluid shadow" src="{{ meetup.event.theatre.get_image_400x300.url}}">
                         {% else %}
-                            <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                            <img class="rounded img-fluid shadow" src="{% static 'img/NoneTheatre400x300.jpg' %}">
                         {% endif %}
                     </div>
                     <div class="col d-md-flex align-items-md-end align-items-lg-center mb-5">
@@ -120,9 +120,10 @@
                     <div class="card shadow sm text-center">
                         <div class="col mb-5 ">
                             {% if user.user.id != request.user.id %}
-                                <a href="{% url 'users:users_detail' user.user.user_profile.id %}"><img class="rounded img-fluid shadow" style="border:2px solid {{ user.user.user_profile.rank.color }}" src="{% if user.user.user_profile.image %} {{ user.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
+                                <a href="{% url 'users:users_detail' user.user.user_profile.id %}"><img class="rounded img-fluid shadow" style="border:2px solid {{ user.user.user_profile.rank.color }}" src="{% if user.user.user_profile.image %} {{ user.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser400x300.jpg' %} {% endif %}"></a>
                             {% else %}
-                                <a href="{% url 'users:profile' %}"><img class="rounded img-fluid shadow" style="border:2px solid {{ user.user.user_profile.rank.color }}" src="{% if user.user.user_profile.image %} {{ user.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/None400x300.jpg' %} {% endif %}"></a>
+                                <a href="{% url 'users:profile' %}"><img class="rounded img-fluid shadow" style="border:2px solid {{ user.user.user_profile.rank.color }}" src="{% if user.user.user_profile.image %} {{ user.user.user_profile.get_image_400x300.url }} {% else %} {% static '/img/
+                                  User400x300.jpg' %} {% endif %}"></a>
                             {% endif %}
                         </div>
                         <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">

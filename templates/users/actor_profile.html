@@ -8,7 +8,7 @@
             <div class="row mb-3">
                 <div class="col-lg-4">
                     <div class="card shadow block-profile-img mb-3">
-                        <div class="card-body text-center shadow"><img class="rounded-circle mb-3 mt-4" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/None.jpg' %} {% endif %}" width="160" height="160">
+                        <div class="card-body text-center shadow"><img class="rounded-circle mb-3 mt-4" src="{% if profile.image %} {{ profile.get_image_400x300.url }} {% else %} {% static '/img/NoneUser.jpg' %} {% endif %}" width="160" height="160">
                             <h3 class="text-center text-dark mb-3">{{ profile.first_name }} {{ profile.last_name }}</h3>
                         </div>
                     </div>
@@ -47,13 +47,16 @@
                                                 <input readonly class="form-control" type="text" id="{{ main_form.first_name.id_for_label }}" placeholder="Отсутствует" name="{{ main_form.first_name.html_name }}" value="{{ profile.first_name }} {{ profile.last_name }}">
                                             </div>
                                         </div>
+                                        {% if profile.birthday %}
                                         <div class="col">
                                             <div class="mb-3">
                                                 <label class="form-label" for="{{ extra_form.birthday.label }}"><strong>День рождения</strong></label>
                                                 <input readonly class="form-control" type="date" id="{{ extra_form.birthday.label }}" name="{{ extra_form.birthday.html_name }}" value="{{ profile.birthday|date:'Y-m-d' }}">
                                             </div>
                                         </div>
+                                        {% endif %}
                                     </div>
+                                    {% if profile.description %}
                                     <div class="row">
                                         <div class="card-body">
                                             <div class="mb-3">
@@ -62,6 +65,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -80,7 +84,7 @@
                     {% if event.image %}
                         <img class="rounded img-fluid shadow" src="{{ event.get_image_400x300.url}}">
                     {% else %}
-                        <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                        <img class="rounded img-fluid shadow" src="{% static 'img/NoneEvent400x300.jpg' %}">
                     {% endif %}
                 </div>
                 <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
@@ -120,7 +124,7 @@
                     {% if theatre.image %}
                         <img class="rounded img-fluid shadow" src="{{ theatre.get_image_400x300.url}}">
                     {% else %}
-                        <img class="rounded img-fluid shadow" src="{% static 'img/None400x300.jpg' %}">
+                        <img class="rounded img-fluid shadow" src="{% static 'img/NoneTheatre400x300.jpg' %}">
                     {% endif %}
                 </div>
                 <div class="col d-md-flex mx-auto align-items-md-end align-items-lg-center mb-2">
@@ -143,7 +147,7 @@
             </div>
         </div>
         {% empty %}
-            <h4 class="text-center">Постановок нет.</h4>
+            <h4 class="text-center">Театров нет.</h4>
         {% endfor %}
         </div>
         </div>

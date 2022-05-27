@@ -75,6 +75,8 @@ class RatingCreateView(TemplateView):
         form = RatingForm(request.POST)
         review_type = kwargs.get("type")
         object_id = kwargs.get("id")
+        
+        redirect_url = {"event": "theatres:events_detail", "theatre": "rating:rating_theatre"}
 
         if review_type in ["event", "theatre"]:
             manager = Theatre.objects if review_type == "theatre" else Event.objects
@@ -88,6 +90,6 @@ class RatingCreateView(TemplateView):
                 user_id=request.user.id,
             )
             add_experience(request.user.id, 10)
-            return redirect(f"rating:rating_{review_type}", object_id)
+            return redirect(redirect_url[review_type], object_id)
 
         raise BadRequest()

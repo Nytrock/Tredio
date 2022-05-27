@@ -1,4 +1,5 @@
-from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
@@ -46,7 +47,7 @@ class TheatresDetailView(TemplateView):
         return context
 
 
-class TheatresCreateView(TemplateView):
+class TheatresCreateView(LoginRequiredMixin, TemplateView):
     template_name = "theatres/theatres_create.html"
 
     def get_context_data(self, **kwargs):
@@ -134,7 +135,7 @@ class EventDetailView(View):
         return JsonResponse(json_file)
 
 
-class ActorCreateView(TemplateView):
+class ActorCreateView(LoginRequiredMixin, TemplateView):
     template_name = "theatres/actors_create.html"
 
     def get_context_data(self, **kwargs):
@@ -156,7 +157,7 @@ class ActorCreateView(TemplateView):
         return redirect("homepage:home")
 
 
-class EventCreateView(TemplateView):
+class EventCreateView(LoginRequiredMixin, TemplateView):
     template_name = "theatres/events_create.html"
 
     def get_context_data(self, **kwargs):
