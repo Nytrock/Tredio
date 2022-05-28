@@ -154,11 +154,6 @@
                                         {% empty %}
                                             <p class="small" id="contact-not">Контакты отсутствуют.</p>
                                         {% endfor %}
-                                    </div>
-                                        <div class="mb-3">
-                                            <button class="btn btn-primary btn-sm" name="contact-button" value="True" type="submit">Сохранить</button>
-                                            <button class="btn btn-primary btn-sm" type="button" id="AddContactProfile">Добавить</button>
-                                        </div>
                                         <div id="multiple_field" class="mb-3 collapse">
                                             <label class="form-label"><strong>Тип контакта</strong></label>
                                             <select id="key_stub" class="form-control selected">
@@ -169,6 +164,11 @@
                                             </select>
                                             <label class="form-label"><strong>Значение (обязательно)</strong></label>
                                             <input id="value_stub" class="form-control" type="text" placeholder="Введите значение" name="сontacts">
+                                        </div>
+                                    </div>
+                                        <div class="mb-3">
+                                            <button class="btn btn-primary btn-sm" name="contact-button" value="True" type="submit">Сохранить</button>
+                                            <button class="btn btn-primary btn-sm" type="button" id="AddContactProfile">Добавить</button>
                                         </div>
                                 </div>
                             </form>
