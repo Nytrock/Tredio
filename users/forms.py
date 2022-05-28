@@ -164,13 +164,13 @@ class ChangeContactsProfileForm(MultipleKeyValueForm):
         )
 
     def save(self, commit=True):
-        contacts_data = {self.cleaned_data[key]: self.cleaned_data[value] for (key, value) in self.multiple_fields()}
+        contacts_data = [(self.cleaned_data[key], self.cleaned_data[value]) for (key, value) in self.multiple_fields()]
 
         contacts = self.instance
         contacts.save()
         contacts_objects = []
 
-        for contact_type, contact_value in contacts_data.items():
+        for contact_type, contact_value in contacts_data:
             contacts_objects.append(Contact(contacts_group=contacts, type=contact_type, value=contact_value))
         Contact.objects.bulk_create(contacts_objects)
 
