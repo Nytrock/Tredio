@@ -107,7 +107,7 @@ class ProfileView(LoginRequiredMixin, View):
         form_main = ChangeMainProfileForm(request.POST)
         form_extra = ChangeExtraProfileForm(request.POST, request.FILES, instance=profile)
         form_contacts = ChangeContactsProfileForm(
-            request.POST, fields=request.POST.get("field_count"), instance=profile.contacts
+            request.POST, fields=request.POST.get("field_count", 0), instance=profile.contacts
         )
 
         if form_main.is_valid():
