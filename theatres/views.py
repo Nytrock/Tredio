@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import FormView, TemplateView
@@ -59,7 +59,7 @@ class TheatresCreateView(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = TheatreForm(request.POST, fields=request.POST.get("field_count"))
+        form = TheatreForm(request.POST, request.FILES, fields=request.POST.get("field_count"))
 
         if not form.is_valid():
             return self.render_to_response(context=dict(self.get_context_data(), form=form))
