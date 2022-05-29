@@ -19,7 +19,9 @@ class MeetupForm(ModelForm):
         )
         widgets = {
             Meetup.event.field.name: widgets.Select(attrs={"class": "multi-form-input"}),
-            Meetup.start.field.name: widgets.DateTimeInput(attrs={"class": "multi-form-input", "type": "date"}),
+            Meetup.start.field.name: widgets.DateTimeInput(
+                attrs={"class": "multi-form-input", "type": "datetime-local"}
+            ),
             Meetup.description.field.name: widgets.Textarea(attrs={"class": "multi-form-input"}),
             Meetup.participants_limit.field.name: widgets.NumberInput(attrs={"class": "multi-form-input"}),
         }
