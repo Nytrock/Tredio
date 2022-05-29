@@ -37,9 +37,6 @@ class ModerationActorProfileAdmin(ActorProfileAdmin):
     def has_add_permission(self, request, obj=None):
         return False
 
-    def has_delete_permission(self, request, obj=None):
-        return False
-
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.filter(is_published=False)
