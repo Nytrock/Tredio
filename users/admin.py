@@ -28,8 +28,8 @@ class UserAchievementAdmin(admin.ModelAdmin):
 
 @admin.register(ActorProfile)
 class ActorProfileAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "last_name", "birthday", "contacts", "is_published")
-    fields = ("first_name", "last_name", "birthday", "contacts", "description", "is_published")
+    list_display = ("first_name", "last_name", "birthday", "contacts", "image_tmb", "is_published")
+    fields = ("first_name", "last_name", "birthday", "contacts", "description", "image", "is_published")
 
 
 @admin.register(ModerationActorProfile)
