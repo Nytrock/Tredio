@@ -19,10 +19,12 @@ class TheatresListView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         search_query = kwargs.get("search_query", None)
+        location_query = kwargs.get("location_query", None)
 
         if search_query:
-            context["theatres"] = Theatre.theatres.theatre_search(search_query)
+            context["theatres"] = Theatre.theatres.theatre_search(search_query, location_query)
             context["current_search"] = search_query
+            context["current_select"] = int(location_query)
         else:
             context["theatres"] = Theatre.theatres.theatres_list()
         context["cities"] = City.objects.all()
@@ -30,7 +32,9 @@ class TheatresListView(FormView):
         return context
 
     def form_valid(self, form, **kwargs):
-        return self.render_to_response(context=self.get_context_data(search_query=form.data["search"]))
+        return self.render_to_response(
+            context=self.get_context_data(search_query=form.data["search"], location_query=form.data["location"])
+        )
 
 
 class TheatresDetailView(TemplateView):

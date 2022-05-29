@@ -13,9 +13,9 @@
                         <div class="my-2"><button class="btn btn-primary ms-sm-2" type="submit">Поиск</button></div>
                         <div style="padding-top: 6px;">
                             <label class="form-label text-nowrap ms-sm-2">Город&nbsp;&nbsp;
-                                <select class="form-select d-inline-block form-select form-select-sm">
+                                <select name="location" class="form-select d-inline-block form-select form-select-sm">
                                     {% for city in cities %}
-                                        <option value="{{city.id}}">{{ city.name }}</option>
+                                        <option value="{{city.id}}" {% if current_select == city.id %} selected {% endif %}>{{ city.name }}</option>
                                     {% endfor %}
                                 </select>
                             </label>
