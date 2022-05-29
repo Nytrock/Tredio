@@ -83,7 +83,7 @@
                         <div>
                             <h5 class="fw-bold">{{ meetup.event.name }}</h5>
                             {% if meetup.event.description %}
-                                <p>{{ meetup.event.description }}</p>
+                                <p>{{ meetup.event.description | truncatewords:10 }}</p>
                             {% endif %}
                             <a href="{% url 'theatres:events_detail' meetup.event.id %}" class="btn btn-primary shadow" type="button">Подробнее</a>
                         </div>
