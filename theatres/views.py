@@ -21,7 +21,7 @@ class TheatresListView(FormView):
         search_query = kwargs.get("search_query", None)
         location_query = kwargs.get("location_query", None)
 
-        if search_query:
+        if search_query or location_query:
             context["theatres"] = Theatre.theatres.theatre_search(search_query, location_query)
             context["current_search"] = search_query
             context["current_select"] = int(location_query)
@@ -79,10 +79,12 @@ class EventListView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         search_query = kwargs.get("search_query", None)
+        location_query = kwargs.get("location_query", None)
 
-        if search_query:
-            context["events"] = Event.events.event_search(search_query)
+        if search_query or location_query:
+            context["events"] = Event.events.event_search(search_query, location_query)
             context["current_search"] = search_query
+            context["current_select"] = int(location_query)
         else:
             context["events"] = Event.events.events_list()
         context["cities"] = City.objects.all()
@@ -90,7 +92,9 @@ class EventListView(FormView):
         return context
 
     def form_valid(self, form, **kwargs):
-        return self.render_to_response(context=self.get_context_data(search_query=form.data["search"]))
+        return self.render_to_response(
+            context=self.get_context_data(search_query=form.data["search"], location_query=form.data["location"])
+        )
 
 
 class EventDetailView(View):

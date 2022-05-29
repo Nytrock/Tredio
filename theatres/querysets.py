@@ -24,7 +24,7 @@ class TheatreQuerySet(models.QuerySet):
         )
 
     def theatre_search(self, search_query: str, location_query: int):
-        return self.theatres_list().filter(name__icontains=search_query, location_id=location_query)
+        return self.theatres_list().filter(name__icontains=search_query, location__city=location_query)
 
     def theatre_details(self, id: int):
         from theatres.models import Event
@@ -69,8 +69,8 @@ class EventQuerySet(models.QuerySet):
             .filter(is_published=True)
         )
 
-    def event_search(self, search_query: str):
-        return self.events_list().filter(name__icontains=search_query)
+    def event_search(self, search_query: str, location_query: int):
+        return self.events_list().filter(name__icontains=search_query, theatre__location__city=location_query)
 
     def event_details(self, id: int):
         return (

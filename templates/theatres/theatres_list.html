@@ -14,6 +14,7 @@
                         <div style="padding-top: 6px;">
                             <label class="form-label text-nowrap ms-sm-2">Город&nbsp;&nbsp;
                                 <select name="location" class="form-select d-inline-block form-select form-select-sm">
+                                    <option value="" selected="">---------</option>
                                     {% for city in cities %}
                                         <option value="{{city.id}}" {% if current_select == city.id %} selected {% endif %}>{{ city.name }}</option>
                                     {% endfor %}
