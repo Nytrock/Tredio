@@ -23,8 +23,8 @@ class TheatreQuerySet(models.QuerySet):
             .filter(is_published=True)
         )
 
-    def theatre_search(self, search_query: str):
-        return self.theatres_list().filter(name__icontains=search_query)
+    def theatre_search(self, search_query: str, location_query: int):
+        return self.theatres_list().filter(name__icontains=search_query, location_id=location_query)
 
     def theatre_details(self, id: int):
         from theatres.models import Event
