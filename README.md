@@ -54,6 +54,6 @@ Tredio это площадка-агрегатор для поиска инфор
 
 # Команда
 
-|[Артём](https://github.com/Jubastik)  |[Савва](https://github.com/Nytrock)  | [Данил](https://github.com/PatriotRossii) |
+|[Артём](https://github.com/Jubastik)  |[Я](https://github.com/Nytrock)  | [Данил](https://github.com/PatriotRossii) |
 |--|--|--|
 
