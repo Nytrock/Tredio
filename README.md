@@ -5,20 +5,18 @@ Tredio это площадка-агрегатор для поиска инфор
 
 # Сайт
 
-Сайт - https://squid-app-536wx.ondigitalocean.app/
+Больше не хостируется по причине распада команды. Единственная возможность его опробовать - запустить на локальной машине, о чём ниже.
 
-> Если вы столкнулись с какой либо ошибкой, пожалуйста сойзайте [issue](https://github.com/Jubastik/YlPlusProject/issues).
-> 
-> PS для ревьютеров. На сайте могут быть неожиданные ошибки. Если вы столкнулись с ними, попробуйте запустить сайт на локальной машине. Ну и конечно мы всегда рады вышим [issue](https://github.com/Jubastik/YlPlusProject/issues).
+> Если вы столкнулись с какой-либо ошибкой, пожалуйста, создайте [issue](https://github.com/Nytrock/YlPlusProject/issues).
 
 
 
-# Инструкция по запуску
+# Инструкция по запуску на локальной машине
 
  - Клонировать репозиторий
 
 	```shell
-	git clone https://github.com/Jubastik/YlPlusProject.git
+	git clone https://github.com/Nytrock/YlPlusProject.git
 	```
 
  - Установить зависимости с помощью requirements.txt или poetry
