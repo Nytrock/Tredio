@@ -7,7 +7,7 @@ Tredio это площадка-агрегатор для поиска инфор
 
 Больше не хостируется по причине распада команды. Единственная возможность его опробовать - запустить на локальной машине, о чём ниже.
 
-> Если вы столкнулись с какой-либо ошибкой, пожалуйста, создайте [issue](https://github.com/Nytrock/YlPlusProject/issues).
+> Если вы столкнулись с какой-либо ошибкой, пожалуйста, создайте [issue](https://github.com/Nytrock/Tredio/issues).
 
 
 
@@ -16,7 +16,7 @@ Tredio это площадка-агрегатор для поиска инфор
  - Клонировать репозиторий
 
 	```shell
-	git clone https://github.com/Nytrock/YlPlusProject.git
+	git clone https://github.com/Nytrock/Tredio.git
 	```
 
  - Установить зависимости с помощью requirements.txt или poetry
